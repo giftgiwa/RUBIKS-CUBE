@@ -1,8 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { TrackballControls } from 'three/addons/controls/TrackballControls.js'
-import { DragControls } from 'three/addons/controls/DragControls.js'
 import RubiksCube from './rubiks'
 
 
@@ -29,7 +27,6 @@ renderer.setSize(
 
 
 document.body.appendChild(renderer.domElement)
-// console.log(renderer.domElement)
 
 // resize render on window resize
 window.addEventListener( 'resize', onWindowResize, false )
@@ -81,18 +78,8 @@ let rubiksCube = new THREE.Mesh();
 
 let pieces = []
 
-// loader.load( './public/assets/models/rubiks.glb', function ( gltf ) {
-
 function modelLoader(url) {
     return new Promise((resolve, reject) => {
-        // loader.load( './public/assets/models/rubiks.gltf', function (gltf) {
-        //     rubiksCube = gltf.scene
-        //     pieces = gltf.scene.children
-            
-        //     scene.add( rubiksCube )
-        // }, undefined, function ( error ) {
-        //         console.error( error )
-        // });
         loader.load(url, (data) => resolve(data), null, undefined, function (error) {
             console.error(error)
         })
@@ -112,7 +99,7 @@ let samplePiece = rubiksCube.children[0]
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-console.log(scene.children)
+// console.log(scene.children)
 
 
 function onPointerMove( event ) {
