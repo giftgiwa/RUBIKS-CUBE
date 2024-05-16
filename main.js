@@ -87,7 +87,7 @@ function modelLoader(url) {
 
 }
 
-const gltfData = await modelLoader('./public/assets/models/rubiks.gltf')
+const gltfData = await modelLoader('/assets/models/rubiks.gltf')
 rubiksCube = gltfData.scene;
 scene.add(rubiksCube);
 
