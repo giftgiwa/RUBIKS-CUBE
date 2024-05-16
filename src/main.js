@@ -91,7 +91,10 @@ const gltfData = await modelLoader('/assets/models/rubiks.gltf')
 rubiksCube = gltfData.scene;
 scene.add(rubiksCube);
 
+
+// initialize rubiks cube "data structure"
 let rb = new RubiksCube(rubiksCube)
+
 
 let samplePiece = rubiksCube.children[0]
 // console.log(samplePiece)
