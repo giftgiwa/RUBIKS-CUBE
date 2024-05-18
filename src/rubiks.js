@@ -3,13 +3,44 @@ import { RubiksPiece } from './pieces'
 
 
 class RubiksCube {
+
+    /* Global Variables */
+
+    /**
+     * lists complementary faces on rubiks cube (i.e. faces that exist on
+     * opposite sides of the cube, such as the blue and green face).
+     */
+    complements = {
+        'W': 'Y', 'Y': 'W',
+        'O': 'R', 'R': 'O',
+        'B': 'G', 'G': 'B'
+    }
+
+    /**
+     * Lists the ordering of faces in the clockwise direction (for
+     * handling rotations)
+     */
+    clockwiseRotationMap = {
+        'W': ['B', 'R', 'G', 'O'],
+        'B': ['W', 'O', 'Y', 'R'],
+        'O': ['W', 'G', 'Y', 'B'],
+        'G': ['W', 'R', 'Y', 'O'],
+        'R': ['W', 'B', 'Y', 'G'],
+        'Y': ['B', 'O', 'G', 'R']
+    }
+
+
+    /**
+     * Constructor for RubiksCube class.
+     * @param {*} gltf actual gltf file imported into the THREE.js Scene
+     */
     constructor(gltf) {
         this.gltf = gltf // store the model file
         this.edges = []
         this.faces = []
         this.corners = []
 
-        this.buildCoordinateMap() // build the groups for the pieces
+        this.initCoordinateMap() // build the coordinate map
     }
 
     // buildMeshGroups() {
@@ -20,76 +51,74 @@ class RubiksCube {
      * "Parse" the Rubik's cube in its default state for 
      * its data structure representation.
      */
-    buildCoordinateMap() {
+    initCoordinateMap() {
 
         // each of the nested-nested-nested-nested arrays store the colors of the piece
         this.coordinateMap = [
             [
-                [[], [], []],
-                [[], [], []],
-                [[], [], []]
+                [null, null, null],
+                [null, null, null],
+                [null, null, null]
             ], 
             [
-                [[], [], []],
-                [[], [], []],
-                [[], [], []]
+                [null, null, null],
+                [null, null, null],
+                [null, null, null]
             ], 
             [
-                [[], [], []],
-                [[], [], []],
-                [[], [], []]
+                [null, null, null],
+                [null, null, null],
+                [null, null, null]
             ]
         ]
 
-        this.flatCoordinateMap = [
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-            ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
-        ]
-
-        // console.log(this.coordinateMap)
+        console.log(this.coordinateMap)
         // console.log(this.coordinateMap[0][0][0])
 
         for (let i = 0; i < this.gltf.children.length; i++) {
-            // console.log(Number(this.gltf.children[i].name[0]) + " " +
-            //             Number(this.gltf.children[i].name[1]) + " " +
-            //             Number(this.gltf.children[i].name[2]) + " "
-            // )
 
             let currentPiece = this.gltf.children[i]
+            console.log(currentPiece)
 
             let x = Number(currentPiece.name[0])
             let y = Number(currentPiece.name[1])
             let z = Number(currentPiece.name[2])
 
-            // console.log(currentPiece)
-
+            /**
+             * RubiksPiece(colors, coordinates, orientationMap, mesh)
+             */
             if (currentPiece.children.length == 2) { // face
-                console.log("This is a face piece.")
 
-                // let face = new Face()
+                this.coordinateMap[x][y][z] = new RubiksPiece(
+                    [],
+                    [x, y, z],
+                    {
+                        
+                    },
+                    currentPiece
+                )
+
+
+                
 
             } else if (currentPiece.children.length == 3) { // edge
-                console.log("This is a edge piece.")
+                // console.log("This is a edge piece.")
 
             } else if (currentPiece.children.length == 4) { // corner
-                console.log("This is a corner piece.")
+                // console.log("This is a corner piece.")
 
             }
+            
+            // place the inidivual pieces inside of the coordinate map
+            // this.coordinateMap[x][y][z] = [ne]
 
-            this.coordinateMap[x][y][z] = []
+            
+
+            // console.log(this.coordinateMap[x][y][z])
+
+
         }
     }
-
-
 }
-
-
 
 export default RubiksCube

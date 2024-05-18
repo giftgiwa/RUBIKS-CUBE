@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { TrackballControls } from 'three/examples/jsm/Addons.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks'
 
@@ -40,6 +41,16 @@ function onWindowResize() {
 const orbitControls = new OrbitControls( camera, renderer.domElement )
 orbitControls.minDistance = 0.15
 orbitControls.maxDistance = 0.3
+
+
+// const trackballControls = new TrackballControls( camera, renderer.domElement)
+// trackballControls.rotateSpeed = 3.5
+// trackballControls.zoomSpeed = 1.5
+// trackballControls.noPan = true
+// trackballControls.staticMoving = true
+// trackballControls.minDistance = 0.15
+// trackballControls.maxDistance = 0.3
+
 
 const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
 scene.add( ambientLight );
@@ -146,13 +157,15 @@ function animate() {
 
         } else {
             orbitControls.enabled = true
+
+
         }
     }
 
 
 	
 
-
+    // trackballControls.update();
 	requestAnimationFrame( animate )
 	renderer.render( scene, camera )
 }
