@@ -108,24 +108,24 @@ let rb = new RubiksCube(rubiksCube)
 
 
 let samplePiece = rubiksCube.children[0]
-// console.log(samplePiece)
-// samplePiece.position.set(1, 1, 1)
 
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-// console.log(scene.children)
 
 
 function onPointerMove( event ) {
 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
-
 window.addEventListener('pointermove', onPointerMove)
 
 
+/**
+ * Check whether the left click on the mouse (or equivalent) is 
+ * currently being held down.
+ */
 let mouseDown = false
 document.body.onmousedown = function () {
     mouseDown = true

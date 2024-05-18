@@ -29,6 +29,51 @@ class RubiksCube {
         'Y': ['B', 'O', 'G', 'R']
     }
 
+    counterclockwiseRotationMap = {
+        'W': ['B', 'O', 'G', 'R'],
+        'B': ['W', 'R', 'Y', 'O'],
+        'O': ['W', 'B', 'Y', 'G'],
+        'G': ['W', 'O', 'Y', 'R'],
+        'R': ['W', 'G', 'Y', 'B'],
+        'Y': ['B', 'R', 'G', 'O']
+    }
+
+    // initial state for Rubik's cube (used for initialization of coordinate map)
+    /**
+     * keys: color(s) of face/edge/corner
+     * values: face that specific color(s) reside on
+     * 
+     * e.g. If a yellow/blue/red corner were to reside on the corner between
+     *      the white, red, and blue faces 09-such that the yellow tile is on
+     *      the white face, the red tile
+     */
+    solvedStateOrientations = [
+        [
+            //   (0, 0, 0) , (0, 0, 1) , (0, 0, 2)
+            [{'W':'W','B':'B','R':'R'}, {'W':'W','B':'B'}, {'W':'W','B':'B','O':'O'}],
+            //   (0, 1, 0) , (0, 1, 1) , (0, 1, 2)
+            [{'W':'W','R':'R'}, {'W':'W'}, {'W':'W','O':'O'}],
+            //   (0, 1, 0) , (0, 1, 1) , (0, 1, 2)
+            [{'W':'W','G':'G','R':'R'}, {'W':'W','G':'G'}, {'W':'W','G':'G','O':'O'}]
+        ], 
+        [
+            //   (1, 0, 0) , (1, 0, 1) , (1, 0, 2)
+            [{'B':'B', 'R':'R'}, {'B':'B'}, {'B':'B', 'O':'O'}],
+            //   (1, 1, 0) , (1, 1, 1) , (1, 1, 2)
+            [{'R':'R'}, null, {'O':'O'}],
+            //   (1, 1, 0) , (1, 1, 1) , (1, 1, 2)
+            [{'R':'R', 'G':'G'}, {'G':'G'}, {'O':'O', 'G':'G'}]
+        ], 
+        [
+            //   (2, 0, 0) , (2, 0, 1) , (2, 0, 2)
+            [{'Y':'Y','R':'R','B':'B'}, {'Y':'Y','B':'B'}, {'Y':'Y','B':'B','O':'O'}],
+            //   (2, 1, 0) , (2, 1, 1) , (2, 1, 2)
+            [{'Y':'Y','R':'R'}, {'Y':'Y'}, {'Y':'Y','O':'O'}],
+            //   (2, 1, 0) , (2, 1, 1) , (2, 1, 2)
+            [{'Y':'Y','R':'R','G':'G'}, {'Y':'Y','G':'G'}, {'Y':'Y','G':'G','O':'O'}]
+        ]
+    ]
+
 
     /**
      * Constructor for RubiksCube class.
@@ -75,6 +120,11 @@ class RubiksCube {
         console.log(this.coordinateMap)
         // console.log(this.coordinateMap[0][0][0])
 
+
+        /**
+         * NOTE: All of the pieces in the mesh are being iterated through
+         *       (which excludes the "null center piece" in the middle layer).
+         */
         for (let i = 0; i < this.gltf.children.length; i++) {
 
             let currentPiece = this.gltf.children[i]
