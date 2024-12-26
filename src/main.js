@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { TrackballControls } from 'three/examples/jsm/Addons.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { TrackballControls } from 'three/addons/controls/TrackballControls.js'
-import { DragControls } from 'three/addons/controls/DragControls.js'
+import RubiksCube from './rubiks'
 
 
 const scene = new THREE.Scene();
@@ -28,7 +28,6 @@ renderer.setSize(
 
 
 document.body.appendChild(renderer.domElement)
-// console.log(renderer.domElement)
 
 // resize render on window resize
 window.addEventListener( 'resize', onWindowResize, false )
@@ -42,6 +41,16 @@ function onWindowResize() {
 const orbitControls = new OrbitControls( camera, renderer.domElement )
 orbitControls.minDistance = 0.15
 orbitControls.maxDistance = 0.3
+
+
+// const trackballControls = new TrackballControls( camera, renderer.domElement)
+// trackballControls.rotateSpeed = 3.5
+// trackballControls.zoomSpeed = 1.5
+// trackballControls.noPan = true
+// trackballControls.staticMoving = true
+// trackballControls.minDistance = 0.15
+// trackballControls.maxDistance = 0.3
+
 
 const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
 scene.add( ambientLight );
@@ -77,36 +86,48 @@ for (let i = 0; i < lightPositions.length; i++) {
 
 const loader = new GLTFLoader();
 let rubiksCube = new THREE.Mesh();
-// loader.load( './public/assets/models/rubiks.glb', function ( gltf ) {
-loader.load( './public/assets/models/rubiks.gltf', function ( gltf ) {
 
-    rubiksCube = gltf.scene
+let pieces = []
 
-    console.log(gltf)
-    // console.log(gltf.parser.json.meshes)
+function modelLoader(url) {
+    return new Promise((resolve, reject) => {
+        loader.load(url, (data) => resolve(data), null, undefined, function (error) {
+            console.error(error)
+        })
+    })
 
-    scene.add( rubiksCube )
+}
 
-}, undefined, function ( error ) {
-        console.error( error )
-});
+const gltfData = await modelLoader('/assets/models/rubiks.gltf')
+rubiksCube = gltfData.scene;
+scene.add(rubiksCube);
+
+
+// initialize rubiks cube "data structure"
+let rb = new RubiksCube(rubiksCube)
+
+
+let samplePiece = rubiksCube.children[0]
+// console.log(samplePiece)
+// samplePiece.position.set(1, 1, 1)
+
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-console.log(scene.children)
 
 
 function onPointerMove( event ) {
 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
-
 window.addEventListener('pointermove', onPointerMove)
 
 
-
-
+/**
+ * Check whether the left click on the mouse (or equivalent) is 
+ * currently being held down.
+ */
 let mouseDown = false
 document.body.onmousedown = function () {
     mouseDown = true
@@ -116,24 +137,37 @@ document.body.onmouseup = function () {
 }
 
 
+
+
+
 function animate() {
     raycaster.setFromCamera( pointer, camera );
 
     const intersects = raycaster.intersectObjects( scene.children );
 
-    // block orbit controls if the cube is being hovered over
+    // block orbit controls if the cube is being clicked and dragged over
     if (!mouseDown) {
         if (intersects.length > 0) {
             orbitControls.enabled = false
+
+            
+
+
+
+
+
+
         } else {
             orbitControls.enabled = true
+
+
         }
     }
 
 
 	
 
-
+    // trackballControls.update();
 	requestAnimationFrame( animate )
 	renderer.render( scene, camera )
 }

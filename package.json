@@ -2,7 +2,7 @@
   "name": "rubiks-cube",
   "version": "1.0.0",
   "description": "",
-  "main": "rubiks.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx vite build",
@@ -11,6 +11,7 @@
   "author": "Gift Giwa",
   "license": "ISC",
   "dependencies": {
-    "three": "^0.164.1"
+    "three": "^0.164.1",
+    "vite": "^5.2.11"
   }
 }
