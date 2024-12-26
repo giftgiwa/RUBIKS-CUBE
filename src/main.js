@@ -108,6 +108,8 @@ let rb = new RubiksCube(rubiksCube)
 
 
 let samplePiece = rubiksCube.children[0]
+// console.log(samplePiece)
+// samplePiece.position.set(1, 1, 1)
 
 
 const raycaster = new THREE.Raycaster();

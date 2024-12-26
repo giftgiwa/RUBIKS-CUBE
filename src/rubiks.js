@@ -1,9 +1,7 @@
 import * as THREE from 'three'
 import { RubiksPiece } from './pieces'
 
-
 class RubiksCube {
-
     /* Global Variables */
 
     /**
@@ -77,7 +75,7 @@ class RubiksCube {
 
     /**
      * Constructor for RubiksCube class.
-     * @param {*} gltf actual gltf file imported into the THREE.js Scene
+     * @param {*} gltf actual GLTF file imported into the THREE.js Scene
      */
     constructor(gltf) {
         this.gltf = gltf // store the model file
@@ -85,20 +83,29 @@ class RubiksCube {
         this.faces = []
         this.corners = []
 
-        this.initCoordinateMap() // build the coordinate map
-    }
+        // store groups of the meshes (for handling rotation)
+        this.meshGroups = {
+            'W': [],
+            'B': [],
+            'O': [],
+            'G': [],
+            'R': [],
+            'Y': [],
+        }
 
-    // buildMeshGroups() {
-    //     console.log(this.gltf)
-    // }
+        this.initCoordinateMap() // build the coordinate map
+
+
+        this.buildMeshGroups() // build the mesh groups
+    }
+    
 
     /**
      * "Parse" the Rubik's cube in its default state for 
      * its data structure representation.
      */
     initCoordinateMap() {
-
-        // each of the nested-nested-nested-nested arrays store the colors of the piece
+        // each of the nested-nested-nested-nested arrays will store the colors of the piece
         this.coordinateMap = [
             [
                 [null, null, null],
@@ -117,18 +124,15 @@ class RubiksCube {
             ]
         ]
 
-        console.log(this.coordinateMap)
-        // console.log(this.coordinateMap[0][0][0])
-
-
         /**
-         * NOTE: All of the pieces in the mesh are being iterated through
-         *       (which excludes the "null center piece" in the middle layer).
+         * NOTE:
+         * * All of the pieces in the mesh are being iterated through
+         *   (which excludes the "null center piece" in the middle layer).
+         * * There should be (and are) 8 corner pieces, 12 edge pieces, and 6
+         *   face pieces.
          */
         for (let i = 0; i < this.gltf.children.length; i++) {
-
             let currentPiece = this.gltf.children[i]
-            console.log(currentPiece)
 
             let x = Number(currentPiece.name[0])
             let y = Number(currentPiece.name[1])
@@ -137,37 +141,56 @@ class RubiksCube {
             /**
              * RubiksPiece(colors, coordinates, orientationMap, mesh)
              */
-            if (currentPiece.children.length == 2) { // face
+            let colors = Object.keys(this.solvedStateOrientations[x][y][z])
+            let currentOrientationMap = this.solvedStateOrientations[x][y][z]
 
-                this.coordinateMap[x][y][z] = new RubiksPiece(
-                    [],
-                    [x, y, z],
-                    {
-                        
-                    },
-                    currentPiece
-                )
-
-
-                
-
-            } else if (currentPiece.children.length == 3) { // edge
-                // console.log("This is a edge piece.")
-
-            } else if (currentPiece.children.length == 4) { // corner
-                // console.log("This is a corner piece.")
-
-            }
-            
-            // place the inidivual pieces inside of the coordinate map
-            // this.coordinateMap[x][y][z] = [ne]
-
-            
-
-            // console.log(this.coordinateMap[x][y][z])
-
-
+            this.coordinateMap[x][y][z] = new RubiksPiece(
+                colors, /* colors */
+                [x, y, z], /* coordinates */
+                currentOrientationMap, /* orientaton map */
+                currentPiece /* mesh (within GLTF file) */
+            )
         }
+        // console.log("Coordinate Map initialized.")
+        
+    }
+
+
+
+    /**
+     * Assign the Rubik's Cube pieces into groups for face rotations.
+     */
+    buildMeshGroups() {
+
+        /**
+         * Note on face assignments for each Rubik's Cube state:
+         * 
+         * white face: "x"/"i" coordinate == 0
+         * yellow face: "x"/"i" coordinate == 2
+         * blue face: 
+         */
+
+        for (let i = 0; i < this.coordinateMap.length; i++) {
+            for (let j = 0; j < this.coordinateMap[0].length; j++) {
+                for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
+                    // console.log(this.coordinateMap[i][j][k])
+
+                    // skipping the null middle piece
+                    if (this.coordinateMap[i][j][k]) {
+                        console.log(Object.values(this.coordinateMap[i][j][k].orientationMap))
+
+                        for (let face in Object.values(this.coordinateMap[i][j][k].orientationMap)) {
+                            console.log()
+                        }
+
+
+                    }
+                    
+                }
+            }
+        }
+
+
     }
 }
 
