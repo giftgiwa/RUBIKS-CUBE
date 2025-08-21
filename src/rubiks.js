@@ -167,7 +167,10 @@ class RubiksCube {
          * 
          * white face: "x"/"i" coordinate == 0
          * yellow face: "x"/"i" coordinate == 2
-         * blue face: 
+         * blue face: "y"/"j" coordinate == 0
+         * green face: "y"/"j" coordinate == 2
+         * red face: "z"/"k" coordinate == 0
+         * orange face: "z"/"k" coordinate == 2
          */
 
         for (let i = 0; i < this.coordinateMap.length; i++) {
@@ -177,16 +180,17 @@ class RubiksCube {
 
                     // skipping the null middle piece
                     if (this.coordinateMap[i][j][k]) {
-                        console.log(Object.values(this.coordinateMap[i][j][k].orientationMap))
+                        console.log(Object.values(this.coordinateMap[i][j][k]))
 
                         for (let face in Object.values(this.coordinateMap[i][j][k].orientationMap)) {
-                            console.log()
+                            //console.log()
                         }
 
 
                     }
                     
                 }
+                //break
             }
         }
 
