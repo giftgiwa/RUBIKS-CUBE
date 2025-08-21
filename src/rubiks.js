@@ -158,7 +158,7 @@ class RubiksCube {
      * Assign the Rubik's Cube pieces into groups for face rotations.
      */
     buildMeshGroups() {
-        console.log(this.coordinateMap)
+        //console.log(this.coordinateMap)
 
         /**
          * Note on face assignments for each Rubik's Cube state:
@@ -171,14 +171,14 @@ class RubiksCube {
          * orange face: "z"/"k" coordinate == 2
          */
 
-        this.sampleGroup = new THREE.Group();
+        this.sampleGroup = [];
 
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
-                    console.log(this.coordinateMap[i][j][k])
+                    //console.log(this.coordinateMap[i][j][k])
 
-                    this.sampleGroup.add(this.coordinateMap[i][j][k].mesh)
+                    this.sampleGroup.push(this.coordinateMap[i][j][k].mesh)
                     // skipping the null middle piece
                     //if (this.coordinateMap[i][j][k]) {
                     //    console.log(Object.values(this.coordinateMap[i][j][k]))

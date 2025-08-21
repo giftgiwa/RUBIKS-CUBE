@@ -104,10 +104,14 @@ scene.add(rubiksCube);
 // initialize rubiks cube "data structure"
 let rb = new RubiksCube(rubiksCube)
 
-scene.add(rb.sampleGroup)
+
+for (let mesh of rb.sampleGroup) {
+    //console.log(mesh)
+    scene.add(mesh)
+}
 
 
-let samplePiece = rubiksCube.children[0]
+//let samplePiece = rubiksCube.children[0]
 // console.log(samplePiece)
 // samplePiece.position.set(1, 1, 1)
 
@@ -145,7 +149,9 @@ window.addEventListener("keypress", (event) => {
     }
 })
 
-
+for (let mesh of rb.sampleGroup) {
+    mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), Math.PI)
+}
 
 function animate() {
     raycaster.setFromCamera( pointer, camera );
@@ -172,8 +178,11 @@ function animate() {
         }
     }
 
+    for (let mesh of rb.sampleGroup) {
+        mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), 0.01)
+    }
 
-    rb.sampleGroup.rotation.z += 0.01; // In your animation loop
+    //rb.sampleGroup.rotation.z += 0.01; // In your animation loop
 
     // trackballControls.update();
 	requestAnimationFrame( animate )
