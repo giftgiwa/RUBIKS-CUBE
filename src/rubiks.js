@@ -93,9 +93,7 @@ class RubiksCube {
             'Y': [],
         }
 
-        this.initCoordinateMap() // build the coordinate map
-
-
+        this.initCoordinateMap() // build the coordinate map\
         this.buildMeshGroups() // build the mesh groups
     }
     
@@ -156,11 +154,11 @@ class RubiksCube {
     }
 
 
-
     /**
      * Assign the Rubik's Cube pieces into groups for face rotations.
      */
     buildMeshGroups() {
+        console.log(this.coordinateMap)
 
         /**
          * Note on face assignments for each Rubik's Cube state:
@@ -173,26 +171,34 @@ class RubiksCube {
          * orange face: "z"/"k" coordinate == 2
          */
 
+        this.sampleGroup = new THREE.Group();
+
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
-                    // console.log(this.coordinateMap[i][j][k])
+                    console.log(this.coordinateMap[i][j][k])
 
+                    this.sampleGroup.add(this.coordinateMap[i][j][k].mesh)
                     // skipping the null middle piece
-                    if (this.coordinateMap[i][j][k]) {
-                        console.log(Object.values(this.coordinateMap[i][j][k]))
+                    //if (this.coordinateMap[i][j][k]) {
+                    //    console.log(Object.values(this.coordinateMap[i][j][k]))
 
-                        for (let face in Object.values(this.coordinateMap[i][j][k].orientationMap)) {
-                            //console.log()
-                        }
+                        //for (let face in Object.values(this.coordinateMap[i][j][k].orientationMap)) {
+                        //    console.log(face)
+                        //}
 
+                    //this.meshGroups['B'].push(this.coordinateMap[i][j][k])
 
-                    }
+                    //}
                     
                 }
-                //break
+                break
             }
         }
+
+        
+
+        //console.log(this.meshGroups)
 
 
     }

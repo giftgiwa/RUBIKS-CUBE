@@ -104,6 +104,8 @@ scene.add(rubiksCube);
 // initialize rubiks cube "data structure"
 let rb = new RubiksCube(rubiksCube)
 
+scene.add(rb.sampleGroup)
+
 
 let samplePiece = rubiksCube.children[0]
 // console.log(samplePiece)
@@ -139,7 +141,7 @@ window.addEventListener("keypress", (event) => {
         console.log("rotate")
 
         // TODO: implement a single clockwise rotation of the top face
-        
+
     }
 })
 
@@ -171,7 +173,7 @@ function animate() {
     }
 
 
-	
+    rb.sampleGroup.rotation.z += 0.01; // In your animation loop
 
     // trackballControls.update();
 	requestAnimationFrame( animate )
