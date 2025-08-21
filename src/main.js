@@ -83,9 +83,8 @@ for (let i = 0; i < lightPositions.length; i++) {
     scene.add(light)
 }
 
-
 const loader = new GLTFLoader();
-let rubiksCube = new THREE.Mesh();
+let rubiksCube = new THREE.Mesh(); // create Rubik's cube
 
 let pieces = []
 
@@ -95,7 +94,6 @@ function modelLoader(url) {
             console.error(error)
         })
     })
-
 }
 
 const gltfData = await modelLoader('/assets/models/rubiks.gltf')
@@ -136,7 +134,14 @@ document.body.onmouseup = function () {
     mouseDown = false
 }
 
+window.addEventListener("keypress", (event) => {
+    if (event.key.toLowerCase() == "r") {
+        console.log("rotate")
 
+        // TODO: implement a single clockwise rotation of the top face
+        
+    }
+})
 
 
 
@@ -148,9 +153,11 @@ function animate() {
     // block orbit controls if the cube is being clicked and dragged over
     if (!mouseDown) {
         if (intersects.length > 0) {
+            //console.log("here!")
             orbitControls.enabled = false
 
-            
+            // TODO: add click and drag for rotation
+
 
 
 
@@ -159,7 +166,6 @@ function animate() {
 
         } else {
             orbitControls.enabled = true
-
 
         }
     }
