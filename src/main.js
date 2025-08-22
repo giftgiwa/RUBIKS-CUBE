@@ -105,16 +105,9 @@ scene.add(rubiksCube);
 let rb = new RubiksCube(rubiksCube)
 
 
-for (let mesh of rb.sampleGroup) {
-    //console.log(mesh)
-    scene.add(mesh)
-}
-
-
 //let samplePiece = rubiksCube.children[0]
 // console.log(samplePiece)
 // samplePiece.position.set(1, 1, 1)
-
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -140,18 +133,6 @@ document.body.onmouseup = function () {
     mouseDown = false
 }
 
-window.addEventListener("keypress", (event) => {
-    if (event.key.toLowerCase() == "r") {
-        console.log("rotate")
-
-        // TODO: implement a single clockwise rotation of the top face
-
-    }
-})
-
-for (let mesh of rb.sampleGroup) {
-    mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), Math.PI)
-}
 
 function animate() {
     raycaster.setFromCamera( pointer, camera );
@@ -178,9 +159,9 @@ function animate() {
         }
     }
 
-    for (let mesh of rb.sampleGroup) {
-        mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), 0.01)
-    }
+    //for (let mesh of rb.sampleGroup) {
+    //    mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), 0.01)
+    //}
 
     //rb.sampleGroup.rotation.z += 0.01; // In your animation loop
 
