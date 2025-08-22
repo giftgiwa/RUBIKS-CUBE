@@ -1,5 +1,9 @@
 import * as THREE from 'three'
 import { RubiksPiece } from './pieces'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { TrackballControls } from 'three/examples/jsm/Addons.js'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+
 
 class RubiksCube {
     /* Global Variables */
@@ -42,7 +46,7 @@ class RubiksCube {
      * values: face that specific color(s) reside on
      * 
      * e.g. If a yellow/blue/red corner were to reside on the corner between
-     *      the white, red, and blue faces 09-such that the yellow tile is on
+     *      the white, red, and blue faces such that the yellow tile is on
      *      the white face, the red tile
      */
     solvedStateOrientations = [
@@ -72,6 +76,15 @@ class RubiksCube {
         ]
     ]
 
+    rotationGroups = {
+        'W': [],
+        'B': [],
+        'O': [],
+        'G': [],
+        'R': [],
+        'Y': [],
+    }
+
 
     /**
      * Constructor for RubiksCube class.
@@ -93,8 +106,10 @@ class RubiksCube {
             'Y': [],
         }
 
-        this.initCoordinateMap() // build the coordinate map\
+        this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
+
+        this.sampleRotate()
     }
     
 
@@ -158,8 +173,6 @@ class RubiksCube {
      * Assign the Rubik's Cube pieces into groups for face rotations.
      */
     buildMeshGroups() {
-        //console.log(this.coordinateMap)
-
         /**
          * Note on face assignments for each Rubik's Cube state:
          * 
@@ -171,36 +184,153 @@ class RubiksCube {
          * orange face: "z"/"k" coordinate == 2
          */
 
-        this.sampleGroup = [];
 
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
-                    //console.log(this.coordinateMap[i][j][k])
 
-                    this.sampleGroup.push(this.coordinateMap[i][j][k].mesh)
                     // skipping the null middle piece
-                    //if (this.coordinateMap[i][j][k]) {
+                    if (this.coordinateMap[i][j][k]) {
                     //    console.log(Object.values(this.coordinateMap[i][j][k]))
 
-                        //for (let face in Object.values(this.coordinateMap[i][j][k].orientationMap)) {
-                        //    console.log(face)
-                        //}
+                        if (i == 0) { // white
+                            this.rotationGroups["W"].push(this.coordinateMap[i][j][k])
+                        }
+                        if (i == 2) { // yellow
+                            this.rotationGroups["Y"].push(this.coordinateMap[i][j][k])
+                        }
+                        if (j == 0) { // blue
+                            this.rotationGroups["B"].push(this.coordinateMap[i][j][k])
+                        }
+                        if (j == 2) { // green
+                            this.rotationGroups["G"].push(this.coordinateMap[i][j][k])
+                        }
+                        if (k == 0) { // red
+                            this.rotationGroups["R"].push(this.coordinateMap[i][j][k])
+                        }
+                        if (k == 2) { // orange
+                            this.rotationGroups["O"].push(this.coordinateMap[i][j][k])
+                        }
 
-                    //this.meshGroups['B'].push(this.coordinateMap[i][j][k])
-
-                    //}
+                    }
                     
                 }
-                break
+                //break
             }
         }
+      
 
-        
+        console.log(this.rotationGroups)
+    }
 
-        //console.log(this.meshGroups)
+    sampleRotate() {
+        window.addEventListener("keypress", (event) => {
+            if (event.key.toLowerCase() == "r") {
+                //console.log("rotate")
+                for (let piece of this.rotationGroups["B"]) {
+                    piece.mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2)
+                }
+
+                console.log(this.rotationGroups["B"])
+                console.log(this.counterclockwiseRotationMap["B"])
+
+                for (let piece of this.rotationGroups["B"]) {
+                    if (piece.colors.length == 3) { // handling corners
+                        //console.log("this is an corner")
+                        for (let i = 0; i < this.counterclockwiseRotationMap["B"].length; i++) {    
+                            let sourceFace = this.counterclockwiseRotationMap["B"][i]
+
+                            let destinationFace = null
+                            if (i + 2 <= 3)
+                                destinationFace = this.counterclockwiseRotationMap["B"][i + 2]
+                            else
+                                destinationFace = this.counterclockwiseRotationMap["B"][i - 2]
+
+                            let adjacentFace = null
+                            if (i + 1 <= 3)
+                                adjacentFace = this.counterclockwiseRotationMap["B"][i + 1]
+                            else
+                                adjacentFace = this.counterclockwiseRotationMap["B"][0]
+                            
+                            if (this.rotationGroups[sourceFace].includes(piece) && this.rotationGroups[adjacentFace].includes(piece)) {
+                                
+                                //console.log(`Source Face: ${currentFace}`)
+                                //console.log(`Destination Face: ${nextFace}`) 
+                                //console.log("CURRENT PIECE:")
+                                //console.log(piece)
+                                
+                                this.moveCorner(piece, sourceFace, destinationFace)
+                                break
+                            }
+                        }
+
+                    } else if (piece.colors.length == 2) { // handling edges
+                        //console.log("this is an edge")
+                    } else { // handling center piece – do nothing
+                        //console.log("this is an center piece")
+                        continue
+                    }
+                
+
+                }
+
+                console.log(this.rotationGroups)
+
+                //console.log(this.counterclockwiseRotationMap["B"])
+                //console.log(this.rotationGroups["B"][6])
+                //let piece = this.rotationGroups["B"][6]
+                //for (let i = 0; i < this.counterclockwiseRotationMap["B"].length; i++) {    
+                //    let currentFace = this.counterclockwiseRotationMap["B"][i]
+                //    let nextFace = null
+                //    if (i + 2 <= 3)
+                //        nextFace = this.counterclockwiseRotationMap["B"][i + 2]
+                //    else
+                //        nextFace = this.counterclockwiseRotationMap["B"][i - 2]
+
+                //    //console.log(currentFace)
+                //    //console.log(nextFace)
+
+                //    if (this.rotationGroups[currentFace].includes(piece)) {
+                //        this.movePiece(piece, currentFace, nextFace)
+                //        break
+                //    }
+                //}
 
 
+
+                // TODO: implement a single clockwise rotation of the top face
+
+                // the pieces in the faces that AREN'T the ones in the top face array get
+                // rearranged in the rotationGroups.
+                
+
+                // e.g. 'B': ['W', 'R', 'Y', 'O'],
+
+                // the pieces in the blue rotation group that are also in the white rotation group
+                // get moved to red, the pieces in red get moved to yellow, and so on
+
+                
+
+            }
+        })
+    }
+
+    moveCorner(piece, sourceFace, destinationFace) {
+
+        // remove the piece that already exists
+        for (let i = this.rotationGroups[sourceFace].length - 1; i > -1; i--) {
+            let currentPiece = this.rotationGroups[sourceFace][i]
+            if (currentPiece == piece) {
+                this.rotationGroups[sourceFace].splice(i, 1)
+                //break
+            }
+        }
+        this.rotationGroups[destinationFace].push(piece)
+
+        //console.log(`Source Face: ${sourceFace}`)
+        //console.log(this.rotationGroups[sourceFace])
+        //console.log(`Destination Face: ${destinationFace}`) 
+        //console.log(this.rotationGroups[destinationFace])
     }
 }
 
