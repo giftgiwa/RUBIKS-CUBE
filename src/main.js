@@ -105,19 +105,11 @@ rubiksCube.scale.y = 2
 rubiksCube.scale.z = 2
 scene.add(rubiksCube);
 
-
-
 // initialize rubiks cube "data structure"
 let rb = new RubiksCube(rubiksCube)
 
-
-//let samplePiece = rubiksCube.children[0]
-// console.log(samplePiece)
-// samplePiece.position.set(1, 1, 1)
-
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-
 
 
 function onPointerMove( event ) {
@@ -125,7 +117,6 @@ function onPointerMove( event ) {
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 window.addEventListener('pointermove', onPointerMove)
-
 
 /**
  * Check whether the left click on the mouse (or equivalent) is 
@@ -151,9 +142,6 @@ function animate() {
             orbitControls.enabled = false
 
             // TODO: add click and drag for rotation
-
-
-
 
 
 

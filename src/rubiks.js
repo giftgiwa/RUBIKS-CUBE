@@ -164,10 +164,7 @@ class RubiksCube {
                 currentPiece /* mesh (within GLTF file) */
             )
         }
-        // console.log("Coordinate Map initialized.")
-        
     }
-
 
     /**
      * Assign the Rubik's Cube pieces into groups for face rotations.
@@ -194,10 +191,8 @@ class RubiksCube {
                         if (j == 2) this.rotationGroups["G"].push(this.coordinateMap[i][j][k]) // green
                         if (k == 0) this.rotationGroups["R"].push(this.coordinateMap[i][j][k]) // red
                         if (k == 2) this.rotationGroups["O"].push(this.coordinateMap[i][j][k]) // orange
-                    }
-                    
+                    }             
                 }
-                //break
             }
         }
       
@@ -208,7 +203,6 @@ class RubiksCube {
     }
 
     rotateFace(direction, color) {
-        console.log(this.rotationGroups[color])
 
         let rotationMap = null
         if (direction == "ccw")
@@ -260,16 +254,11 @@ class RubiksCube {
                         break
                     }
                 }
-
-
             } else // handling center piece – do nothing
                 continue
         }
-
         console.log(this.rotationGroups)
-
     }
-
 
     sampleRotate() {
         window.addEventListener("keypress", (event) => {
@@ -289,23 +278,7 @@ class RubiksCube {
             }
         }
         this.rotationGroups[destinationFace].push(piece)
-
-        //console.log(`Source Face: ${sourceFace}`)
-        //console.log(this.rotationGroups[sourceFace])
-        //console.log(`Destination Face: ${destinationFace}`) 
-        //console.log(this.rotationGroups[destinationFace])
     }
-
-    //moveEdge(piece, sourceFace, destinationFace) {
-    //    for (let i = this.rotationGroups[sourceFace].length - 1; i > -1; i--) {
-    //        let currentPiece = this.rotationGroups[sourceFace][i]
-    //        if (currentPiece == piece) {
-    //            this.rotationGroups[sourceFace].splice(i, 1)
-    //            break
-    //        }
-    //    }
-    //    this.rotationGroups[destinationFace].push(piece)
-    //}
 }
 
 export default RubiksCube
