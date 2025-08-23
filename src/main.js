@@ -44,11 +44,11 @@ const orbitControls = new OrbitControls( camera, renderer.domElement )
 orbitControls.minDistance = 0.15
 orbitControls.maxDistance = 0.3
 
-
 // const trackballControls = new TrackballControls( camera, renderer.domElement)
 // trackballControls.rotateSpeed = 3.5
 // trackballControls.zoomSpeed = 1.5
 // trackballControls.noPan = true
+
 // trackballControls.staticMoving = true
 // trackballControls.minDistance = 0.15
 // trackballControls.maxDistance = 0.3
@@ -148,7 +148,6 @@ function animate() {
     // block orbit controls if the cube is being clicked and dragged over
     if (!mouseDown) {
         if (intersects.length > 0) {
-            //console.log("here!")
             orbitControls.enabled = false
 
             // TODO: add click and drag for rotation
