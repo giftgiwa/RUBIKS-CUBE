@@ -7,14 +7,17 @@ import RubiksCube from './rubiks'
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 
-    75, /* FOV */
+    80, /* FOV */
     window.innerWidth / window.innerHeight, /* aspect ratio */
     0.1, /* closest visible distance */
     1000 /* furthest visible distance */
 );
-camera.position.x = 0
-camera.position.y = 0
+//camera.position.x = 0
+//camera.position.y = 0
+camera.position.x = 0.15
+camera.position.y = 0.15
 camera.position.z = 0.15
+camera.lookAt(new THREE.Vector3(0, 0, 0))
 
 
 const renderer = new THREE.WebGLRenderer({
@@ -25,7 +28,6 @@ renderer.setSize(
     window.innerWidth, /* width */
     window.innerHeight /* height */
 )
-
 
 document.body.appendChild(renderer.domElement)
 
@@ -52,11 +54,11 @@ orbitControls.maxDistance = 0.3
 // trackballControls.maxDistance = 0.3
 
 
-const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
-scene.add( ambientLight );
+const ambientLight = new THREE.AmbientLight( 0x404040 ) // soft white light
+scene.add( ambientLight )
 
-const axesHelper = new THREE.AxesHelper( 5 );
-// scene.add( axesHelper );
+const axesHelper = new THREE.AxesHelper( 5 )
+// scene.add( axesHelper )
 
 const lightPositions = [
     [0.5, 0.5, 0.5], 
@@ -83,8 +85,8 @@ for (let i = 0; i < lightPositions.length; i++) {
     scene.add(light)
 }
 
-const loader = new GLTFLoader();
-let rubiksCube = new THREE.Mesh(); // create Rubik's cube
+const loader = new GLTFLoader()
+let rubiksCube = new THREE.Mesh() // create Rubik's cube
 
 let pieces = []
 
@@ -97,8 +99,12 @@ function modelLoader(url) {
 }
 
 const gltfData = await modelLoader('/assets/models/rubiks.gltf')
-rubiksCube = gltfData.scene;
+rubiksCube = gltfData.scene
+rubiksCube.scale.x = 2
+rubiksCube.scale.y = 2
+rubiksCube.scale.z = 2
 scene.add(rubiksCube);
+
 
 
 // initialize rubiks cube "data structure"
