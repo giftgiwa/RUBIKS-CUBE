@@ -183,33 +183,17 @@ class RubiksCube {
          * red face: "z"/"k" coordinate == 0
          * orange face: "z"/"k" coordinate == 2
          */
-
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
                     // skipping the null middle piece
                     if (this.coordinateMap[i][j][k]) {
-                    //    console.log(Object.values(this.coordinateMap[i][j][k]))
-
-                        if (i == 0) { // white
-                            this.rotationGroups["W"].push(this.coordinateMap[i][j][k])
-                        }
-                        if (i == 2) { // yellow
-                            this.rotationGroups["Y"].push(this.coordinateMap[i][j][k])
-                        }
-                        if (j == 0) { // blue
-                            this.rotationGroups["B"].push(this.coordinateMap[i][j][k])
-                        }
-                        if (j == 2) { // green
-                            this.rotationGroups["G"].push(this.coordinateMap[i][j][k])
-                        }
-                        if (k == 0) { // red
-                            this.rotationGroups["R"].push(this.coordinateMap[i][j][k])
-                        }
-                        if (k == 2) { // orange
-                            this.rotationGroups["O"].push(this.coordinateMap[i][j][k])
-                        }
-
+                        if (i == 0) this.rotationGroups["W"].push(this.coordinateMap[i][j][k]) // white
+                        if (i == 2) this.rotationGroups["Y"].push(this.coordinateMap[i][j][k]) // yellow
+                        if (j == 0) this.rotationGroups["B"].push(this.coordinateMap[i][j][k]) // blue
+                        if (j == 2) this.rotationGroups["G"].push(this.coordinateMap[i][j][k]) // green
+                        if (k == 0) this.rotationGroups["R"].push(this.coordinateMap[i][j][k]) // red
+                        if (k == 2) this.rotationGroups["O"].push(this.coordinateMap[i][j][k]) // orange
                     }
                     
                 }
@@ -217,73 +201,80 @@ class RubiksCube {
             }
         }
       
+        console.log("ROTATION GROUPS")
+        console.log(this.rotationGroups)
+        console.log("COORDINATE MAP")
+        console.log(this.coordinateMap)
+    }
+
+    rotateFace(direction, color) {
+        console.log(this.rotationGroups[color])
+
+        let rotationMap = null
+        if (direction == "ccw")
+            rotationMap = this.counterclockwiseRotationMap
+        else // direction == "cw"
+            rotationMap = this.clockwiseRotationMap
+
+        for (let piece of this.rotationGroups[color])
+            if (direction == "ccw")
+                piece.mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2)
+            else
+                piece.mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), -Math.PI / 2)
+
+        for (let piece of this.rotationGroups[color]) {
+            if (piece.colors.length == 3) { // handling corners
+                for (let i = 0; i < rotationMap[color].length; i++) {    
+                    let sourceFace = rotationMap[color][i]
+
+                    let destinationFace = null
+                    if (i + 2 <= 3)
+                        destinationFace = rotationMap[color][i + 2]
+                    else
+                        destinationFace = rotationMap[color][i - 2]
+
+                    let adjacentFace = null
+                    if (i + 1 <= 3)
+                        adjacentFace = rotationMap[color][i + 1]
+                    else
+                        adjacentFace = rotationMap[color][0]
+                    
+                    if (this.rotationGroups[sourceFace].includes(piece) 
+                        && this.rotationGroups[adjacentFace].includes(piece)) {
+                        this.movePiece(piece, sourceFace, destinationFace)
+                        break
+                    }
+                }
+            } else if (piece.colors.length == 2) { // handling edges
+                for (let i = 0; i < rotationMap["B"].length; i++) {
+                    let sourceFace = rotationMap["B"][i]
+
+                    let destinationFace = null
+                    if (i + 1 <= 3)
+                        destinationFace = rotationMap["B"][i + 1]
+                    else
+                        destinationFace = rotationMap["B"][0]
+
+                    if (this.rotationGroups[sourceFace].includes(piece)) {
+                        this.movePiece(piece, sourceFace, destinationFace)
+                        break
+                    }
+                }
+
+
+            } else // handling center piece – do nothing
+                continue
+        }
 
         console.log(this.rotationGroups)
+
     }
+
 
     sampleRotate() {
         window.addEventListener("keypress", (event) => {
             if (event.key.toLowerCase() == "r") {
-                for (let piece of this.rotationGroups["B"]) {
-                    piece.mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2)
-                }
-
-                console.log(this.rotationGroups["B"])
-                //console.log(this.counterclockwiseRotationMap["B"])
-
-                for (let piece of this.rotationGroups["B"]) {
-                    if (piece.colors.length == 3) { // handling corners
-                        for (let i = 0; i < this.counterclockwiseRotationMap["B"].length; i++) {    
-                            let sourceFace = this.counterclockwiseRotationMap["B"][i]
-
-                            let destinationFace = null
-                            if (i + 2 <= 3)
-                                destinationFace = this.counterclockwiseRotationMap["B"][i + 2]
-                            else
-                                destinationFace = this.counterclockwiseRotationMap["B"][i - 2]
-
-                            let adjacentFace = null
-                            if (i + 1 <= 3)
-                                adjacentFace = this.counterclockwiseRotationMap["B"][i + 1]
-                            else
-                                adjacentFace = this.counterclockwiseRotationMap["B"][0]
-                            
-                            if (this.rotationGroups[sourceFace].includes(piece) 
-                                && this.rotationGroups[adjacentFace].includes(piece)) {
-                                this.movePiece(piece, sourceFace, destinationFace)
-                                break
-                            }
-                        }
-                    } else if (piece.colors.length == 2) { // handling edges
-                        for (let i = 0; i < this.counterclockwiseRotationMap["B"].length; i++) {
-                            let sourceFace = this.counterclockwiseRotationMap["B"][i]
-
-                            let destinationFace = null
-                            if (i + 1 <= 3)
-                                destinationFace = this.counterclockwiseRotationMap["B"][i + 1]
-                            else
-                                destinationFace = this.counterclockwiseRotationMap["B"][0]
-
-                            if (this.rotationGroups[sourceFace].includes(piece)) {
-                                this.movePiece(piece, sourceFace, destinationFace)
-                                break
-                            }
-                        }
-                        //break 
-
-                    } else // handling center piece – do nothing
-                        continue
-                    
-
-                }
-
-                console.log(this.rotationGroups)
-
-
-
-
-                
-
+                this.rotateFace("cw", "B")
             }
         })
     }
