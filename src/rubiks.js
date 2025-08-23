@@ -184,11 +184,9 @@ class RubiksCube {
          * orange face: "z"/"k" coordinate == 2
          */
 
-
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
-
                     // skipping the null middle piece
                     if (this.coordinateMap[i][j][k]) {
                     //    console.log(Object.values(this.coordinateMap[i][j][k]))
@@ -226,17 +224,15 @@ class RubiksCube {
     sampleRotate() {
         window.addEventListener("keypress", (event) => {
             if (event.key.toLowerCase() == "r") {
-                //console.log("rotate")
                 for (let piece of this.rotationGroups["B"]) {
                     piece.mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2)
                 }
 
                 console.log(this.rotationGroups["B"])
-                console.log(this.counterclockwiseRotationMap["B"])
+                //console.log(this.counterclockwiseRotationMap["B"])
 
                 for (let piece of this.rotationGroups["B"]) {
                     if (piece.colors.length == 3) { // handling corners
-                        //console.log("this is an corner")
                         for (let i = 0; i < this.counterclockwiseRotationMap["B"].length; i++) {    
                             let sourceFace = this.counterclockwiseRotationMap["B"][i]
 
@@ -252,62 +248,39 @@ class RubiksCube {
                             else
                                 adjacentFace = this.counterclockwiseRotationMap["B"][0]
                             
-                            if (this.rotationGroups[sourceFace].includes(piece) && this.rotationGroups[adjacentFace].includes(piece)) {
-                                
-                                //console.log(`Source Face: ${currentFace}`)
-                                //console.log(`Destination Face: ${nextFace}`) 
-                                //console.log("CURRENT PIECE:")
-                                //console.log(piece)
-                                
-                                this.moveCorner(piece, sourceFace, destinationFace)
+                            if (this.rotationGroups[sourceFace].includes(piece) 
+                                && this.rotationGroups[adjacentFace].includes(piece)) {
+                                this.movePiece(piece, sourceFace, destinationFace)
                                 break
                             }
                         }
-
                     } else if (piece.colors.length == 2) { // handling edges
-                        //console.log("this is an edge")
-                    } else { // handling center piece – do nothing
-                        //console.log("this is an center piece")
+                        for (let i = 0; i < this.counterclockwiseRotationMap["B"].length; i++) {
+                            let sourceFace = this.counterclockwiseRotationMap["B"][i]
+
+                            let destinationFace = null
+                            if (i + 1 <= 3)
+                                destinationFace = this.counterclockwiseRotationMap["B"][i + 1]
+                            else
+                                destinationFace = this.counterclockwiseRotationMap["B"][0]
+
+                            if (this.rotationGroups[sourceFace].includes(piece)) {
+                                this.movePiece(piece, sourceFace, destinationFace)
+                                break
+                            }
+                        }
+                        //break 
+
+                    } else // handling center piece – do nothing
                         continue
-                    }
-                
+                    
 
                 }
 
                 console.log(this.rotationGroups)
 
-                //console.log(this.counterclockwiseRotationMap["B"])
-                //console.log(this.rotationGroups["B"][6])
-                //let piece = this.rotationGroups["B"][6]
-                //for (let i = 0; i < this.counterclockwiseRotationMap["B"].length; i++) {    
-                //    let currentFace = this.counterclockwiseRotationMap["B"][i]
-                //    let nextFace = null
-                //    if (i + 2 <= 3)
-                //        nextFace = this.counterclockwiseRotationMap["B"][i + 2]
-                //    else
-                //        nextFace = this.counterclockwiseRotationMap["B"][i - 2]
-
-                //    //console.log(currentFace)
-                //    //console.log(nextFace)
-
-                //    if (this.rotationGroups[currentFace].includes(piece)) {
-                //        this.movePiece(piece, currentFace, nextFace)
-                //        break
-                //    }
-                //}
 
 
-
-                // TODO: implement a single clockwise rotation of the top face
-
-                // the pieces in the faces that AREN'T the ones in the top face array get
-                // rearranged in the rotationGroups.
-                
-
-                // e.g. 'B': ['W', 'R', 'Y', 'O'],
-
-                // the pieces in the blue rotation group that are also in the white rotation group
-                // get moved to red, the pieces in red get moved to yellow, and so on
 
                 
 
@@ -315,14 +288,13 @@ class RubiksCube {
         })
     }
 
-    moveCorner(piece, sourceFace, destinationFace) {
-
+    movePiece(piece, sourceFace, destinationFace) {
         // remove the piece that already exists
         for (let i = this.rotationGroups[sourceFace].length - 1; i > -1; i--) {
             let currentPiece = this.rotationGroups[sourceFace][i]
             if (currentPiece == piece) {
                 this.rotationGroups[sourceFace].splice(i, 1)
-                //break
+                break
             }
         }
         this.rotationGroups[destinationFace].push(piece)
@@ -332,6 +304,17 @@ class RubiksCube {
         //console.log(`Destination Face: ${destinationFace}`) 
         //console.log(this.rotationGroups[destinationFace])
     }
+
+    //moveEdge(piece, sourceFace, destinationFace) {
+    //    for (let i = this.rotationGroups[sourceFace].length - 1; i > -1; i--) {
+    //        let currentPiece = this.rotationGroups[sourceFace][i]
+    //        if (currentPiece == piece) {
+    //            this.rotationGroups[sourceFace].splice(i, 1)
+    //            break
+    //        }
+    //    }
+    //    this.rotationGroups[destinationFace].push(piece)
+    //}
 }
 
 export default RubiksCube
