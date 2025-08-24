@@ -4,7 +4,6 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { TrackballControls } from 'three/examples/jsm/Addons.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
-
 class RubiksCube {
     /* Global Variables */
 
@@ -85,6 +84,14 @@ class RubiksCube {
         'Y': [],
     }
 
+    rotationAxes = {
+        'W': new THREE.Vector3(0, 1, 0), /* y */
+        'B': new THREE.Vector3(0, 0, 1), /* z */
+        'O': new THREE.Vector3(1, 0, 0), /* x */
+        'G': new THREE.Vector3(0, 0, 1), /* z */
+        'R': new THREE.Vector3(1, 0, 0), /* x */
+        'Y': new THREE.Vector3(0, 1, 0), /* y */
+    }
 
     /**
      * Constructor for RubiksCube class.
@@ -212,9 +219,9 @@ class RubiksCube {
 
         for (let piece of this.rotationGroups[color])
             if (direction == "ccw")
-                piece.mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), Math.PI / 2)
+                piece.mesh.rotateOnWorldAxis(this.rotationAxes[color], Math.PI / 2)
             else
-                piece.mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), -Math.PI / 2)
+                piece.mesh.rotateOnWorldAxis(this.rotationAxes[color], -Math.PI / 2)
 
         for (let piece of this.rotationGroups[color]) {
             if (piece.colors.length == 3) { // handling corners
@@ -240,14 +247,14 @@ class RubiksCube {
                     }
                 }
             } else if (piece.colors.length == 2) { // handling edges
-                for (let i = 0; i < rotationMap["B"].length; i++) {
-                    let sourceFace = rotationMap["B"][i]
+                for (let i = 0; i < rotationMap[color].length; i++) {
+                    let sourceFace = rotationMap[color][i]
 
                     let destinationFace = null
                     if (i + 1 <= 3)
-                        destinationFace = rotationMap["B"][i + 1]
+                        destinationFace = rotationMap[color][i + 1]
                     else
-                        destinationFace = rotationMap["B"][0]
+                        destinationFace = rotationMap[color][0]
 
                     if (this.rotationGroups[sourceFace].includes(piece)) {
                         this.movePiece(piece, sourceFace, destinationFace)
@@ -264,6 +271,12 @@ class RubiksCube {
         window.addEventListener("keypress", (event) => {
             if (event.key.toLowerCase() == "r") {
                 this.rotateFace("cw", "B")
+            }
+        })
+
+        window.addEventListener("keypress", (event) => {
+            if (event.key.toLowerCase() == "d") {
+                this.rotateFace("ccw", "W")
             }
         })
     }
