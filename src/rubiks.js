@@ -18,8 +18,13 @@ class RubiksCube {
     }
 
     /**
-     * Lists the ordering of faces in the clockwise direction (for
-     * handling rotations)
+     * Lists the ordering of faces adjacent to each face in the clockwise 
+     * direction (for handling rotations).
+     * 
+     * For example for the white face, the faces adjacent to it are the blue, 
+     * red, green, and orange faces. If the white side of the cube were rotated 
+     * clockwise, the pieces would move from the blue face to the red face, the
+     * red face to the green face, and so on.
      */
     clockwiseRotationMap = {
         'W': ['B', 'R', 'G', 'O'],
@@ -30,6 +35,15 @@ class RubiksCube {
         'Y': ['B', 'O', 'G', 'R']
     }
 
+    /**
+     * Lists the ordering of faces in the clockwise direction (for
+     * handling rotations).
+     * 
+     * For example for the white face, the faces adjacent to it are the blue, 
+     * orange, green, and red faces. If the white side of the cube were rotated 
+     * counterclockwise, the pieces would move from the blue face to the red
+     * face, the red face to the green face, and so on.
+     */
     counterclockwiseRotationMap = {
         'W': ['B', 'O', 'G', 'R'],
         'B': ['W', 'R', 'Y', 'O'],
@@ -39,8 +53,8 @@ class RubiksCube {
         'Y': ['B', 'R', 'G', 'O']
     }
 
-    // initial state for Rubik's cube (used for initialization of coordinate map)
     /**
+     *Initial state for Rubik's cube (used for initialization of coordinate map)
      * keys: color(s) of face/edge/corner
      * values: face that specific color(s) reside on
      * 
@@ -75,6 +89,9 @@ class RubiksCube {
         ]
     ]
 
+    /**
+     * 
+     */
     rotationGroups = {
         'W': [],
         'B': [],
