@@ -104,9 +104,9 @@ class RubiksCube {
         'W': new THREE.Vector3(0, 1, 0), /* y */
         'B': new THREE.Vector3(0, 0, 1), /* z */
         'O': new THREE.Vector3(1, 0, 0), /* x */
-        'G': new THREE.Vector3(0, 0, 1), /* z */
-        'R': new THREE.Vector3(1, 0, 0), /* x */
-        'Y': new THREE.Vector3(0, 1, 0), /* y */
+        'G': new THREE.Vector3(0, 0, -1), /* z */
+        'R': new THREE.Vector3(-1, 0, 0), /* x */
+        'Y': new THREE.Vector3(0, -1, 0), /* y */
     }
 
     /**
@@ -119,15 +119,15 @@ class RubiksCube {
         this.faces = []
         this.corners = []
 
-        // store groups of the meshes (for handling rotation)
-        this.meshGroups = {
-            'W': [],
-            'B': [],
-            'O': [],
-            'G': [],
-            'R': [],
-            'Y': [],
-        }
+        // // store groups of the meshes (for handling rotation)
+        // this.meshGroups = {
+        //     'W': [],
+        //     'B': [],
+        //     'O': [],
+        //     'G': [],
+        //     'R': [],
+        //     'Y': [],
+        // }
 
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
@@ -224,22 +224,6 @@ class RubiksCube {
         // console.log("COORDINATE MAP")
         // console.log(this.coordinateMap)   
     }
-
-    // sampleRotate() {
-    //     window.addEventListener("keypress", (event) => {
-    //         if (event.key.toLowerCase() == "r") {
-    //             // this.rotateFace("cw", "B")
-    //             RotationHelper.rotateFace(this, "cw", "B")
-    //         }
-    //     })
-
-    //     window.addEventListener("keypress", (event) => {
-    //         if (event.key.toLowerCase() == "d") {
-    //             // this.rotateFace("ccw", "W")
-    //             RotationHelper.rotateFace(this, "ccw", "W")
-    //         }
-    //     })
-    // }
 
 
 }
