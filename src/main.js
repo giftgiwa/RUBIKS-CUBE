@@ -12,6 +12,7 @@ const camera = new THREE.PerspectiveCamera(
     0.1, /* closest visible distance */
     1000 /* furthest visible distance */
 );
+
 //camera.position.x = 0
 //camera.position.y = 0
 camera.position.x = 0.15
@@ -19,11 +20,11 @@ camera.position.y = 0.15
 camera.position.z = 0.15
 camera.lookAt(new THREE.Vector3(0, 0, 0))
 
-
 const renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true
 })
+
 renderer.setSize(
     window.innerWidth, /* width */
     window.innerHeight /* height */
@@ -52,7 +53,6 @@ orbitControls.maxDistance = 0.3
 // trackballControls.staticMoving = true
 // trackballControls.minDistance = 0.15
 // trackballControls.maxDistance = 0.3
-
 
 const ambientLight = new THREE.AmbientLight( 0x404040 ) // soft white light
 scene.add( ambientLight )
