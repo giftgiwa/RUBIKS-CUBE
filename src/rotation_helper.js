@@ -20,16 +20,24 @@ class RotationHelper {
      */
     static rotateFace(rubiksCube, direction, color) {
         let rotationMap = null
-        if (direction == "ccw")
+        if (direction == "ccw") {
             rotationMap = rubiksCube.counterclockwiseRotationMap
-        else // direction == "cw"
+            // console.log("counterclockwise")
+        }
+        else { // direction == "cw"
             rotationMap = rubiksCube.clockwiseRotationMap
+            // console.log("clockwise")
+        }
 
-        for (let piece of rubiksCube.rotationGroups[color])
+        for (let piece of rubiksCube.rotationGroups[color]) {
             if (direction == "ccw")
                 piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], Math.PI / 2)
             else
                 piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], -Math.PI / 2)
+        }
+
+        // console.log("rotation map")
+        // console.log(rotationMap)
         
         for (let piece of rubiksCube.rotationGroups[color]) {
             if (piece.colors.length == 3) { // handling corner
@@ -48,6 +56,10 @@ class RotationHelper {
                     else
                         adjacentFace = rotationMap[color][0]
                     
+                    // console.log("CORNER")
+                    // console.log(sourceFace)
+                    // console.log(destinationFace)
+
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece) 
                         && rubiksCube.rotationGroups[adjacentFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
@@ -63,6 +75,10 @@ class RotationHelper {
                         destinationFace = rotationMap[color][i + 1]
                     else
                         destinationFace = rotationMap[color][0]
+                    
+                    // console.log("EDGE")
+                    // console.log(sourceFace)
+                    // console.log(destinationFace)
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
