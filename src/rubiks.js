@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import RubiksPiece from './pieces'
 import RotationHelper from './rotation_helper'
+import KeybindHelper from './keybinds'
 
 class RubiksCube {
     /* Global Variables */
@@ -131,7 +132,8 @@ class RubiksCube {
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
 
-        this.sampleRotate()
+        KeybindHelper.addInputs(this)
+        // this.sampleRotate()
     }
 
     /**
@@ -217,27 +219,27 @@ class RubiksCube {
             }
         }
       
-        console.log("ROTATION GROUPS")
-        console.log(this.rotationGroups)
-        console.log("COORDINATE MAP")
-        console.log(this.coordinateMap)   
+        // console.log("ROTATION GROUPS")
+        // console.log(this.rotationGroups)
+        // console.log("COORDINATE MAP")
+        // console.log(this.coordinateMap)   
     }
 
-    sampleRotate() {
-        window.addEventListener("keypress", (event) => {
-            if (event.key.toLowerCase() == "r") {
-                // this.rotateFace("cw", "B")
-                RotationHelper.rotateFace(this, "cw", "B")
-            }
-        })
+    // sampleRotate() {
+    //     window.addEventListener("keypress", (event) => {
+    //         if (event.key.toLowerCase() == "r") {
+    //             // this.rotateFace("cw", "B")
+    //             RotationHelper.rotateFace(this, "cw", "B")
+    //         }
+    //     })
 
-        window.addEventListener("keypress", (event) => {
-            if (event.key.toLowerCase() == "d") {
-                // this.rotateFace("ccw", "W")
-                RotationHelper.rotateFace(this, "ccw", "W")
-            }
-        })
-    }
+    //     window.addEventListener("keypress", (event) => {
+    //         if (event.key.toLowerCase() == "d") {
+    //             // this.rotateFace("ccw", "W")
+    //             RotationHelper.rotateFace(this, "ccw", "W")
+    //         }
+    //     })
+    // }
 
 
 }

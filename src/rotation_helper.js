@@ -30,7 +30,7 @@ class RotationHelper {
                 piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], Math.PI / 2)
             else
                 piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], -Math.PI / 2)
-
+        
         for (let piece of rubiksCube.rotationGroups[color]) {
             if (piece.colors.length == 3) { // handling corner
                 for (let i = 0; i < rotationMap[color].length; i++) {    
@@ -72,7 +72,7 @@ class RotationHelper {
             } else // handling center piece of face – do nothing
                 continue
         }
-        console.log(rubiksCube.rotationGroups)
+        // console.log(rubiksCube.rotationGroups)
     }
 
     /**
