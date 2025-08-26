@@ -1,8 +1,6 @@
 import * as THREE from 'three'
-import { RubiksPiece } from './pieces'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { TrackballControls } from 'three/examples/jsm/Addons.js'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import RubiksPiece from './pieces'
+import RotationHelper from './rotation_helper'
 
 class RubiksCube {
     /* Global Variables */
@@ -135,7 +133,6 @@ class RubiksCube {
 
         this.sampleRotate()
     }
-    
 
     /**
      * "Parse" the Rubik's cube in its default state for 
@@ -223,92 +220,26 @@ class RubiksCube {
         console.log("ROTATION GROUPS")
         console.log(this.rotationGroups)
         console.log("COORDINATE MAP")
-        console.log(this.coordinateMap)
-    }
-
-    rotateFace(direction, color) {
-
-        let rotationMap = null
-        if (direction == "ccw")
-            rotationMap = this.counterclockwiseRotationMap
-        else // direction == "cw"
-            rotationMap = this.clockwiseRotationMap
-
-        for (let piece of this.rotationGroups[color])
-            if (direction == "ccw")
-                piece.mesh.rotateOnWorldAxis(this.rotationAxes[color], Math.PI / 2)
-            else
-                piece.mesh.rotateOnWorldAxis(this.rotationAxes[color], -Math.PI / 2)
-
-        for (let piece of this.rotationGroups[color]) {
-            if (piece.colors.length == 3) { // handling corners
-                for (let i = 0; i < rotationMap[color].length; i++) {    
-                    let sourceFace = rotationMap[color][i]
-
-                    let destinationFace = null
-                    if (i + 2 <= 3)
-                        destinationFace = rotationMap[color][i + 2]
-                    else
-                        destinationFace = rotationMap[color][i - 2]
-
-                    let adjacentFace = null
-                    if (i + 1 <= 3)
-                        adjacentFace = rotationMap[color][i + 1]
-                    else
-                        adjacentFace = rotationMap[color][0]
-                    
-                    if (this.rotationGroups[sourceFace].includes(piece) 
-                        && this.rotationGroups[adjacentFace].includes(piece)) {
-                        this.movePiece(piece, sourceFace, destinationFace)
-                        break
-                    }
-                }
-            } else if (piece.colors.length == 2) { // handling edges
-                for (let i = 0; i < rotationMap[color].length; i++) {
-                    let sourceFace = rotationMap[color][i]
-
-                    let destinationFace = null
-                    if (i + 1 <= 3)
-                        destinationFace = rotationMap[color][i + 1]
-                    else
-                        destinationFace = rotationMap[color][0]
-
-                    if (this.rotationGroups[sourceFace].includes(piece)) {
-                        this.movePiece(piece, sourceFace, destinationFace)
-                        break
-                    }
-                }
-            } else // handling center piece – do nothing
-                continue
-        }
-        console.log(this.rotationGroups)
+        console.log(this.coordinateMap)   
     }
 
     sampleRotate() {
         window.addEventListener("keypress", (event) => {
             if (event.key.toLowerCase() == "r") {
-                this.rotateFace("cw", "B")
+                // this.rotateFace("cw", "B")
+                RotationHelper.rotateFace(this, "cw", "B")
             }
         })
 
         window.addEventListener("keypress", (event) => {
             if (event.key.toLowerCase() == "d") {
-                this.rotateFace("ccw", "W")
+                // this.rotateFace("ccw", "W")
+                RotationHelper.rotateFace(this, "ccw", "W")
             }
         })
     }
 
-    movePiece(piece, sourceFace, destinationFace) {
-        // remove the piece that already exists
-        for (let i = this.rotationGroups[sourceFace].length - 1; i > -1; i--) {
-            let currentPiece = this.rotationGroups[sourceFace][i]
-            if (currentPiece == piece) {
-                this.rotationGroups[sourceFace].splice(i, 1)
-                break
-            }
-        }
-        this.rotationGroups[destinationFace].push(piece)
-    }
+
 }
 
 export default RubiksCube

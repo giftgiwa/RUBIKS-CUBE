@@ -8,4 +8,4 @@ class RubiksPiece {
 }
 
 
-export { RubiksPiece }
+export default RubiksPiece
