@@ -166,7 +166,6 @@ class RotationHelper {
         // console.log(angle)
 
         if (color == "W" || color == "Y") { // "x"
-            //rubiksPiece.coordinates[0] = 
             rubiksPiece.coordinates[1] = Math.round(Math.abs(
                 y*Math.cos(angle) - z*Math.sin(angle) + y0*(1 - Math.cos(angle)) + z0*Math.sin(angle)
             ))
@@ -181,25 +180,13 @@ class RotationHelper {
                 -x*Math.sin(angle) + z*Math.cos(angle) + x0*(1 - Math.cos(angle)) + z0*Math.sin(angle)
             ))
         } else { // "z"; color == "R" || color == "O"
-            // rubiksPiece.coordinates[1] = 
-            // rubiksPiece.coordinates[2] =
-        }
-
-        console.log(rubiksPiece)
-
-
-        // }
-
-
-
-        // if (rubiksPiece.coordinates.toString() == [0, 0, 0].toString()) {
-        // console.log("updateCoordinates()")
-        // console.log(rubiksCube.rotationAxes)
-
-
-            // console.log(rubiksCube.rotationGroups)
-        // }
-        
+             rubiksPiece.coordinates[0] = Math.round(Math.abs(
+                x*Math.cos(angle) - y*Math.sin(angle) + x0*(1 - Math.cos(angle)) + y0*Math.sin(angle)
+            ))
+             rubiksPiece.coordinates[1] = Math.round(Math.abs(
+                x*Math.sin(angle) + y*Math.cos(angle) + y0*(1 - Math.cos(angle)) - x0*Math.sin(angle)
+            ))
+        }      
     }
 
     /**
