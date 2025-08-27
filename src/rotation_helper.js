@@ -63,6 +63,7 @@ class RotationHelper {
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece) 
                         && rubiksCube.rotationGroups[adjacentFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+                        this.updateCoordinates(rubiksCube, piece, direction, color)
                         break
                     }
                 }
@@ -82,6 +83,8 @@ class RotationHelper {
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+                        this.updateCoordinates(rubiksCube, piece, direction, color)
+                        this.updateOrientationMap(rubiksCube, piece, direction, color)
                         break
                     }
                 }
@@ -118,6 +121,76 @@ class RotationHelper {
 
         // add the piece from to the destination face array
         rubiksCube.rotationGroups[destinationFace].push(piece)
+    }
+
+    /**
+     * Updates the coordinates for a given Rubik's Cube piece that moved in a 
+     * specified direction along a specified face.
+     * @param {RubiksCube} rubiksCube RubiksCube object whose piece is
+     *                                referenced
+     * @param {RubiksPiece} rubiksPiece RubiksPiece object referenced
+     * @param {string} direction direction the side of the Rubik's Cube rotates,
+     *                           either "cw" (clockwise) or "ccw" 
+     *                           (counterclockwise)
+     * @param {string} color color of face piece that rotates, either "R" (red),
+     *                       "O" (orange), "Y" (yellow),
+     *                       "G" (green), "B" (blue), or "W" (white)
+     */
+    static updateCoordinates(rubiksCube, rubiksPiece, direction, color) {
+
+        let rotateX = () => {
+            //let x_prime = 0
+            //let y_prime = 0
+            //let z_prime = 0
+            //rubiksPiece.coordinates[0] = x_prime
+            //rubiksPiece.coordinates[1] = y_prime
+            //rubiksPiece.coordinates[2] = z_prime
+        }
+
+        let rotateY = () => {
+            
+        }
+
+        let rotateZ = () => {
+
+        }
+
+
+
+        if (rubiksPiece.coordinates.toString() == [0, 0, 0].toString()) {
+            console.log("updateCoordinates()")
+            console.log(rubiksCube.rotationAxes)
+
+            rotateX()
+            rotateY()
+            rotateZ()
+
+            console.log(rubiksCube.rotationGroups)
+        }
+        
+    }
+
+    /**
+     * Updates the coordinates for a given Rubik's Cube piece that moved in a 
+     * specified direction along a specified face.
+     * @param {RubiksCube} rubiksCube RubiksCube object whose piece is
+     *                                referenced
+     * @param {RubiksPiece} rubiksPiece RubiksPiece object referenced
+     * @param {string} direction direction the side of the Rubik's Cube rotates,
+     *                           either "cw" (clockwise) or "ccw" 
+     *                           (counterclockwise)
+     * @param {string} color color of face piece that rotates, either "R" (red),
+     *                       "O" (orange), "Y" (yellow),
+     *                       "G" (green), "B" (blue), or "W" (white)
+     */
+    static updateOrientationMap(rubiksCube, rubiksPiece, direction, color) {
+        if (rubiksPiece.coordinates.toString() == [0, 0, 0].toString()) {
+            console.log(rubiksPiece.orientationMap)
+
+
+        }
+
+
     }
 
 }
