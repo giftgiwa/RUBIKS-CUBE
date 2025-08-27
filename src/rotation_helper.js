@@ -186,17 +186,7 @@ class RotationHelper {
              rubiksPiece.coordinates[1] = Math.round(Math.abs(
                 x*Math.sin(angle) + y*Math.cos(angle) + y0*(1 - Math.cos(angle)) - x0*Math.sin(angle)
             ))
-        }
-
-        //console.log(rubiksPiece)
-
-
-        // if (rubiksPiece.coordinates.toString() == [0, 0, 0].toString()) {
-        // console.log("updateCoordinates()")
-        // console.log(rubiksCube.rotationAxes)
-            // console.log(rubiksCube.rotationGroups)
-        // }
-        
+        }      
     }
 
     /**
