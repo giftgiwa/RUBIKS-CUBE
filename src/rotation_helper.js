@@ -136,7 +136,7 @@ class RotationHelper {
      *                       "O" (orange), "Y" (yellow),
      *                       "G" (green), "B" (blue), or "W" (white)
      */
-    static updateCoordinates(rubiksCube, rubiksPiece, direction, color) {
+    static updateCoordinates(rubiksPiece, direction, color) {
 
         let rotationOrigins = {
             "W": [0, 1, 1],
