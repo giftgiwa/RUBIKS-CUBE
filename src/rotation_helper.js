@@ -138,35 +138,67 @@ class RotationHelper {
      */
     static updateCoordinates(rubiksCube, rubiksPiece, direction, color) {
 
-        let rotateX = () => {
-            //let x_prime = 0
-            //let y_prime = 0
-            //let z_prime = 0
-            //rubiksPiece.coordinates[0] = x_prime
-            //rubiksPiece.coordinates[1] = y_prime
-            //rubiksPiece.coordinates[2] = z_prime
+        let rotationOrigins = {
+            "W": [0, 1, 1],
+            "B": [1, 0, 1],
+            "O": [1, 1, 2],
+            "G": [1, 2, 1],
+            "R": [1, 1, 0],
+            "Y": [2, 1, 1]
         }
 
-        let rotateY = () => {
-            
+        let negativeAxisFaces = new Set(["R", "W", "B"])
+
+        let x = rubiksPiece.coordinates[0]
+        let y = rubiksPiece.coordinates[1]
+        let z = rubiksPiece.coordinates[2]
+        let x0 = rotationOrigins[color][0]
+        let y0 = rotationOrigins[color][1]
+        let z0 = rotationOrigins[color][2]
+
+        let angle = Math.PI / 2 // 90 degrees counterclockwise
+        if ((negativeAxisFaces.has(color) && direction == "cw") ||
+                (!negativeAxisFaces.has(color) && direction == "ccw")) {
+            angle = Math.PI / 2
+        } else {
+            angle = -Math.PI / 2
+        }
+        // console.log(angle)
+
+        if (color == "W" || color == "Y") { // "x"
+            //rubiksPiece.coordinates[0] = 
+            rubiksPiece.coordinates[1] = Math.round(Math.abs(
+                y*Math.cos(angle) - z*Math.sin(angle) + y0*(1 - Math.cos(angle)) + z0*Math.sin(angle)
+            ))
+            rubiksPiece.coordinates[2] = Math.round(Math.abs(
+                y*Math.sin(angle) + z*Math.cos(angle) + z0*(1 - Math.cos(angle)) - y0*Math.sin(angle)
+            ))
+        } else if (color == "G" || color == "B") { // "y"
+            rubiksPiece.coordinates[0] = Math.round(Math.abs(
+                x*Math.cos(angle) + z*Math.sin(angle) + z0*(1 - Math.cos(angle)) - x0*Math.sin(angle)
+            ))
+            rubiksPiece.coordinates[2] = Math.round(Math.abs(
+                -x*Math.sin(angle) + z*Math.cos(angle) + x0*(1 - Math.cos(angle)) + z0*Math.sin(angle)
+            ))
+        } else { // "z"; color == "R" || color == "O"
+            // rubiksPiece.coordinates[1] = 
+            // rubiksPiece.coordinates[2] =
         }
 
-        let rotateZ = () => {
-
-        }
+        console.log(rubiksPiece)
 
 
+        // }
 
-        if (rubiksPiece.coordinates.toString() == [0, 0, 0].toString()) {
-            console.log("updateCoordinates()")
-            console.log(rubiksCube.rotationAxes)
 
-            rotateX()
-            rotateY()
-            rotateZ()
 
-            console.log(rubiksCube.rotationGroups)
-        }
+        // if (rubiksPiece.coordinates.toString() == [0, 0, 0].toString()) {
+        // console.log("updateCoordinates()")
+        // console.log(rubiksCube.rotationAxes)
+
+
+            // console.log(rubiksCube.rotationGroups)
+        // }
         
     }
 
