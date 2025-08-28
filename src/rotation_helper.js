@@ -63,7 +63,7 @@ class RotationHelper {
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece) 
                         && rubiksCube.rotationGroups[adjacentFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
-                        this.updateCoordinates(rubiksCube, piece, direction, color)
+                        this.updateCoordinates(piece, direction, color)
                         break
                     }
                 }
@@ -83,7 +83,7 @@ class RotationHelper {
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
-                        this.updateCoordinates(rubiksCube, piece, direction, color)
+                        this.updateCoordinates(piece, direction, color)
                         this.updateOrientationMap(rubiksCube, piece, direction, color)
                         break
                     }
@@ -137,7 +137,7 @@ class RotationHelper {
      *                       "G" (green), "B" (blue), or "W" (white)
      */
     static updateCoordinates(rubiksPiece, direction, color) {
-
+        console.log(rubiksPiece)
         let rotationOrigins = {
             "W": [0, 1, 1],
             "B": [1, 0, 1],
