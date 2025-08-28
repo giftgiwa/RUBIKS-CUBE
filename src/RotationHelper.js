@@ -64,6 +64,7 @@ class RotationHelper {
                         && rubiksCube.rotationGroups[adjacentFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
                         this.updateCoordinates(piece, direction, color)
+                        this.updateOrientationMap(rubiksCube, piece, direction, color)
                         break
                     }
                 }
@@ -137,7 +138,7 @@ class RotationHelper {
      *                       "G" (green), "B" (blue), or "W" (white)
      */
     static updateCoordinates(rubiksPiece, direction, color) {
-        console.log(rubiksPiece)
+        //console.log(rubiksPiece)
         let rotationOrigins = {
             "W": [0, 1, 1],
             "B": [1, 0, 1],
@@ -203,10 +204,29 @@ class RotationHelper {
      *                       "G" (green), "B" (blue), or "W" (white)
      */
     static updateOrientationMap(rubiksCube, rubiksPiece, direction, color) {
-        if (rubiksPiece.coordinates.toString() == [0, 0, 0].toString()) {
-            console.log(rubiksPiece.orientationMap)
+        let rotationMap = null
+        if (direction == "cw")
+            rotationMap = rubiksCube.clockwiseRotationMap[color]
+        else
+            rotationMap = rubiksCube.counterclockwiseRotationMap[color]
 
-        }
+        Object.entries(rubiksPiece.orientationMap).forEach((face) => {
+            let currentPieceColor = face[0]
+            let currentFace = face[1]
+
+            if (currentFace != color) {
+
+                for (let i = 0; i < rotationMap.length; i++) {
+                    if (rotationMap[i] == currentFace) {
+                        if (i + 1 <= 3)
+                            rubiksPiece.orientationMap[currentPieceColor] = rotationMap[i + 1]
+                        else
+                            rubiksPiece.orientationMap[currentPieceColor] = rotationMap[0]
+                    }
+                }
+
+            }
+        })
     }
 
 }
