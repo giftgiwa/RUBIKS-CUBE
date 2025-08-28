@@ -1,4 +1,3 @@
-import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
 import RubiksCube from './rubiks-cube'
 
@@ -20,14 +19,10 @@ class RotationHelper {
      */
     static rotateFace(rubiksCube, direction, color) {
         let rotationMap = null
-        if (direction == "ccw") {
+        if (direction == "ccw")
             rotationMap = rubiksCube.counterclockwiseRotationMap
-            // console.log("counterclockwise")
-        }
-        else { // direction == "cw"
+        else // direction == "cw"
             rotationMap = rubiksCube.clockwiseRotationMap
-            // console.log("clockwise")
-        }
 
         for (let piece of rubiksCube.rotationGroups[color]) {
             if (direction == "ccw")
@@ -35,9 +30,6 @@ class RotationHelper {
             else
                 piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], -Math.PI / 2)
         }
-
-        // console.log("rotation map")
-        // console.log(rotationMap)
         
         for (let piece of rubiksCube.rotationGroups[color]) {
             if (piece.colors.length == 3) { // handling corner
@@ -55,10 +47,6 @@ class RotationHelper {
                         adjacentFace = rotationMap[color][i + 1]
                     else
                         adjacentFace = rotationMap[color][0]
-                    
-                    // console.log("CORNER")
-                    // console.log(sourceFace)
-                    // console.log(destinationFace)
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece) 
                         && rubiksCube.rotationGroups[adjacentFace].includes(piece)) {
@@ -164,7 +152,6 @@ class RotationHelper {
         } else {
             angle = -Math.PI / 2
         }
-        // console.log(angle)
 
         if (color == "W" || color == "Y") { // "x"
             rubiksPiece.coordinates[1] = Math.round(Math.abs(

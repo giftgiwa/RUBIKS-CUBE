@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
-import RotationHelper from './rotation-helper'
 import Keybinds from './keybinds'
 
 class RubiksCube {
@@ -125,7 +124,6 @@ class RubiksCube {
         this.buildMeshGroups() // build the mesh groups
 
         Keybinds.addInputs(this)
-        // this.sampleRotate()
     }
 
     /**
@@ -210,14 +208,8 @@ class RubiksCube {
                 }
             }
         }
-      
-        // console.log("ROTATION GROUPS")
-        // console.log(this.rotationGroups)
-        // console.log("COORDINATE MAP")
-        // console.log(this.coordinateMap)   
+
     }
-
-
 }
 
 export default RubiksCube
