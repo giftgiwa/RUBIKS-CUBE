@@ -89,7 +89,9 @@ class RubiksCube {
     ]
 
     /**
-     * 
+     * Stores the RubiksPiece objects associated with each face in the Rubik's
+     * cube. The keys are faces identified by color, and the values are arrays
+     * of RubiksPiece objects. These arrays are used to rotate faces as groups.
      */
     rotationGroups = {
         'W': [],
@@ -118,16 +120,6 @@ class RubiksCube {
         this.edges = []
         this.faces = []
         this.corners = []
-
-        // // store groups of the meshes (for handling rotation)
-        // this.meshGroups = {
-        //     'W': [],
-        //     'B': [],
-        //     'O': [],
-        //     'G': [],
-        //     'R': [],
-        //     'Y': [],
-        // }
 
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
