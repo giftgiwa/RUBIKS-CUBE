@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { TrackballControls } from 'three/examples/jsm/Addons.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import RubiksCube from './rubiks'
+import RubiksCube from './rubiks-cube'
 import { ArcballControls } from 'three/examples/jsm/Addons.js'
 
 
@@ -42,9 +42,9 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, 500)
 }
 
-// const orbitControls = new OrbitControls( camera, renderer.domElement )
-// orbitControls.minDistance = 0.15
-// orbitControls.maxDistance = 0.3
+ const orbitControls = new OrbitControls( camera, renderer.domElement )
+ orbitControls.minDistance = 0.15
+ orbitControls.maxDistance = 0.3
 
 // const arcballControls = new ArcballControls( camera, renderer.domElement, scene );
 // arcballControls.addEventListener( 'change', function () {
@@ -53,14 +53,14 @@ function onWindowResize() {
 
 // } );
 
-const trackballControls = new TrackballControls( camera, renderer.domElement)
-trackballControls.rotateSpeed = 7
-trackballControls.zoomSpeed = 0
-trackballControls.noPan = true
+//const trackballControls = new TrackballControls( camera, renderer.domElement)
+//trackballControls.rotateSpeed = 7
+//trackballControls.zoomSpeed = 0
+//trackballControls.noPan = true
 
-trackballControls.staticMoving = true
-trackballControls.minDistance = 0.15
-trackballControls.maxDistance = 0.3
+//trackballControls.staticMoving = true
+//trackballControls.minDistance = 0.15
+//trackballControls.maxDistance = 0.3
 
 const ambientLight = new THREE.AmbientLight( 0x404040 ) // soft white light
 scene.add( ambientLight )
@@ -147,18 +147,18 @@ function animate() {
     // block orbit controls if the cube is being clicked and dragged over
     if (!mouseDown) {
         if (intersects.length > 0) {
-            // orbitControls.enabled = false
+             orbitControls.enabled = false
             // arcballControls.enabled = false
-            trackballControls.enabled = false
+            //trackballControls.enabled = false
             // TODO: add click and drag for rotation
 
 
 
 
         } else {
-            // orbitControls.enabled = true
+             orbitControls.enabled = true
             // arcballControls.enabled = false
-            trackballControls.enabled = true
+            //trackballControls.enabled = true
 
         }
     }
@@ -169,7 +169,7 @@ function animate() {
 
     //rb.sampleGroup.rotation.z += 0.01; // In your animation loop
 
-    trackballControls.update();
+    //trackballControls.update();
 	requestAnimationFrame( animate )
 	renderer.render( scene, camera )
 }

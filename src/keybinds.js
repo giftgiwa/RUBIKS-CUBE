@@ -1,6 +1,6 @@
-import RotationHelper from './rotation_helper'
+import RotationHelper from './rotation-helper'
 
-class KeybindHelper {
+class Keybinds {
 
     static addInputs(rubiksCube) {
 
@@ -17,4 +17,4 @@ class KeybindHelper {
 
 }
 
-export default KeybindHelper
+export default Keybinds
