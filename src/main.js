@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { TrackballControls } from 'three/examples/jsm/Addons.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import RubiksCube from './RubiksCube'
+import RubiksCube from './rubiks-cube'
 import { ArcballControls } from 'three/examples/jsm/Addons.js'
 
 

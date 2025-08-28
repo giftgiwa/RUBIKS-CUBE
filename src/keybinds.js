@@ -1,4 +1,4 @@
-import RotationHelper from './RotationHelper'
+import RotationHelper from './rotation-helper'
 
 class Keybinds {
 
