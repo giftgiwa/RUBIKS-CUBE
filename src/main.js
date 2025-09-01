@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
+import RubiksAnimationHelper from './rubiks-animation'
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 
@@ -11,7 +12,7 @@ const camera = new THREE.PerspectiveCamera(
     1000 /* furthest visible distance */
 );
 
-camera.position.x = 0.15
+camera.position.x = -0.15
 camera.position.y = 0.15
 camera.position.z = 0.15
 camera.lookAt(new THREE.Vector3(0, 0, 0))
@@ -40,7 +41,6 @@ function onWindowResize() {
 const orbitControls = new OrbitControls( camera, renderer.domElement )
 orbitControls.minDistance = 0.15
 orbitControls.maxDistance = 0.3
-
 
 const ambientLight = new THREE.AmbientLight( 0x404040 ) // soft white light
 scene.add( ambientLight )
@@ -91,25 +91,20 @@ rubiksCube = gltfData.scene
 rubiksCube.scale.x = 2
 rubiksCube.scale.y = 2
 rubiksCube.scale.z = 2
-scene.add(rubiksCube);
+scene.add(rubiksCube)
 
 // initialize rubiks cube "data structure"
 let rb = new RubiksCube(rubiksCube)
 
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2();
+const raycaster = new THREE.Raycaster()
+const pointer = new THREE.Vector2()
 
-
-function onPointerMove( event ) {
-	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+function onPointerMove(event) {
+	pointer.x = (event.clientX / window.innerWidth) * 2 - 1
+	pointer.y = - (event.clientY / window.innerHeight) * 2 + 1
 }
 window.addEventListener('pointermove', onPointerMove)
 
-/**
- * Check whether the left click on the mouse (or equivalent) is 
- * currently being held down.
- */
 let mouseDown = false
 document.body.onmousedown = function () {
     mouseDown = true
@@ -118,30 +113,25 @@ document.body.onmouseup = function () {
     mouseDown = false
 }
 
-
 function animate() {
-    raycaster.setFromCamera( pointer, camera );
+    raycaster.setFromCamera(pointer, camera)
 
-    const intersects = raycaster.intersectObjects( scene.children );
+    const intersects = raycaster.intersectObjects(scene.children)
+    if (mouseDown) {
+        RubiksAnimationHelper.setupAnimation(camera, pointer, rb, renderer, scene)
+
+    }
 
     // block orbit controls if the cube is being clicked and dragged over
     if (!mouseDown) {
-        if (intersects.length > 0) {
+        if (intersects.length > 0)
             orbitControls.enabled = false
-
-            // TODO: add click and drag for rotation
-
-
-
-
-        } else {
-             orbitControls.enabled = true
-        }
+        else
+            orbitControls.enabled = true
     }
 
-    //trackballControls.update();
 	requestAnimationFrame( animate )
 	renderer.render( scene, camera )
 }
 
-animate();
+animate()
