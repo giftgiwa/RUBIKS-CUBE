@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { DragControls } from 'three/addons/controls/DragControls.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
@@ -113,12 +114,34 @@ document.body.onmouseup = function () {
     mouseDown = false
 }
 
+function onDrag(e) {
+  e.preventDefault(); // not move obj
+  e.target.rotateOnWorldAxis(xAxis, e.movementY * 0.01);
+  e.target.rotateOnWorldAxis(yAxis, e.movementX * 0.01);
+}
+
+
+const controls = new DragControls( rubiksCube.children, camera, renderer.domElement );
+
+controls.addEventListener('dragstart', function ( event ) {
+	event.object.material.emissive.set( 0xaaaaaa );
+});
+
+controls.addEventListener('dragend', function ( event ) {
+	event.object.material.emissive.set( 0x000000 );
+});
+
+
 function animate() {
     raycaster.setFromCamera(pointer, camera)
 
     const intersects = raycaster.intersectObjects(scene.children)
     if (mouseDown) {
-        RubiksAnimationHelper.setupAnimation(camera, pointer, rb, renderer, scene)
+        //if (intersects.length > 0) {
+        //    console.log(intersects[0])
+        //}
+        //RubiksAnimationHelper.setupAnimation(camera, pointer, rb, renderer, scene)
+
 
     }
 
