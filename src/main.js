@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import { DragControls } from 'three/addons/controls/DragControls.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { TransformControls } from 'three/addons/controls/TransformControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
@@ -31,22 +31,22 @@ renderer.setSize(
 document.body.appendChild(renderer.domElement)
 
 // resize render on window resize
-window.addEventListener( 'resize', onWindowResize, false )
+window.addEventListener('resize', onWindowResize, false)
 
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
-    renderer.setSize(window.innerWidth, 500)
+    renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
-const orbitControls = new OrbitControls( camera, renderer.domElement )
+const orbitControls = new OrbitControls(camera, renderer.domElement)
 orbitControls.minDistance = 0.15
 orbitControls.maxDistance = 0.3
 
-const ambientLight = new THREE.AmbientLight( 0x404040 ) // soft white light
+const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
 
-const axesHelper = new THREE.AxesHelper( 5 )
+const axesHelper = new THREE.AxesHelper(0.15 )
 // scene.add( axesHelper )
 
 const lightPositions = [
@@ -114,36 +114,29 @@ document.body.onmouseup = function () {
     mouseDown = false
 }
 
-function onDrag(e) {
-  e.preventDefault(); // not move obj
-  e.target.rotateOnWorldAxis(xAxis, e.movementY * 0.01);
-  e.target.rotateOnWorldAxis(yAxis, e.movementX * 0.01);
-}
+const sampleButtonPlane = new THREE.PlaneGeometry(0.05, 0.05)
+const material = new THREE.MeshBasicMaterial({
+    color: 0xd1d1d1,
+    side: THREE.DoubleSide
+})
 
-
-const controls = new DragControls( rubiksCube.children, camera, renderer.domElement );
-
-controls.addEventListener('dragstart', function ( event ) {
-	event.object.material.emissive.set( 0xaaaaaa );
-});
-
-controls.addEventListener('dragend', function ( event ) {
-	event.object.material.emissive.set( 0x000000 );
-});
+const sampleButton = new THREE.Mesh(sampleButtonPlane, material)
+sampleButton.position.x = 0.2
+sampleButton.rotation.y = Math.PI / 2
+scene.add(sampleButton)
 
 
 function animate() {
     raycaster.setFromCamera(pointer, camera)
 
     const intersects = raycaster.intersectObjects(scene.children)
-    if (mouseDown) {
+
+    // if (mouseDown) {
         //if (intersects.length > 0) {
         //    console.log(intersects[0])
         //}
         //RubiksAnimationHelper.setupAnimation(camera, pointer, rb, renderer, scene)
-
-
-    }
+    // }
 
     // block orbit controls if the cube is being clicked and dragged over
     if (!mouseDown) {
