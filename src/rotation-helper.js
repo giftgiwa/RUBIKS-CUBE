@@ -65,10 +65,6 @@ class RotationHelper {
                         destinationFace = rotationMap[color][i + 1]
                     else
                         destinationFace = rotationMap[color][0]
-                    
-                    // console.log("EDGE")
-                    // console.log(sourceFace)
-                    // console.log(destinationFace)
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
@@ -80,7 +76,6 @@ class RotationHelper {
             } else // handling center piece of face – do nothing
                 continue
         }
-        // console.log(rubiksCube.rotationGroups)
     }
 
     /**
@@ -215,7 +210,6 @@ class RotationHelper {
             }
         })
     }
-
 }
 
 export default RotationHelper
