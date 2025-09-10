@@ -5,10 +5,25 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 class RubiksAnimationHelper {
 
-	static setupAnimation(camera, pointer, rubiksCube, renderer, scene) {
+	static setupAnimation(rubiksCube, intersects) {
 		// TODO: add click and drag for rotation
+		
+	
 
-		console.log("setupAnimation()")
+
+	}
+
+	static rotationTest(currentMesh) {
+		console.log(currentMesh)
+
+		let quaternion = new THREE.Quaternion()
+		let yAxis = new THREE.Vector3(0, 1, 0)
+		
+		const onDrag= () => {
+			console.log("hi")
+		}
+
+		currentMesh[0].on('drag', onDrag)
 	}
 }
 

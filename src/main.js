@@ -125,20 +125,29 @@ document.body.onmouseup = function () {
 // sampleButton.rotation.y = Math.PI / 2
 // scene.add(sampleButton)
 
+console.log(rb.coordinateMap)
+console.log(rb.coordinateMap[0][0][0])
+
+raycaster.setFromCamera(pointer, camera)
 
 
+RubiksAnimationHelper.rotationTest(rb.coordinateMap[0][0][0].mesh)
 
 function animate() {
     raycaster.setFromCamera(pointer, camera)
 
     const intersects = raycaster.intersectObjects(scene.children)
 
-    // if (mouseDown) {
-        //if (intersects.length > 0) {
-        //    console.log(intersects[0])
-        //}
-        //RubiksAnimationHelper.setupAnimation(camera, pointer, rb, renderer, scene)
-    // }
+    if (mouseDown) {
+        if (intersects.length > 0) {
+        //    RubiksAnimationHelper.setupAnimation(rb, intersects)
+            // console.log(intersects[0].object.parent)
+            if (intersects[0].object.parent == rb.coordinateMap[0][0][0].mesh) {
+                // console.log("match")
+                rb.coordinateMap[0][0][0].mesh.rotation.x += 0.01
+            }
+        }
+    }
 
     // block orbit controls if the cube is being clicked and dragged over
     if (!mouseDown) {
