@@ -114,16 +114,18 @@ document.body.onmouseup = function () {
     mouseDown = false
 }
 
-const sampleButtonPlane = new THREE.PlaneGeometry(0.05, 0.05)
-const material = new THREE.MeshBasicMaterial({
-    color: 0xd1d1d1,
-    side: THREE.DoubleSide
-})
+// const sampleButtonPlane = new THREE.PlaneGeometry(0.05, 0.05)
+// const material = new THREE.MeshBasicMaterial({
+//     color: 0xd1d1d1,
+//     side: THREE.DoubleSide
+// })
 
-const sampleButton = new THREE.Mesh(sampleButtonPlane, material)
-sampleButton.position.x = 0.2
-sampleButton.rotation.y = Math.PI / 2
-scene.add(sampleButton)
+// const sampleButton = new THREE.Mesh(sampleButtonPlane, material)
+// sampleButton.position.x = 0.2
+// sampleButton.rotation.y = Math.PI / 2
+// scene.add(sampleButton)
+
+
 
 
 function animate() {
