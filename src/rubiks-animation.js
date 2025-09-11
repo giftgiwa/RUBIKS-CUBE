@@ -23,7 +23,6 @@ class RubiksAnimationHelper {
 			console.log("hi")
 		}
 
-		//currentMesh[0].on('drag', onDrag)
 	}
 }
 

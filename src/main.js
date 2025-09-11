@@ -40,9 +40,9 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
-const orbitControls = new OrbitControls(camera, renderer.domElement)
-orbitControls.minDistance = 0.15
-orbitControls.maxDistance = 0.3
+// const orbitControls = new OrbitControls(camera, renderer.domElement)
+// orbitControls.minDistance = 0.15
+// orbitControls.maxDistance = 0.3
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
@@ -113,13 +113,38 @@ document.body.onmouseup = function () {
 }
 
 
-let control = new TransformControls(camera, renderer.domElement)
-control.setMode('rotate')
-control.addEventListener( 'change', animate )
-control.addEventListener( 'dragging-changed', function ( event ) {
-    orbitControls.enabled = ! event.value;
-});
-control.attach(rb.coordinateMap[0][0][0].mesh)
+// let control = new TransformControls(camera, renderer.domElement)
+// control.setMode('rotate')
+// control.addEventListener( 'change', animate )
+// control.addEventListener( 'dragging-changed', function ( event ) {
+//     orbitControls.enabled = ! event.value;
+// });
+// control.attach(rb.coordinateMap[0][0][0].mesh)
+
+
+console.log(rb.coordinateMap[0][0][0])
+rb.coordinateMap[0][0][0].mesh.addEventListener('click', () => {
+    console.log("here")
+})
+
+let previousMousePosition = { x: 0, y: 0 }
+renderer.domElement.addEventListener('mousemove', (e) => {
+    if (!mouseDown) {
+        return
+    }
+
+    const deltaMove = {
+        x: e.clientX - previousMousePosition.x,
+        y: e.clientY - previousMousePosition.y
+    }
+
+    console.log(deltaMove)
+
+    previousMousePosition = {
+        x: e.clientX,
+        y: e.clientY
+    }
+})
 
 function animate() {
 	requestAnimationFrame( animate )
