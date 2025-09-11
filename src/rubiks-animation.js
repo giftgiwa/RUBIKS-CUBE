@@ -19,11 +19,11 @@ class RubiksAnimationHelper {
 		let quaternion = new THREE.Quaternion()
 		let yAxis = new THREE.Vector3(0, 1, 0)
 		
-		const onDrag= () => {
+		const onDrag = () => {
 			console.log("hi")
 		}
 
-		currentMesh[0].on('drag', onDrag)
+		//currentMesh[0].on('drag', onDrag)
 	}
 }
 

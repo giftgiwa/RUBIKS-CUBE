@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { TransformControls } from 'three/addons/controls/TransformControls.js'
+//import { TransformControls } from 'three/addons/controls/TransformControls.js'
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
@@ -45,9 +46,6 @@ orbitControls.maxDistance = 0.3
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
-
-const axesHelper = new THREE.AxesHelper(0.15 )
-// scene.add( axesHelper )
 
 const lightPositions = [
     [0.5, 0.5, 0.5], 
@@ -114,49 +112,16 @@ document.body.onmouseup = function () {
     mouseDown = false
 }
 
-// const sampleButtonPlane = new THREE.PlaneGeometry(0.05, 0.05)
-// const material = new THREE.MeshBasicMaterial({
-//     color: 0xd1d1d1,
-//     side: THREE.DoubleSide
-// })
 
-// const sampleButton = new THREE.Mesh(sampleButtonPlane, material)
-// sampleButton.position.x = 0.2
-// sampleButton.rotation.y = Math.PI / 2
-// scene.add(sampleButton)
-
-console.log(rb.coordinateMap)
-console.log(rb.coordinateMap[0][0][0])
-
-raycaster.setFromCamera(pointer, camera)
-
-
-RubiksAnimationHelper.rotationTest(rb.coordinateMap[0][0][0].mesh)
+let control = new TransformControls(camera, renderer.domElement)
+control.setMode('rotate')
+control.addEventListener( 'change', animate )
+control.addEventListener( 'dragging-changed', function ( event ) {
+    orbitControls.enabled = ! event.value;
+});
+control.attach(rb.coordinateMap[0][0][0].mesh)
 
 function animate() {
-    raycaster.setFromCamera(pointer, camera)
-
-    const intersects = raycaster.intersectObjects(scene.children)
-
-    if (mouseDown) {
-        if (intersects.length > 0) {
-        //    RubiksAnimationHelper.setupAnimation(rb, intersects)
-            // console.log(intersects[0].object.parent)
-            if (intersects[0].object.parent == rb.coordinateMap[0][0][0].mesh) {
-                // console.log("match")
-                rb.coordinateMap[0][0][0].mesh.rotation.x += 0.01
-            }
-        }
-    }
-
-    // block orbit controls if the cube is being clicked and dragged over
-    if (!mouseDown) {
-        if (intersects.length > 0)
-            orbitControls.enabled = false
-        else
-            orbitControls.enabled = true
-    }
-
 	requestAnimationFrame( animate )
 	renderer.render( scene, camera )
 }
