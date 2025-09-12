@@ -1,18 +1,17 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-//import { TransformControls } from 'three/addons/controls/TransformControls.js'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(
     80, /* FOV */
     window.innerWidth / window.innerHeight, /* aspect ratio */
     0.1, /* closest visible distance */
     1000 /* furthest visible distance */
-);
+)
 
 camera.position.x = -0.15
 camera.position.y = 0.15
@@ -29,6 +28,16 @@ renderer.setSize(
     window.innerHeight /* height */
 )
 
+//const main = new Main();
+//main.createView({
+//    //animate: animate(),
+//    backgroundAlpha: 1,
+//    backgroundColor: 'white',
+//    scene: scene,
+//    camera: camera,
+//    showStats: false
+//});
+
 document.body.appendChild(renderer.domElement)
 
 // resize render on window resize
@@ -40,9 +49,9 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
-// const orbitControls = new OrbitControls(camera, renderer.domElement)
-// orbitControls.minDistance = 0.15
-// orbitControls.maxDistance = 0.3
+ const orbitControls = new OrbitControls(camera, renderer.domElement)
+ orbitControls.minDistance = 0.15
+ orbitControls.maxDistance = 0.3
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
@@ -112,24 +121,12 @@ document.body.onmouseup = function () {
     mouseDown = false
 }
 
-
-// let control = new TransformControls(camera, renderer.domElement)
-// control.setMode('rotate')
-// control.addEventListener( 'change', animate )
-// control.addEventListener( 'dragging-changed', function ( event ) {
-//     orbitControls.enabled = ! event.value;
-// });
-// control.attach(rb.coordinateMap[0][0][0].mesh)
-
-
-console.log(rb.coordinateMap[0][0][0])
-rb.coordinateMap[0][0][0].mesh.addEventListener('click', () => {
-    console.log("here")
-})
+let intersects = []
+//console.log(rb.coordinateMap[0][0][0])
 
 let previousMousePosition = { x: 0, y: 0 }
 renderer.domElement.addEventListener('mousemove', (e) => {
-    if (!mouseDown) {
+    if (!mouseDown || intersects.length == 0) {
         return
     }
 
@@ -140,13 +137,25 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 
     console.log(deltaMove)
 
-    previousMousePosition = {
-        x: e.clientX,
-        y: e.clientY
+    if (mouseDown) {
+        previousMousePosition = {
+            x: e.clientX,
+            y: e.clientY
+        }
     }
 })
 
+
+
 function animate() {
+    raycaster.setFromCamera(pointer, camera)
+    intersects = raycaster.intersectObjects( scene.children )
+    if (!mouseDown) {
+        if (intersects.length > 0)
+            orbitControls.enabled = false
+        else
+            orbitControls.enabled = true
+    }
 	requestAnimationFrame( animate )
 	renderer.render( scene, camera )
 }
