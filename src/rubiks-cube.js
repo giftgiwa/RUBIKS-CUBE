@@ -131,7 +131,7 @@ class RubiksCube {
      * its data structure representation.
      */
     initCoordinateMap() {
-        // each of the nested-nested-nested-nested arrays will store the colors of the piece
+        // each of the triple-nested arrays will store the colors of the piece
         this.coordinateMap = [
             [
                 [null, null, null],
