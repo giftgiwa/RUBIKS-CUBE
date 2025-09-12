@@ -89,6 +89,7 @@ rubiksCube = gltfData.scene
 rubiksCube.scale.x = 2
 rubiksCube.scale.y = 2
 rubiksCube.scale.z = 2
+
 scene.add(rubiksCube)
 
 // initialize rubiks cube "data structure"
@@ -104,21 +105,28 @@ function onPointerMove(event) {
 window.addEventListener('pointermove', onPointerMove)
 
 let mouseDown = false
-document.body.onmousedown = function () {
+document.body.onmousedown = () => {
     mouseDown = true
 }
-document.body.onmouseup = function () {
+document.body.onmouseup = () => {
     mouseDown = false
 }
 
-let intersects = []
-//console.log(rb.coordinateMap[0][0][0])
+let worldPosition = new THREE.Vector3()
 
+let intersects = []
+//console.log(rb.coordinateMap)
+//rb.coordinateMap[0][0][0].mesh.getWorldPosition(worldPosition)
+//console.log(worldPosition)
+
+
+/**
+ * Getting direction of mouse movement on click and drag.
+ */
 let previousMousePosition = { x: 0, y: 0 }
 renderer.domElement.addEventListener('mousemove', (e) => {
-    if (!mouseDown || intersects.length == 0) {
+    if (!mouseDown || intersects.length == 0)
         return
-    }
 
     const deltaMove = {
         x: e.clientX - previousMousePosition.x,
@@ -135,7 +143,29 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     }
 })
 
+console.log(rubiksCube)
 
+/**
+ * Sample code for getting an object's position in 3d space and translating it
+ * to 2D space (relative to renderer)
+ * Source: https://stackoverflow.com/a/27412386
+ */
+let vector = new THREE.Vector3()
+vector.setFromMatrixPosition(rb.coordinateMap[0][0][0].mesh.matrixWorld)
+vector.project(camera)
+vector.x = Math.round( (vector.x + 1 ) * renderer.domElement.width  / 2 );
+vector.y = Math.round( (-vector.y + 1 ) * renderer.domElement.height / 2 );
+
+console.log(vector)
+
+
+renderer.domElement.addEventListener('click', (e) => {
+    let currentPosition = {
+        x: e.clientX,
+        y: e.clientY
+    }
+    console.log(currentPosition)
+})
 
 function animate() {
     raycaster.setFromCamera(pointer, camera)
