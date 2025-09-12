@@ -13,6 +13,14 @@ class RubiksAnimationHelper {
 
 	}
 
+	/**
+	 * Helper function to take the corners of the Rubik's cube and set up
+	 * vectors used to detect faces being rotated from each view of the cube
+	 */
+	static setupCornerVectors() {
+
+	}
+
 	static rotationTest(currentMesh) {
 		console.log(currentMesh)
 
