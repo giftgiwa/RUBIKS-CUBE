@@ -28,16 +28,6 @@ renderer.setSize(
     window.innerHeight /* height */
 )
 
-//const main = new Main();
-//main.createView({
-//    //animate: animate(),
-//    backgroundAlpha: 1,
-//    backgroundColor: 'white',
-//    scene: scene,
-//    camera: camera,
-//    showStats: false
-//});
-
 document.body.appendChild(renderer.domElement)
 
 // resize render on window resize
