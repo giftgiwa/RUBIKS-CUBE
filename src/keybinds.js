@@ -1,4 +1,4 @@
-import RotationHelper from './rotation-helper'
+import RotationHelper from './rubiks-rotation-helper'
 
 class Keybinds {
 
