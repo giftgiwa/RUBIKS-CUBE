@@ -74,8 +74,6 @@ for (let i = 0; i < lightPositions.length; i++) {
 const loader = new GLTFLoader()
 let rubiksCube = new THREE.Mesh() // create Rubik's cube
 
-let pieces = []
-
 function modelLoader(url) {
     return new Promise((resolve, reject) => {
         loader.load(url, (data) => resolve(data), null, undefined, function (error) {
@@ -153,10 +151,10 @@ console.log(rubiksCube)
 let vector = new THREE.Vector3()
 vector.setFromMatrixPosition(rb.coordinateMap[0][0][0].mesh.matrixWorld)
 vector.project(camera)
-vector.x = Math.round( (vector.x + 1 ) * renderer.domElement.width  / 2 );
-vector.y = Math.round( (-vector.y + 1 ) * renderer.domElement.height / 2 );
+vector.x = (vector.x + 1) * renderer.domElement.width / 2;
+vector.y = (-vector.y + 1) * renderer.domElement.height / 2;
 
-console.log(vector)
+//console.log(vector)
 
 
 renderer.domElement.addEventListener('click', (e) => {
