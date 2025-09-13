@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
@@ -62,7 +61,7 @@ for (let i = 0; i < lightPositions.length; i++) {
         0xffffff, /* color */
         1, /* intensity */
         100 /* distance */
-    );
+    )
     light.position.set(
         lightPositions[i][0], /* x */
         lightPositions[i][1], /* y */
@@ -110,13 +109,7 @@ document.body.onmouseup = () => {
     mouseDown = false
 }
 
-let worldPosition = new THREE.Vector3()
-
 let intersects = []
-//console.log(rb.coordinateMap)
-//rb.coordinateMap[0][0][0].mesh.getWorldPosition(worldPosition)
-//console.log(worldPosition)
-
 
 /**
  * Getting direction of mouse movement on click and drag.
@@ -153,8 +146,6 @@ vector.setFromMatrixPosition(rb.coordinateMap[0][0][0].mesh.matrixWorld)
 vector.project(camera)
 vector.x = (vector.x + 1) * renderer.domElement.width / 2;
 vector.y = (-vector.y + 1) * renderer.domElement.height / 2;
-
-//console.log(vector)
 
 
 renderer.domElement.addEventListener('click', (e) => {
