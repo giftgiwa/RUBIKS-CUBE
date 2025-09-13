@@ -1,5 +1,20 @@
+import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
 import RubiksCube from './rubiks-cube'
+
+THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
+    let q = new THREE.Quaternion();
+    return function rotateAroundWorldAxis(point, axis, angle) {
+
+        q.setFromAxisAngle(axis, angle)
+        this.applyQuaternion(q)
+
+        this.position.sub(point)
+        this.position.applyQuaternion(q)
+        this.position.add(point)
+        return this;
+    }
+}()
 
 /**
  * Class for handling updates of coordinates and coordinate maps for individual
@@ -18,6 +33,7 @@ class RotationHelper {
      *                       "G" (green), "B" (blue), or "W" (white)
      */
     static rotateFace(rubiksCube, direction, color) {
+        let origin = new THREE.Vector3(0, 0, 0)
         let rotationMap = null
         if (direction == "ccw")
             rotationMap = rubiksCube.counterclockwiseRotationMap
@@ -25,10 +41,12 @@ class RotationHelper {
             rotationMap = rubiksCube.clockwiseRotationMap
 
         for (let piece of rubiksCube.rotationGroups[color]) {
-            if (direction == "ccw")
-                piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], Math.PI / 2)
+            if (direction == "ccw") {
+                piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
+                //piece.mesh.rotate
+            }
             else
-                piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], -Math.PI / 2)
+                piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
         }
         
         for (let piece of rubiksCube.rotationGroups[color]) {
