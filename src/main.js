@@ -125,7 +125,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     /**
      * Accounting for 
      */
-    if (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75) {
+    if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75)) {
         console.log(deltaMove)
     }
 
@@ -150,7 +150,6 @@ vector.setFromMatrixPosition(rb.coordinateMap[0][0][0].mesh.matrixWorld)
 vector.project(camera)
 vector.x = (vector.x + 1) * renderer.domElement.width / 2;
 vector.y = (-vector.y + 1) * renderer.domElement.height / 2;
-
 
 renderer.domElement.addEventListener('click', (e) => {
     let currentPosition = {
