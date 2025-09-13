@@ -5,6 +5,22 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 class RubiksAnimationHelper {
 
+	//static setupMouseMovement(renderer, raycaster, pointer, camera, scene) {
+	//	/**
+	//	 * Getting direction of mouse movement on click and drag.
+	//	 */
+
+	//	let mouseDown = false
+	//	document.body.onmousedown = () => {
+	//		mouseDown = true
+	//	}
+	//	document.body.onmouseup = () => {
+	//		mouseDown = false
+	//	}
+
+	
+	//}
+
 	static setupAnimation(rubiksCube, intersects) {
 		// TODO: add click and drag for rotation
 		

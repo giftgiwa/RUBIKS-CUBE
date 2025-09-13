@@ -38,9 +38,9 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
- const orbitControls = new OrbitControls(camera, renderer.domElement)
- orbitControls.minDistance = 0.15
- orbitControls.maxDistance = 0.3
+const orbitControls = new OrbitControls(camera, renderer.domElement)
+orbitControls.minDistance = 0.15
+orbitControls.maxDistance = 0.3
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
@@ -111,9 +111,7 @@ document.body.onmouseup = () => {
 
 let intersects = []
 
-/**
- * Getting direction of mouse movement on click and drag.
- */
+
 let previousMousePosition = { x: 0, y: 0 }
 renderer.domElement.addEventListener('mousemove', (e) => {
     if (!mouseDown || intersects.length == 0)
@@ -124,7 +122,12 @@ renderer.domElement.addEventListener('mousemove', (e) => {
         y: e.clientY - previousMousePosition.y
     }
 
-    console.log(deltaMove)
+    /**
+     * Accounting for 
+     */
+    if (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75) {
+        console.log(deltaMove)
+    }
 
     if (mouseDown) {
         previousMousePosition = {
@@ -133,6 +136,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
         }
     }
 })
+
 
 console.log(rubiksCube)
 
@@ -153,20 +157,20 @@ renderer.domElement.addEventListener('click', (e) => {
         x: e.clientX,
         y: e.clientY
     }
-    console.log(currentPosition)
+    //console.log(currentPosition)
 })
 
 function animate() {
     raycaster.setFromCamera(pointer, camera)
-    intersects = raycaster.intersectObjects( scene.children )
+    intersects = raycaster.intersectObjects(scene.children)
     if (!mouseDown) {
         if (intersects.length > 0)
             orbitControls.enabled = false
         else
             orbitControls.enabled = true
     }
-	requestAnimationFrame( animate )
-	renderer.render( scene, camera )
+	requestAnimationFrame(animate)
+	renderer.render(scene, camera)
 }
 
 animate()
