@@ -127,6 +127,9 @@ renderer.domElement.addEventListener('mousemove', (e) => {
      */
     if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75)) {
         console.log(deltaMove)
+
+        // TODO: Implement swipe direction tracking
+        
     }
 
     if (mouseDown) {
