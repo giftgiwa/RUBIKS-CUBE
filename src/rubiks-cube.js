@@ -181,8 +181,7 @@ class RubiksCube {
                 this.corners.push(this.coordinateMap[x][y][z])
             }
         }
-
-        console.log(this.corners)
+        //console.log(this.corners)
     }
 
     /**
