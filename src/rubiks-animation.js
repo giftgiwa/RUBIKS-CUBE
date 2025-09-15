@@ -5,23 +5,13 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 class RubiksAnimationHelper {
 
-	//static setupMouseMovement(renderer, raycaster, pointer, camera, scene) {
-	//	/**
-	//	 * Getting direction of mouse movement on click and drag.
-	//	 */
+	constructor(rubiksCube) {
+		this.rubiksCube = rubiksCube
+		console.log(this.rubiksCube)
+		console.log(this.rubiksCube.corners)
+	}
 
-	//	let mouseDown = false
-	//	document.body.onmousedown = () => {
-	//		mouseDown = true
-	//	}
-	//	document.body.onmouseup = () => {
-	//		mouseDown = false
-	//	}
-
-	
-	//}
-
-	static setupAnimation(rubiksCube, intersects) {
+	setupAnimation(rubiksCube, intersects) {
 		// TODO: add click and drag for rotation
 		
 	
@@ -33,21 +23,10 @@ class RubiksAnimationHelper {
 	 * Helper function to take the corners of the Rubik's cube and set up
 	 * vectors used to detect faces being rotated from each view of the cube
 	 */
-	static setupCornerVectors() {
-
+	getpCornerVectors() {
+		console.log("getCornerVectors()")
 	}
 
-	static rotationTest(currentMesh) {
-		console.log(currentMesh)
-
-		let quaternion = new THREE.Quaternion()
-		let yAxis = new THREE.Vector3(0, 1, 0)
-		
-		const onDrag = () => {
-			console.log("hi")
-		}
-
-	}
 }
 
 export default RubiksAnimationHelper
