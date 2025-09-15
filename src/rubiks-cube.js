@@ -116,8 +116,8 @@ class RubiksCube {
      */
     constructor(gltf) {
         this.gltf = gltf // store the model file
-        this.edges = []
-        this.faces = []
+        //this.edges = []
+        //this.faces = []
         this.corners = []
 
         this.initCoordinateMap() // build the coordinate map
@@ -176,7 +176,13 @@ class RubiksCube {
                 currentOrientationMap, /* orientaton map */
                 currentPiece /* mesh (within GLTF file) */
             )
+
+            if (this.coordinateMap[x][y][z].colors.length == 3) {
+                this.corners.push(this.coordinateMap[x][y][z])
+            }
         }
+
+        console.log(this.corners)
     }
 
     /**
