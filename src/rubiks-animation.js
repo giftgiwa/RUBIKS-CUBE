@@ -1,9 +1,12 @@
 import * as THREE from 'three'
 import RubiksCube from './rubiks-cube'
 import RubiksPiece from './rubiks-piece'
+import RubiksCubeVector from './rubiks-cube-vector'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 class RubiksAnimationHelper {
+
+	rubiksCubeVectors = {}
 
 	constructor(rubiksCube, camera, renderer) {
 		this.rubiksCube = rubiksCube
@@ -29,16 +32,21 @@ class RubiksAnimationHelper {
 						this.rubiksCube.corners[i].colors,
 						this.rubiksCube.corners[j].colors
 					)) {
-						console.log(this.rubiksCube.corners[i].colors)
-						console.log(this.get2DPosition(this.rubiksCube.corners[i]))
-						console.log(this.rubiksCube.corners[j].colors)
-						console.log(this.get2DPosition(this.rubiksCube.corners[j]))
+
+						let pointA = this.get2DPosition(this.rubiksCube.corners[i])
+						let pointB = this.get2DPosition(this.rubiksCube.corners[j])
+						
+						this.rubiksCubeVectors[`${this.rubiksCube.corners[i].colors.join("")}-${this.rubiksCube.corners[j].colors.join("")}`] = new RubiksCubeVector(
+							pointA,
+							new THREE.Vector2(pointB.x - pointA.x, pointB.y - pointA.y),
+							new THREE.Vector2(pointA.x - pointB.x, pointA.y - pointB.y)
+						)
 					}
-					
 				}
 			}
-			break
 		}
+
+		console.log(this.rubiksCubeVectors)
 	}
 
 	areNeighbors(colorsA, colorsB) {
@@ -67,10 +75,12 @@ class RubiksAnimationHelper {
 		let vector = new THREE.Vector3()
 		vector.setFromMatrixPosition(rubiksPiece.mesh.matrixWorld)
 		vector.project(this.camera)
-		vector.x = (vector.x + 1) * this.renderer.domElement.width / 2
-		vector.y = (-vector.y + 1) * this.renderer.domElement.height / 2
 
-		return vector
+		let result = new THREE.Vector2(vector.x, vector.y)
+		result.x = (vector.x + 1) * this.renderer.domElement.width / 2
+		result.y = (-vector.y + 1) * this.renderer.domElement.height / 2
+
+		return result
 	}
 
 }
