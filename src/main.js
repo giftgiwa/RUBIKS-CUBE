@@ -41,6 +41,8 @@ function onWindowResize() {
 const orbitControls = new OrbitControls(camera, renderer.domElement)
 orbitControls.minDistance = 0.15
 orbitControls.maxDistance = 0.3
+orbitControls.enablePan = false
+orbitControls.enableZoom = false
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
@@ -91,9 +93,18 @@ scene.add(rubiksCube)
 
 // initialize rubiks cube "data structure"
 let rb = new RubiksCube(rubiksCube)
+let rah = new RubiksAnimationHelper(rb)
 
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
+
+const axesHelper = new THREE.AxesHelper();
+axesHelper.name = "axes_helper";
+axesHelper.scale.x = 0.35
+axesHelper.scale.y = 0.35
+axesHelper.scale.z = 0.35
+console.log(axesHelper)
+scene.add(axesHelper)
 
 function onPointerMove(event) {
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1
@@ -111,7 +122,10 @@ document.body.onmouseup = () => {
 
 let intersects = []
 
-
+/**
+ * Calculate the x and y components of the direction the user clicks and drags
+ * on the screen
+ */
 let previousMousePosition = { x: 0, y: 0 }
 renderer.domElement.addEventListener('mousemove', (e) => {
     if (!mouseDown || intersects.length == 0)
@@ -123,10 +137,12 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     }
 
     /**
-     * Accounting for 
+     * If the click and drag starts on the cube AND continues on the cube,
+     * take the direction of the click and drag and rotate a face with it
      */
     if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75)) {
         console.log(deltaMove)
+        console.log(intersects[0])
 
         // TODO: Implement swipe direction tracking
         
@@ -138,6 +154,10 @@ renderer.domElement.addEventListener('mousemove', (e) => {
             y: e.clientY
         }
     }
+})
+
+renderer.domElement.addEventListener('mouseup', (e) => {
+    console.log("mouse up")
 })
 
 
@@ -159,12 +179,16 @@ renderer.domElement.addEventListener('click', (e) => {
         x: e.clientX,
         y: e.clientY
     }
-    //console.log(currentPosition)
+    console.log(currentPosition)
 })
+
+const filteredChildren = scene.children.filter(item => item.name !== "axes_helper")
+
 
 function animate() {
     raycaster.setFromCamera(pointer, camera)
-    intersects = raycaster.intersectObjects(scene.children)
+    
+    intersects = raycaster.intersectObjects(filteredChildren)
     if (!mouseDown) {
         if (intersects.length > 0)
             orbitControls.enabled = false
