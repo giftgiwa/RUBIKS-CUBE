@@ -73,7 +73,7 @@ for (let i = 0; i < lightPositions.length; i++) {
 }
 
 const loader = new GLTFLoader()
-let rubiksCube = new THREE.Mesh() // create Rubik's cube
+let rubiksCubeMesh = new THREE.Mesh() // create Rubik's cube
 
 function modelLoader(url) {
     return new Promise((resolve, reject) => {
@@ -84,16 +84,17 @@ function modelLoader(url) {
 }
 
 const gltfData = await modelLoader('/assets/models/rubiks.gltf')
-rubiksCube = gltfData.scene
-rubiksCube.scale.x = 2
-rubiksCube.scale.y = 2
-rubiksCube.scale.z = 2
+rubiksCubeMesh = gltfData.scene
+rubiksCubeMesh.scale.x = 2
+rubiksCubeMesh.scale.y = 2
+rubiksCubeMesh.scale.z = 2
 
-scene.add(rubiksCube)
+scene.add(rubiksCubeMesh)
 
 // initialize rubiks cube "data structure"
-let rb = new RubiksCube(rubiksCube)
-let rah = new RubiksAnimationHelper(rb)
+let rubiksCube = new RubiksCube(rubiksCubeMesh)
+let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
+rah.getpCornerVectors()
 
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
@@ -103,7 +104,6 @@ axesHelper.name = "axes_helper";
 axesHelper.scale.x = 0.35
 axesHelper.scale.y = 0.35
 axesHelper.scale.z = 0.35
-console.log(axesHelper)
 scene.add(axesHelper)
 
 function onPointerMove(event) {
@@ -157,22 +157,10 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 })
 
 renderer.domElement.addEventListener('mouseup', (e) => {
-    console.log("mouse up")
+    //rah.getpCornerVectors()
 })
 
-
-console.log(rubiksCube)
-
-/**
- * Sample code for getting an object's position in 3d space and translating it
- * to 2D space (relative to renderer)
- * Source: https://stackoverflow.com/a/27412386
- */
-let vector = new THREE.Vector3()
-vector.setFromMatrixPosition(rb.coordinateMap[0][0][0].mesh.matrixWorld)
-vector.project(camera)
-vector.x = (vector.x + 1) * renderer.domElement.width / 2;
-vector.y = (-vector.y + 1) * renderer.domElement.height / 2;
+console.log(rubiksCubeMesh)
 
 renderer.domElement.addEventListener('click', (e) => {
     let currentPosition = {
