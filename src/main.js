@@ -157,7 +157,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 })
 
 renderer.domElement.addEventListener('mouseup', (e) => {
-    //rah.getpCornerVectors()
+    rah.getCornerVectors()
 })
 
 console.log(rubiksCubeMesh)
