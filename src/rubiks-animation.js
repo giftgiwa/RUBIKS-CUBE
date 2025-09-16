@@ -36,7 +36,7 @@ class RubiksAnimationHelper {
 						let pointA = this.get2DPosition(this.rubiksCube.corners[i])
 						let pointB = this.get2DPosition(this.rubiksCube.corners[j])
 						
-						this.rubiksCubeVectors[`${this.rubiksCube.corners[i].colors.join("")}-${this.rubiksCube.corners[j].colors.join("")}`] = new RubiksCubeVector(
+						this.rubiksCubeVectors[`${this.rubiksCube.corners[i].colors.join("")}->${this.rubiksCube.corners[j].colors.join("")}`] = new RubiksCubeVector(
 							pointA,
 							new THREE.Vector2(pointB.x - pointA.x, pointB.y - pointA.y),
 							new THREE.Vector2(pointA.x - pointB.x, pointA.y - pointB.y)
