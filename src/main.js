@@ -94,7 +94,7 @@ scene.add(rubiksCubeMesh)
 // initialize rubiks cube "data structure"
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
-rah.getpCornerVectors()
+rah.getCornerVectors()
 
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
