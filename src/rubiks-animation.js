@@ -12,6 +12,8 @@ class RubiksAnimationHelper {
 		this.rubiksCube = rubiksCube
 		this.camera = camera
 		this.renderer = renderer
+
+		console.log(rubiksCube.corners)
 	}
 
 	setupAnimation(rubiksCube, intersects) {
@@ -37,6 +39,7 @@ class RubiksAnimationHelper {
 						
 						this.rubiksCubeVectors[`${this.rubiksCube.corners[i].colors.join("")}->${this.rubiksCube.corners[j].colors.join("")}`] = new RubiksCubeVector(
 							pointA, /* origin */
+							this.rubiksCube.corners[i].coordinates, /* origin coordinates (in terms of triple-nested array) */
 							new THREE.Vector2(pointB.x - pointA.x, pointB.y - pointA.y).normalize(), /* direction */
 							new THREE.Vector2(pointA.x - pointB.x, pointA.y - pointB.y).normalize() /* negative direction */
 						)
@@ -45,7 +48,7 @@ class RubiksAnimationHelper {
 			}
 		}
 
-		//console.log(this.rubiksCubeVectors)
+		console.log(this.rubiksCubeVectors)
 	}
 
 	areNeighbors(colorsA, colorsB) {

@@ -43,7 +43,6 @@ class RotationHelper {
         for (let piece of rubiksCube.rotationGroups[color]) {
             if (direction == "ccw") {
                 piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
-                //piece.mesh.rotate
             }
             else
                 piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
@@ -182,13 +181,17 @@ class RotationHelper {
                 -x*Math.sin(angle) + z*Math.cos(angle) + x0*(1 - Math.cos(angle)) + z0*Math.sin(angle)
             ))
         } else { // "z"; color == "R" || color == "O"
-             rubiksPiece.coordinates[0] = Math.round(Math.abs(
+            rubiksPiece.coordinates[0] = Math.round(Math.abs(
                 x*Math.cos(angle) - y*Math.sin(angle) + x0*(1 - Math.cos(angle)) + y0*Math.sin(angle)
             ))
-             rubiksPiece.coordinates[1] = Math.round(Math.abs(
+            rubiksPiece.coordinates[1] = Math.round(Math.abs(
                 x*Math.sin(angle) + y*Math.cos(angle) + y0*(1 - Math.cos(angle)) - x0*Math.sin(angle)
             ))
-        }      
+        }
+        rubiksPiece.mesh.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
+        rubiksPiece.mesh.userData.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
+        console.log(rubiksPiece)
+        
     }
 
     /**

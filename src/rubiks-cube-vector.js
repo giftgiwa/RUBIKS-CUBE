@@ -2,8 +2,9 @@ import * as THREE from 'three'
 
 class RubiksCubeVector {
 
-	constructor(origin, direction, reverseDirection) {
+	constructor(origin, originCoordinates, direction, reverseDirection) {
 		this.origin = origin
+		this.originCoordinates = originCoordinates
 		this.direction = direction
 		this.reverseDirection = reverseDirection
 	}
