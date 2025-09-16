@@ -26,6 +26,7 @@ renderer.setSize(
     window.innerWidth, /* width */
     window.innerHeight /* height */
 )
+renderer.setPixelRatio(window.devicePixelRatio * 2);
 
 document.body.appendChild(renderer.domElement)
 
@@ -168,6 +169,7 @@ renderer.domElement.addEventListener('click', (e) => {
         y: e.clientY
     }
     console.log(currentPosition)
+    console.log(intersects[0])
 })
 
 const filteredChildren = scene.children.filter(item => item.name !== "axes_helper")
@@ -175,7 +177,7 @@ const filteredChildren = scene.children.filter(item => item.name !== "axes_helpe
 
 function animate() {
     raycaster.setFromCamera(pointer, camera)
-    
+
     intersects = raycaster.intersectObjects(filteredChildren)
     if (!mouseDown) {
         if (intersects.length > 0)
@@ -183,6 +185,7 @@ function animate() {
         else
             orbitControls.enabled = true
     }
+
 	requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 }
