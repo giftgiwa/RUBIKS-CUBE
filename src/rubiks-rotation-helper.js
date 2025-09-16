@@ -94,7 +94,7 @@ class RotationHelper {
             } else // handling center piece of face – do nothing
                 continue
         }
-        console.log(rubiksCube.coordinateMap)
+        //console.log(rubiksCube.coordinateMap)
     }
 
     /**

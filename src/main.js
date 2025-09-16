@@ -142,8 +142,8 @@ renderer.domElement.addEventListener('mousemove', (e) => {
      * take the direction of the click and drag and rotate a face with it
      */
     if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75)) {
-        console.log(deltaMove)
-        console.log(intersects[0])
+        //console.log(deltaMove)
+        //console.log(intersects[0])
 
         // TODO: Implement swipe direction tracking
         
@@ -161,15 +161,15 @@ renderer.domElement.addEventListener('mouseup', (e) => {
     rah.getCornerVectors()
 })
 
-console.log(rubiksCubeMesh)
+//console.log(rubiksCubeMesh)
 
 renderer.domElement.addEventListener('click', (e) => {
     let currentPosition = {
         x: e.clientX,
         y: e.clientY
     }
-    console.log(currentPosition)
-    console.log(intersects[0])
+    //console.log(currentPosition)
+    //console.log(intersects[0])
 })
 
 const filteredChildren = scene.children.filter(item => item.name !== "axes_helper")

@@ -45,7 +45,7 @@ class RubiksAnimationHelper {
 			}
 		}
 
-		console.log(this.rubiksCubeVectors)
+		//console.log(this.rubiksCubeVectors)
 	}
 
 	areNeighbors(colorsA, colorsB) {
