@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
-import RotationHelper from './rotation-helper'
 import Keybinds from './keybinds'
 
 class RubiksCube {
@@ -117,15 +116,14 @@ class RubiksCube {
      */
     constructor(gltf) {
         this.gltf = gltf // store the model file
-        this.edges = []
-        this.faces = []
+        //this.edges = []
+        //this.faces = []
         this.corners = []
 
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
 
         Keybinds.addInputs(this)
-        // this.sampleRotate()
     }
 
     /**
@@ -133,7 +131,7 @@ class RubiksCube {
      * its data structure representation.
      */
     initCoordinateMap() {
-        // each of the nested-nested-nested-nested arrays will store the colors of the piece
+        // each of the triple-nested arrays will store the colors of the piece
         this.coordinateMap = [
             [
                 [null, null, null],
@@ -178,7 +176,12 @@ class RubiksCube {
                 currentOrientationMap, /* orientaton map */
                 currentPiece /* mesh (within GLTF file) */
             )
+
+            if (this.coordinateMap[x][y][z].colors.length == 3) {
+                this.corners.push(this.coordinateMap[x][y][z])
+            }
         }
+        //console.log(this.corners)
     }
 
     /**
@@ -210,14 +213,8 @@ class RubiksCube {
                 }
             }
         }
-      
-        // console.log("ROTATION GROUPS")
-        // console.log(this.rotationGroups)
-        // console.log("COORDINATE MAP")
-        // console.log(this.coordinateMap)   
+
     }
-
-
 }
 
 export default RubiksCube

@@ -2,6 +2,20 @@ import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
 import RubiksCube from './rubiks-cube'
 
+THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
+    let q = new THREE.Quaternion();
+    return function rotateAroundWorldAxis(point, axis, angle) {
+
+        q.setFromAxisAngle(axis, angle)
+        this.applyQuaternion(q)
+
+        this.position.sub(point)
+        this.position.applyQuaternion(q)
+        this.position.add(point)
+        return this;
+    }
+}()
+
 /**
  * Class for handling updates of coordinates and coordinate maps for individual
  * RubiksPiece objects.
@@ -19,25 +33,21 @@ class RotationHelper {
      *                       "G" (green), "B" (blue), or "W" (white)
      */
     static rotateFace(rubiksCube, direction, color) {
+        let origin = new THREE.Vector3(0, 0, 0)
         let rotationMap = null
-        if (direction == "ccw") {
+        if (direction == "ccw")
             rotationMap = rubiksCube.counterclockwiseRotationMap
-            // console.log("counterclockwise")
-        }
-        else { // direction == "cw"
+        else // direction == "cw"
             rotationMap = rubiksCube.clockwiseRotationMap
-            // console.log("clockwise")
-        }
 
         for (let piece of rubiksCube.rotationGroups[color]) {
-            if (direction == "ccw")
-                piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], Math.PI / 2)
+            if (direction == "ccw") {
+                piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
+                //piece.mesh.rotate
+            }
             else
-                piece.mesh.rotateOnWorldAxis(rubiksCube.rotationAxes[color], -Math.PI / 2)
+                piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
         }
-
-        // console.log("rotation map")
-        // console.log(rotationMap)
         
         for (let piece of rubiksCube.rotationGroups[color]) {
             if (piece.colors.length == 3) { // handling corner
@@ -55,10 +65,6 @@ class RotationHelper {
                         adjacentFace = rotationMap[color][i + 1]
                     else
                         adjacentFace = rotationMap[color][0]
-                    
-                    // console.log("CORNER")
-                    // console.log(sourceFace)
-                    // console.log(destinationFace)
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece) 
                         && rubiksCube.rotationGroups[adjacentFace].includes(piece)) {
@@ -77,10 +83,6 @@ class RotationHelper {
                         destinationFace = rotationMap[color][i + 1]
                     else
                         destinationFace = rotationMap[color][0]
-                    
-                    // console.log("EDGE")
-                    // console.log(sourceFace)
-                    // console.log(destinationFace)
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
@@ -92,7 +94,7 @@ class RotationHelper {
             } else // handling center piece of face – do nothing
                 continue
         }
-        // console.log(rubiksCube.rotationGroups)
+        //console.log(rubiksCube.coordinateMap)
     }
 
     /**
@@ -164,7 +166,6 @@ class RotationHelper {
         } else {
             angle = -Math.PI / 2
         }
-        // console.log(angle)
 
         if (color == "W" || color == "Y") { // "x"
             rubiksPiece.coordinates[1] = Math.round(Math.abs(
@@ -228,7 +229,6 @@ class RotationHelper {
             }
         })
     }
-
 }
 
 export default RotationHelper

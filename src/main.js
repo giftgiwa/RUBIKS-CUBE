@@ -1,22 +1,18 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { TrackballControls } from 'three/examples/jsm/Addons.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
-import { ArcballControls } from 'three/examples/jsm/Addons.js'
+import RubiksAnimationHelper from './rubiks-animation'
 
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(
     80, /* FOV */
     window.innerWidth / window.innerHeight, /* aspect ratio */
     0.1, /* closest visible distance */
     1000 /* furthest visible distance */
-);
+)
 
-//camera.position.x = 0
-//camera.position.y = 0
-camera.position.x = 0.15
+camera.position.x = -0.15
 camera.position.y = 0.15
 camera.position.z = 0.15
 camera.lookAt(new THREE.Vector3(0, 0, 0))
@@ -30,43 +26,27 @@ renderer.setSize(
     window.innerWidth, /* width */
     window.innerHeight /* height */
 )
+renderer.setPixelRatio(window.devicePixelRatio * 2);
 
 document.body.appendChild(renderer.domElement)
 
 // resize render on window resize
-window.addEventListener( 'resize', onWindowResize, false )
+window.addEventListener('resize', onWindowResize, false)
 
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
-    renderer.setSize(window.innerWidth, 500)
+    renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
- const orbitControls = new OrbitControls( camera, renderer.domElement )
- orbitControls.minDistance = 0.15
- orbitControls.maxDistance = 0.3
+const orbitControls = new OrbitControls(camera, renderer.domElement)
+orbitControls.minDistance = 0.15
+orbitControls.maxDistance = 0.3
+orbitControls.enablePan = false
+orbitControls.enableZoom = false
 
-// const arcballControls = new ArcballControls( camera, renderer.domElement, scene );
-// arcballControls.addEventListener( 'change', function () {
-
-// 	renderer.render( scene, camera );
-
-// } );
-
-//const trackballControls = new TrackballControls( camera, renderer.domElement)
-//trackballControls.rotateSpeed = 7
-//trackballControls.zoomSpeed = 0
-//trackballControls.noPan = true
-
-//trackballControls.staticMoving = true
-//trackballControls.minDistance = 0.15
-//trackballControls.maxDistance = 0.3
-
-const ambientLight = new THREE.AmbientLight( 0x404040 ) // soft white light
+const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
-
-const axesHelper = new THREE.AxesHelper( 5 )
-// scene.add( axesHelper )
 
 const lightPositions = [
     [0.5, 0.5, 0.5], 
@@ -84,7 +64,7 @@ for (let i = 0; i < lightPositions.length; i++) {
         0xffffff, /* color */
         1, /* intensity */
         100 /* distance */
-    );
+    )
     light.position.set(
         lightPositions[i][0], /* x */
         lightPositions[i][1], /* y */
@@ -94,9 +74,7 @@ for (let i = 0; i < lightPositions.length; i++) {
 }
 
 const loader = new GLTFLoader()
-let rubiksCube = new THREE.Mesh() // create Rubik's cube
-
-let pieces = []
+let rubiksCubeMesh = new THREE.Mesh() // create Rubik's cube
 
 function modelLoader(url) {
     return new Promise((resolve, reject) => {
@@ -107,71 +85,109 @@ function modelLoader(url) {
 }
 
 const gltfData = await modelLoader('/assets/models/rubiks.gltf')
-rubiksCube = gltfData.scene
-rubiksCube.scale.x = 2
-rubiksCube.scale.y = 2
-rubiksCube.scale.z = 2
-scene.add(rubiksCube);
+rubiksCubeMesh = gltfData.scene
+rubiksCubeMesh.scale.x = 2
+rubiksCubeMesh.scale.y = 2
+rubiksCubeMesh.scale.z = 2
+
+scene.add(rubiksCubeMesh)
 
 // initialize rubiks cube "data structure"
-let rb = new RubiksCube(rubiksCube)
+let rubiksCube = new RubiksCube(rubiksCubeMesh)
+let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
+rah.getCornerVectors()
 
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2();
+const raycaster = new THREE.Raycaster()
+const pointer = new THREE.Vector2()
 
+const axesHelper = new THREE.AxesHelper();
+axesHelper.name = "axes_helper";
+axesHelper.scale.x = 0.35
+axesHelper.scale.y = 0.35
+axesHelper.scale.z = 0.35
+scene.add(axesHelper)
 
-function onPointerMove( event ) {
-	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+function onPointerMove(event) {
+	pointer.x = (event.clientX / window.innerWidth) * 2 - 1
+	pointer.y = - (event.clientY / window.innerHeight) * 2 + 1
 }
 window.addEventListener('pointermove', onPointerMove)
 
-/**
- * Check whether the left click on the mouse (or equivalent) is 
- * currently being held down.
- */
 let mouseDown = false
-document.body.onmousedown = function () {
+document.body.onmousedown = () => {
     mouseDown = true
 }
-document.body.onmouseup = function () {
+document.body.onmouseup = () => {
     mouseDown = false
 }
 
+let intersects = []
 
-function animate() {
-    raycaster.setFromCamera( pointer, camera );
+/**
+ * Calculate the x and y components of the direction the user clicks and drags
+ * on the screen
+ */
+let previousMousePosition = { x: 0, y: 0 }
+renderer.domElement.addEventListener('mousemove', (e) => {
+    if (!mouseDown || intersects.length == 0)
+        return
 
-    const intersects = raycaster.intersectObjects( scene.children );
-
-    // block orbit controls if the cube is being clicked and dragged over
-    if (!mouseDown) {
-        if (intersects.length > 0) {
-             orbitControls.enabled = false
-            // arcballControls.enabled = false
-            //trackballControls.enabled = false
-            // TODO: add click and drag for rotation
-
-
-
-
-        } else {
-             orbitControls.enabled = true
-            // arcballControls.enabled = false
-            //trackballControls.enabled = true
-
-        }
+    const deltaMove = {
+        x: e.clientX - previousMousePosition.x,
+        y: e.clientY - previousMousePosition.y
     }
 
-    //for (let mesh of rb.sampleGroup) {
-    //    mesh.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), 0.01)
-    //}
+    /**
+     * If the click and drag starts on the cube AND continues on the cube,
+     * take the direction of the click and drag and rotate a face with it
+     */
+    if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75)) {
+        //console.log(deltaMove)
+        //console.log(intersects[0])
 
-    //rb.sampleGroup.rotation.z += 0.01; // In your animation loop
+        // TODO: Implement swipe direction tracking
+        
+    }
 
-    //trackballControls.update();
-	requestAnimationFrame( animate )
-	renderer.render( scene, camera )
+    if (mouseDown) {
+        previousMousePosition = {
+            x: e.clientX,
+            y: e.clientY
+        }
+    }
+})
+
+renderer.domElement.addEventListener('mouseup', (e) => {
+    rah.getCornerVectors()
+})
+
+//console.log(rubiksCubeMesh)
+
+renderer.domElement.addEventListener('click', (e) => {
+    let currentPosition = {
+        x: e.clientX,
+        y: e.clientY
+    }
+    //console.log(currentPosition)
+    //console.log(intersects[0])
+})
+
+const filteredChildren = scene.children.filter(item => item.name !== "axes_helper")
+
+
+function animate() {
+    raycaster.setFromCamera(pointer, camera)
+
+    intersects = raycaster.intersectObjects(filteredChildren)
+    if (!mouseDown) {
+        if (intersects.length > 0)
+            orbitControls.enabled = false
+        else
+            orbitControls.enabled = true
+    }
+
+	requestAnimationFrame(animate)
+	renderer.render(scene, camera)
 }
 
-animate();
+animate()
