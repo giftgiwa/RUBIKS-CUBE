@@ -32,7 +32,7 @@ class RotationHelper {
      *                       either "R" (red), "O" (orange), "Y" (yellow),
      *                       "G" (green), "B" (blue), or "W" (white)
      */
-    static rotateFace(rubiksCube, direction, color) {
+    static rotateFace(rubiksCube, direction, color, swiping) {
         let origin = new THREE.Vector3(0, 0, 0)
         let rotationMap = null
         if (direction == "ccw")
@@ -40,12 +40,14 @@ class RotationHelper {
         else // direction == "cw"
             rotationMap = rubiksCube.clockwiseRotationMap
 
-        for (let piece of rubiksCube.rotationGroups[color]) {
-            if (direction == "ccw") {
-                piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
+        if (!swiping) {
+            for (let piece of rubiksCube.rotationGroups[color]) {
+                if (direction == "ccw") {
+                    piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
+                }
+                else
+                    piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
             }
-            else
-                piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
         }
         
         for (let piece of rubiksCube.rotationGroups[color]) {
@@ -190,7 +192,7 @@ class RotationHelper {
         }
         rubiksPiece.mesh.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
         rubiksPiece.mesh.userData.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
-        console.log(rubiksPiece)
+        //console.log(rubiksPiece)
         
     }
 

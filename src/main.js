@@ -104,7 +104,6 @@ rubiksCubeMesh = gltfData.scene
 rubiksCubeMesh.scale.x = 2
 rubiksCubeMesh.scale.y = 2
 rubiksCubeMesh.scale.z = 2
-
 scene.add(rubiksCubeMesh)
 
 // initialize rubiks cube "data structure"
@@ -124,7 +123,7 @@ scene.add(axesHelper)
 
 function onPointerMove(event) {
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1
-	pointer.y = - (event.clientY / window.innerHeight) * 2 + 1
+	pointer.y = -(event.clientY / window.innerHeight) * 2 + 1
 }
 window.addEventListener('pointermove', onPointerMove)
 
@@ -137,8 +136,8 @@ document.body.onmouseup = () => {
 }
 
 let intersects = []
-
 let originPoint = new THREE.Vector2(0, 0)
+let dragStartingOnCube = false
 
 renderer.domElement.addEventListener('mousedown', (e) => {
     originPoint.x = e.clientX
@@ -147,10 +146,9 @@ renderer.domElement.addEventListener('mousedown', (e) => {
     console.log(originPoint)
     console.log(intersects[0])
 
-    //rah.handleAnimation(rubiksCube, originPoint, intersects[0])
+    if (intersects.length > 0)
+        dragStartingOnCube = true
 })
-
-let currentDegRotation = 0
 
 /**
  * Calculate the x and y components of the direction the user clicks and drags
@@ -161,31 +159,16 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     if (!mouseDown || intersects.length == 0)
         return
 
-    //const deltaMove = {
-    //    x: e.clientX - previousMousePosition.x,
-    //    y: e.clientY - previousMousePosition.y
-    //}
-    //const deltaMove = new THREE.Vector2(
-    //    e.clientX - previousMousePosition.x, e.clientY - previousMousePosition.y
-    //).normalize()
-
     const deltaMove = new THREE.Vector2(
         e.movementX, e.movementY
     ).normalize()
-
 
     /**
      * If the click and drag starts on the cube AND continues on the cube,
      * take the direction of the click and drag and rotate a face with it
      */
-    if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75)) {
-        //console.log(deltaMove)
-        //console.log(intersects[0])
-
-        // TODO: Implement swipe direction tracking
-        rah.handleAnimation(rubiksCube, originPoint, deltaMove, intersects[0])
-        //rubiksCube.coordinateMap[0][0][0].mesh.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), e.movementX * 0.01);
-    }
+    if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75))
+        rah.handleDragAnimation(rubiksCube, originPoint, deltaMove, intersects[0])
 
     if (mouseDown) {
         previousMousePosition = {
@@ -197,35 +180,16 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 
 renderer.domElement.addEventListener('mouseup', (e) => {
     rah.getCornerVectors()
-})
-
-console.log(rubiksCubeMesh)
-
-renderer.domElement.addEventListener('click', (e) => {
-    let currentPosition = {
-        x: e.clientX,
-        y: e.clientY
+    if (dragStartingOnCube) {
+        dragStartingOnCube = false
+        rah.handleReleaseAnimation()
     }
-    console.log(currentPosition)
-
-
-    //if (intersects[0]) {
-    //    console.log(intersects[0])
-    //    const localNormal = intersects[0].face.normal.clone()
-    //    // Transform the local normal to world space using the object's matrixWorld
-    //    const worldNormal = localNormal.transformDirection(intersects[0].object.matrixWorld)
-
-    //    // Now, 'worldNormal' holds the correct normal vector reflecting the mesh's rotation
-    //    console.log("World Space Normal:", worldNormal)
-    //}
 })
 
 const filteredChildren = scene.children.filter(item => item.name !== "axes_helper")
 
-
 function animate() {
     raycaster.setFromCamera(pointer, camera)
-
     intersects = raycaster.intersectObjects(filteredChildren)
     if (!mouseDown) {
         if (intersects.length > 0)

@@ -159,7 +159,7 @@ class RubiksCube {
          */
         for (let i = 0; i < this.gltf.children.length; i++) {
             let currentPiece = this.gltf.children[i]
-            currentPiece.updateMatrixWorld(true);
+            //currentPiece.updateMatrixWorld(true);
 
             let x = Number(currentPiece.name[0])
             let y = Number(currentPiece.name[1])

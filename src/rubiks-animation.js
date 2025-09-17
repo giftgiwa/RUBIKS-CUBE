@@ -2,13 +2,44 @@ import * as THREE from 'three'
 import RubiksCube from './rubiks-cube'
 import RubiksPiece from './rubiks-piece'
 import RubiksCubeVector from './rubiks-cube-vector'
+import RotationHelper from './rubiks-rotation-helper'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+
+THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
+	let q = new THREE.Quaternion();
+	return function rotateAroundWorldAxis(point, axis, angle) {
+
+		q.setFromAxisAngle(axis, angle)
+		this.applyQuaternion(q)
+
+		this.position.sub(point)
+		this.position.applyQuaternion(q)
+		this.position.add(point)
+		return this;
+	}
+}()
 
 class RubiksAnimationHelper {
 
 	rubiksCubeVectors = {}
-
 	currentMesh = null
+
+	/**
+	 * Desired direction of face rotation - either "cw" (clockwise) or "ccw"
+	 * (counterclockwise)
+	 */
+	currentDirection = null
+
+	/**
+	 * Current face being rotated – either either "R" (red), "O" (orange),
+	 * "Y" (yellow), "G" (green), "B" (blue), or "W" (white)
+	 */
+	currentColor = null
+
+	/**
+	 * Current rotation angle of face being rotated with click and drag.
+	 */
+	currentRotationAngle = 0
 
 	constructor(rubiksCube, camera, renderer) {
 		this.rubiksCube = rubiksCube
@@ -22,13 +53,16 @@ class RubiksAnimationHelper {
 	//	return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 	//}
 
-	handleAnimation(rubiksCube, originPoint, deltaMove, intersect) {
-		//console.log("handleAnimation()")
-		//console.log(originPoint)
-		//console.log(deltaMove)
-		//console.log(intersect)
+	handleDragAnimation(rubiksCube, originPoint, deltaMove, intersect) {
 
-		this.currentMesh = intersect.object.parent
+		if (!this.currentMesh)
+			this.currentMesh = intersect.object.parent
+		if (!this.currentColor)
+			this.currentColor = "W"
+		if (!this.currentDirection)
+			this.currentDirection = "cw"
+
+
 		const meshName = intersect.object.parent.name
 		console.log(meshName)
 
@@ -50,16 +84,51 @@ class RubiksAnimationHelper {
 		//					   Math.sqrt((currentDirection.x * currentDirection.x) + (currentDirection.y * currentDirection.y))
 
 		let cosine = 0
-		if (Math.abs(deltaMove.angleTo(currentDirection)) <= Math.PI / 4)
+		if (Math.abs(deltaMove.angleTo(currentDirection)) <= Math.PI / 2)
 			cosine = Math.cos(deltaMove.angleTo(currentDirection))
 
 		//let rotationAmount = magnitudeProduct *
 		//					 cosine
 		let rotationAmount = cosine
 		if (this.currentMesh != null) {
-			rubiksCube.coordinateMap[0][0][0].mesh.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), rotationAmount * -0.05);
+			rubiksCube.rotationGroups["W"].forEach((rubiksPiece) => {
+				console.log(rubiksPiece.mesh)
+				rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), rotationAmount * -0.05);
+			})
+			this.currentRotationAngle += rotationAmount * -0.05
 		}
 	
+	}
+
+	handleReleaseAnimation() {
+		/**
+		 * The mesh, color, and direction only get stored in the
+		 * RubiksAnimationHelper class if the user drags across the cube.
+		 * If not, then this function won't do anything, blocking faces from
+		 * rotating from clicks without dragging.
+		 */
+		if (!this.currentMesh || !this.currentColor || !this.currentDirection)
+			return
+
+		if (Math.abs(this.currentRotationAngle) - (Math.PI / 2) <= 0.5) {
+			this.rubiksCube.rotationGroups["W"].forEach((rubiksPiece) => {
+				rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), Math.abs(this.currentRotationAngle) - (Math.PI / 2));
+			})
+			RotationHelper.rotateFace(
+				this.rubiksCube,
+				this.currentDirection,
+				this.currentColor,
+				true
+			)
+			this.currentRotationAngle = 0
+		}
+
+		/**
+		 * Recalculate corner vectors after click and drag completes (in
+		 * case it changes)
+		 */
+		this.getCornerVectors()
+		console.log(this.rubiksCube.rotationGroups)
 	}
 
 	/**
