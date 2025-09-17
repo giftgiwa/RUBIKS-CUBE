@@ -8,6 +8,8 @@ class RubiksAnimationHelper {
 
 	rubiksCubeVectors = {}
 
+	currentMesh = null
+
 	constructor(rubiksCube, camera, renderer) {
 		this.rubiksCube = rubiksCube
 		this.camera = camera
@@ -16,8 +18,48 @@ class RubiksAnimationHelper {
 		console.log(rubiksCube.corners)
 	}
 
-	setupAnimation(rubiksCube, intersects) {
-		// TODO: add click and drag for rotation
+	//decimalRound(value) {
+	//	return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+	//}
+
+	handleAnimation(rubiksCube, originPoint, deltaMove, intersect) {
+		//console.log("handleAnimation()")
+		//console.log(originPoint)
+		//console.log(deltaMove)
+		//console.log(intersect)
+
+		this.currentMesh = intersect.object.parent
+		const meshName = intersect.object.parent.name
+		console.log(meshName)
+
+		/**
+		 * Conversion of normal at intersection of raycaster from local to
+		 * world space
+		 * Source: unknown...
+		 */
+		const localNormal = intersect.face.normal.clone()
+		const worldNormal = localNormal.transformDirection(intersect.object.matrixWorld)
+
+		//console.log("World Space Normal:", worldNormal)
+
+		let currentDirection = this.rubiksCubeVectors['000->020'].direction
+		console.log("ANGLE: ", deltaMove.angleTo(currentDirection) * (180 / Math.PI))
+		console.log("COSINE: ", Math.cos(deltaMove.angleTo(currentDirection)))
+
+		//let magnitudeProduct = Math.sqrt((deltaMove.x * deltaMove.x) + (deltaMove.y * deltaMove.y)) *
+		//					   Math.sqrt((currentDirection.x * currentDirection.x) + (currentDirection.y * currentDirection.y))
+
+		let cosine = 0
+		if (Math.abs(deltaMove.angleTo(currentDirection)) <= Math.PI / 4)
+			cosine = Math.cos(deltaMove.angleTo(currentDirection))
+
+		//let rotationAmount = magnitudeProduct *
+		//					 cosine
+		let rotationAmount = cosine
+		if (this.currentMesh != null) {
+			rubiksCube.coordinateMap[0][0][0].mesh.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), rotationAmount * -0.05);
+		}
+	
 	}
 
 	/**
@@ -34,16 +76,18 @@ class RubiksAnimationHelper {
 						this.rubiksCube.corners[i].colors,
 						this.rubiksCube.corners[j].colors
 					)) {
+						//console.log(this.rubiksCube.corners[i].mesh.name)
+						//console.log(this.rubiksCube.corners[j].mesh.name)
 						let pointA = this.get2DPosition(this.rubiksCube.corners[i])
 						let pointB = this.get2DPosition(this.rubiksCube.corners[j])
 						
-						this.rubiksCubeVectors[`${this.rubiksCube.corners[i].colors.join("")}->${this.rubiksCube.corners[j].colors.join("")}`] = new RubiksCubeVector(
+						this.rubiksCubeVectors[`${this.rubiksCube.corners[i].mesh.name}->${this.rubiksCube.corners[j].mesh.name}`] = new RubiksCubeVector(
 							pointA, /* origin */
 							this.rubiksCube.corners[i].coordinates, /* origin coordinates (in terms of triple-nested array) */
 							new THREE.Vector2(pointB.x - pointA.x, pointB.y - pointA.y).normalize(), /* direction */
 							new THREE.Vector2(pointA.x - pointB.x, pointA.y - pointB.y).normalize() /* negative direction */
 						)
-					}
+					} 
 				}
 			}
 		}
