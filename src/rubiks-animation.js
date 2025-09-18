@@ -66,7 +66,6 @@ class RubiksAnimationHelper {
 		this.rubiksCube = rubiksCube
 		this.camera = camera
 		this.renderer = renderer
-		//console.log(rubiksCube.corners)
 	}
 
 	handleMouseDown(intersect) {
@@ -80,11 +79,9 @@ class RubiksAnimationHelper {
 		worldNormal.x = Math.round(worldNormal.x)
 		worldNormal.y = Math.round(worldNormal.y)
 		worldNormal.z = Math.round(worldNormal.z)
-		//console.log("World Space Normal:", worldNormal)
 		this.currentWorldNormal = worldNormal
 
 		let facePosition = new THREE.Vector3()
-		//console.log(intersect.object)
 		intersect.object.getWorldPosition(facePosition)
 
 		if (!this.currentMesh) {
@@ -92,33 +89,22 @@ class RubiksAnimationHelper {
 			this.getColorCandidates(this.currentMesh.name)
 			this.currentMeshPosition = this.currentMesh.position
 			this.currentMeshPosition = this.roundPosition(this.currentMeshPosition)
-
-			console.log(this.colorCandidates)
-			console.log(this.currentMeshPosition)
 		}
 
 		for (const [key, value] of Object.entries(this.rubiksCubeVectors)) {
 			if (key.startsWith(this.currentMesh.name)) {
-				//console.log(key)
 				this.cornerCandidates.push(key)
 			}
 		}
 
-		/* potentially problematic code */
 		for (const [color, axis] of Object.entries(this.rubiksCube.rotationAxes)) {
 			if (worldNormal.equals(axis)) {
 				this.currentNormalColor = color
 			}
 		}
-
-		console.log(this.rubiksCubeVectors)
-		console.log(this.currentMesh.name)
-		//console.log(this.currentColor)
 	}
 
-	handleDragAnimation(rubiksCube, originPoint, deltaMove, intersect) {
-
-		//console.log(deltaMove)
+	handleDrag(rubiksCube, originPoint, deltaMove, intersect) {
 		if (this.currentColor == null && this.currentDirection == null) {
 			const meshName = intersect.object.parent.name
 
@@ -126,7 +112,6 @@ class RubiksAnimationHelper {
 			let maxAngle = -2
 			this.cornerCandidates.forEach((candidate) => {
 				let angle = Math.cos(this.rubiksCubeVectors[candidate].direction.angleTo(deltaMove))
-				//console.log(angle)
 				if (angle > maxAngle) {
 					maxAngle = angle
 					currentCornerVector = candidate
@@ -139,15 +124,12 @@ class RubiksAnimationHelper {
 			let maximumDistance = 0
 			let likelyFaceDirection = ""
 
-		//if (this.currentColor == null && this.currentDirection == null) {
 			for (const [faceDirection, cornerVectorSet] of Object.entries(this.directionCornerMap)) {
 
 				if (cornerVectorSet.includes(currentCornerVector) 
 					&& !rubiksCube.rotationAxes[faceDirection.substring(0, 1)].equals(this.currentWorldNormal)
 					&& this.currentNormalColor != faceDirection.substring(0, 1)
 				) {
-
-					//console.log(faceDirection)
 					let facePosition = new THREE.Vector3(
 						this.currentMeshPosition.x,
 						this.currentMeshPosition.y,
@@ -173,9 +155,6 @@ class RubiksAnimationHelper {
 
 			console.log(`${this.currentColor} ${this.currentDirection}`)
 		}
-		//else {
-		//	return
-		//}
 		
 		let currentDirection = this.rubiksCubeVectors[this.currentCornerVector].direction
 		let cosine = 0
@@ -202,7 +181,12 @@ class RubiksAnimationHelper {
 	
 	}
 
-	handleMouseUpAnimation() {
+	handleMouseUp() {
+		/**
+		 * If any of the member variables involves in the external
+		 * and internal representation of the Rubik's cube aren't
+		 * properly set, then the rotation locking isn't attempted.
+		 */
 		if (!this.currentMesh ||
 			!this.currentMeshPosition ||
 			!this.currentColor ||

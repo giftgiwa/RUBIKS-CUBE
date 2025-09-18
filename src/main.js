@@ -143,11 +143,7 @@ renderer.domElement.addEventListener('mousedown', (e) => {
     originPoint.x = e.clientX
     originPoint.y = e.clientY
 
-    //console.log(originPoint)
-
     if (intersects.length > 0) {
-        //console.log(intersects[0])
-        //console.log(intersects[0].uv)
         dragStartingOnCube = true
         rah.handleMouseDown(intersects[0])
     }
@@ -165,7 +161,6 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     const deltaMove = new THREE.Vector2(
         e.movementX, e.movementY
     )
-    //.normalize()
 
     /**
      * If the click and drag starts on the cube AND continues on the cube,
@@ -176,7 +171,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
         && Math.abs(deltaMove.y) <= 75)
         && !(deltaMove.x == 0 && deltaMove.y == 0)
         && deltaMove.length() >= 3.0)
-        rah.handleDragAnimation(rubiksCube, originPoint, deltaMove, intersects[0])
+        rah.handleDrag(rubiksCube, originPoint, deltaMove, intersects[0])
 
     if (mouseDown) {
         previousMousePosition = {
@@ -190,7 +185,7 @@ renderer.domElement.addEventListener('mouseup', (e) => {
     rah.getCornerVectors()
     if (dragStartingOnCube) {
         dragStartingOnCube = false
-        rah.handleMouseUpAnimation()
+        rah.handleMouseUp()
     }
 })
 
