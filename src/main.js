@@ -40,8 +40,8 @@ window.mobileCheck = function() {
 /**
  * Sharper resolution if user is not on a mobile device
  */
-if (!window.mobileCheck())
-    renderer.setPixelRatio(window.devicePixelRatio * 2)
+//if (!window.mobileCheck())
+//    renderer.setPixelRatio(window.devicePixelRatio * 2)
 
 document.body.appendChild(renderer.domElement)
 
@@ -143,10 +143,11 @@ renderer.domElement.addEventListener('mousedown', (e) => {
     originPoint.x = e.clientX
     originPoint.y = e.clientY
 
-    console.log(originPoint)
+    //console.log(originPoint)
 
     if (intersects.length > 0) {
-        console.log(intersects[0])
+        //console.log(intersects[0])
+        //console.log(intersects[0].uv)
         dragStartingOnCube = true
         rah.handleMouseDown(intersects[0])
     }
@@ -163,13 +164,18 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 
     const deltaMove = new THREE.Vector2(
         e.movementX, e.movementY
-    ).normalize()
+    )
+    //.normalize()
 
     /**
      * If the click and drag starts on the cube AND continues on the cube,
      * take the direction of the click and drag and rotate a face with it.
      */
-    if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75))
+    if (!orbitControls.enabled 
+        && (Math.abs(deltaMove.x) <= 75 
+        && Math.abs(deltaMove.y) <= 75)
+        && !(deltaMove.x == 0 && deltaMove.y == 0)
+        && deltaMove.length() >= 3.0)
         rah.handleDragAnimation(rubiksCube, originPoint, deltaMove, intersects[0])
 
     if (mouseDown) {
