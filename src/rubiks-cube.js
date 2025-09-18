@@ -37,7 +37,7 @@ class RubiksCube {
      * Lists the ordering of faces in the clockwise direction (for
      * handling rotations).
      * 
-     * For example for the white face, the faces adjacent to it are the blue, 
+     * For example, for the white face, the faces adjacent to it are the blue, 
      * orange, green, and red faces. If the white side of the cube were rotated 
      * counterclockwise, the pieces would move from the blue face to the red
      * face, the red face to the green face, and so on.

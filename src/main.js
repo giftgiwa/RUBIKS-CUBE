@@ -144,15 +144,17 @@ renderer.domElement.addEventListener('mousedown', (e) => {
     originPoint.y = e.clientY
 
     console.log(originPoint)
-    console.log(intersects[0])
 
-    if (intersects.length > 0)
+    if (intersects.length > 0) {
+        console.log(intersects[0])
         dragStartingOnCube = true
+        rah.handleMouseDown(intersects[0])
+    }
 })
 
 /**
  * Calculate the x and y components of the direction the user clicks and drags
- * on the screen
+ * on the screen.
  */
 let previousMousePosition = { x: 0, y: 0 }
 renderer.domElement.addEventListener('mousemove', (e) => {
@@ -165,7 +167,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 
     /**
      * If the click and drag starts on the cube AND continues on the cube,
-     * take the direction of the click and drag and rotate a face with it
+     * take the direction of the click and drag and rotate a face with it.
      */
     if (!orbitControls.enabled && (Math.abs(deltaMove.x) <= 75 && Math.abs(deltaMove.y) <= 75))
         rah.handleDragAnimation(rubiksCube, originPoint, deltaMove, intersects[0])
@@ -182,7 +184,7 @@ renderer.domElement.addEventListener('mouseup', (e) => {
     rah.getCornerVectors()
     if (dragStartingOnCube) {
         dragStartingOnCube = false
-        rah.handleReleaseAnimation()
+        rah.handleMouseUpAnimation()
     }
 })
 

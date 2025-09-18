@@ -8,7 +8,6 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
 	let q = new THREE.Quaternion();
 	return function rotateAroundWorldAxis(point, axis, angle) {
-
 		q.setFromAxisAngle(axis, angle)
 		this.applyQuaternion(q)
 
@@ -21,6 +20,38 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
 
 class RubiksAnimationHelper {
 
+	//directionCornerMap = {
+	//	"W|cw": new Set("000->020", "020->022", "022->002", "002->000"),
+	//	"W|ccw": new Set("020->000", "022->020", "002->022", "000->002"),
+	//	"Y|cw": new Set("220->200", "222->220", "202->222", "200->202"),
+	//	"Y|ccw": new Set("200->220", "220->222", "222->202", "202->200"),
+	//	"B|cw": new Set("000->002", "002->202", "202->200", "200->000"),
+	//	"B|ccw": new Set("002->000", "202->002", "200->202", "000->200"),
+	//	"G|cw": new Set("022->020", "222->022", "220->222", "020->220"),
+	//	"R|cw": new Set("020->000", "220->020", "200->220", "000->200"),
+	//	"R|ccw": new Set("000->020", "020->220", "220->200", "200->000"),
+	//	"O|cw": new Set("002->022", "022->222", "222->202", "202->002"),
+	//	"O|ccw": new Set("022->002", "222->022", "202->222", "002->202")
+	//}
+
+	directionCornerMap = {
+		"W|cw": ["000->020", "020->022", "022->002", "002->000"],
+		"W|ccw": ["020->000", "022->020", "002->022", "000->002"],
+		"Y|cw": ["220->200", "222->220", "202->222", "200->202"],
+		"Y|ccw": ["200->220", "220->222", "222->202", "202->200"],
+		"B|cw": ["000->002", "002->202", "202->200", "200->000"],
+		"B|ccw": ["002->000", "202->002", "200->202", "000->200"],
+		"G|cw": ["022->020", "222->022", "220->222", "020->220"],
+		"R|cw": ["020->000", "220->020", "200->220", "000->200"],
+		"R|ccw": ["000->020", "020->220", "220->200", "200->000"],
+		"O|cw": ["002->022", "022->222", "222->202", "202->002"],
+		"O|ccw": ["022->002", "222->022", "202->222", "002->202"]
+	}
+
+	//swipableFace = {
+	//	"W": new Set("B", "R"),	
+	//}
+	
 	rubiksCubeVectors = {}
 	currentMesh = null
 
@@ -41,6 +72,11 @@ class RubiksAnimationHelper {
 	 */
 	currentRotationAngle = 0
 
+	currentWorldNormal = null
+	currentNormalColor = null
+
+	cornerCandidates = []
+
 	constructor(rubiksCube, camera, renderer) {
 		this.rubiksCube = rubiksCube
 		this.camera = camera
@@ -49,23 +85,7 @@ class RubiksAnimationHelper {
 		console.log(rubiksCube.corners)
 	}
 
-	//decimalRound(value) {
-	//	return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-	//}
-
-	handleDragAnimation(rubiksCube, originPoint, deltaMove, intersect) {
-
-		if (!this.currentMesh)
-			this.currentMesh = intersect.object.parent
-		if (!this.currentColor)
-			this.currentColor = "W"
-		if (!this.currentDirection)
-			this.currentDirection = "cw"
-
-
-		const meshName = intersect.object.parent.name
-		console.log(meshName)
-
+	handleMouseDown(intersect) {
 		/**
 		 * Conversion of normal at intersection of raycaster from local to
 		 * world space
@@ -73,12 +93,83 @@ class RubiksAnimationHelper {
 		 */
 		const localNormal = intersect.face.normal.clone()
 		const worldNormal = localNormal.transformDirection(intersect.object.matrixWorld)
+		worldNormal.x = Math.round(worldNormal.x)
+		worldNormal.y = Math.round(worldNormal.y)
+		worldNormal.z = Math.round(worldNormal.z)
+		console.log("World Space Normal:", worldNormal)
+		this.currentWorldNormal = worldNormal
 
-		//console.log("World Space Normal:", worldNormal)
+		if (!this.currentMesh) {
+			this.currentMesh = intersect.object.parent
+		}
+		console.log(this.currentMesh)
 
-		let currentDirection = this.rubiksCubeVectors['000->020'].direction
-		console.log("ANGLE: ", deltaMove.angleTo(currentDirection) * (180 / Math.PI))
-		console.log("COSINE: ", Math.cos(deltaMove.angleTo(currentDirection)))
+		for (const [key, value] of Object.entries(this.rubiksCubeVectors)) {
+			if (key.startsWith(this.currentMesh.name)) {
+				console.log(key)
+				this.cornerCandidates.push(key)
+			}
+		}
+
+		for (const [color, axis] of Object.entries(this.rubiksCube.rotationAxes)) {
+			if (worldNormal.equals(axis)) {
+				this.currentNormalColor = color
+			}
+		}
+		//console.log(this.currentColor)
+
+
+	}
+
+	handleDragAnimation(rubiksCube, originPoint, deltaMove, intersect) {
+
+		//if (!this.currentMesh)
+		//	this.currentMesh = intersect.object.parent
+		//if (!this.currentColor)
+		//	this.currentColor = "W"
+		//if (!this.currentDirection)
+		//	this.currentDirection = "cw"
+
+		const meshName = intersect.object.parent.name
+		//console.log(meshName)
+
+		let currentCornerVector = ""
+		let maxAngle = -1
+		this.cornerCandidates.forEach((candidate) => {
+			//console.log(Math.cos(
+			//	this.rubiksCubeVectors[candidate].direction.angleTo(deltaMove))
+			//)
+
+			let angle = Math.cos(this.rubiksCubeVectors[candidate].direction.angleTo(deltaMove))
+			if (angle > maxAngle) {
+				maxAngle = angle
+				currentCornerVector = candidate
+			}
+		})
+
+		let currentDirection = this.rubiksCubeVectors[currentCornerVector].direction
+		console.log(currentCornerVector)
+		//console.log(currentDirection)
+		//console.log(this.currentNormalColor)
+		//console.log(this.currentWorldNormal)
+
+		for (const [faceDirection, cornerVectorSet] of Object.entries(this.directionCornerMap)) {
+			//console.log(cornerVectorSet)
+
+			if (cornerVectorSet.includes(currentCornerVector) 
+				&& !rubiksCube.rotationAxes[faceDirection.substring(0, 1)].equals(this.currentWorldNormal)
+				&& this.currentNormalColor != faceDirection.substring(0, 1)
+			) {
+				this.currentColor = faceDirection.substring(0, 1)
+				this.currentDirection = faceDirection.substring(2)
+				break
+			}
+		}
+
+		console.log(`${this.currentColor} ${this.currentDirection}`)
+		
+		//console.log("ANGLE: ", deltaMove.angleTo(currentDirection) * (180 / Math.PI))
+		//console.log("COSINE: ", Math.cos(deltaMove.angleTo(currentDirection)))
 
 		//let magnitudeProduct = Math.sqrt((deltaMove.x * deltaMove.x) + (deltaMove.y * deltaMove.y)) *
 		//					   Math.sqrt((currentDirection.x * currentDirection.x) + (currentDirection.y * currentDirection.y))
@@ -91,29 +182,50 @@ class RubiksAnimationHelper {
 		//					 cosine
 		let rotationAmount = cosine
 		if (this.currentMesh != null) {
-			rubiksCube.rotationGroups["W"].forEach((rubiksPiece) => {
-				console.log(rubiksPiece.mesh)
-				rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), rotationAmount * -0.05);
+			rubiksCube.rotationGroups[this.currentColor].forEach((rubiksPiece) => {
+			//rubiksCube.rotationGroups["W"].forEach((rubiksPiece) => {
+				//console.log(rubiksPiece.mesh)
+				//rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), rotationAmount * -0.05);
+				if (this.currentDirection == "cw")
+					rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), rubiksCube.rotationAxes[this.currentColor], rotationAmount * -0.05)
+				else
+					rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), rubiksCube.rotationAxes[this.currentColor], rotationAmount * 0.05)
 			})
-			this.currentRotationAngle += rotationAmount * -0.05
+			if (this.currentDirection == "cw")
+				this.currentRotationAngle += rotationAmount * -0.05
+			else
+				this.currentRotationAngle += rotationAmount * 0.05
 		}
 	
 	}
 
-	handleReleaseAnimation() {
+	handleMouseUpAnimation() {
 		/**
 		 * The mesh, color, and direction only get stored in the
 		 * RubiksAnimationHelper class if the user drags across the cube.
 		 * If not, then this function won't do anything, blocking faces from
 		 * rotating from clicks without dragging.
 		 */
-		if (!this.currentMesh || !this.currentColor || !this.currentDirection)
+		if (!this.currentMesh ||
+			!this.currentColor ||
+			!this.currentDirection ||
+			this.cornerCandidates.length == 0 ||
+			!this.currentWorldNormal ||
+			!this.currentNormalColor)
 			return
-
-		if (Math.abs(this.currentRotationAngle) - (Math.PI / 2) <= 0.5) {
-			this.rubiksCube.rotationGroups["W"].forEach((rubiksPiece) => {
-				rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), Math.abs(this.currentRotationAngle) - (Math.PI / 2));
+		
+		console.log(this.currentRotationAngle)
+		if (Math.abs(this.currentRotationAngle) - Math.abs(Math.PI / 2) <= 0.5) {
+			this.rubiksCube.rotationGroups[this.currentColor].forEach((rubiksPiece) => {
+			//this.rubiksCube.rotationGroups["W"].forEach((rubiksPiece) => {
+				if (this.currentDirection == "cw")
+					rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), this.rubiksCube.rotationAxes[this.currentColor], Math.abs(this.currentRotationAngle) - (Math.PI / 2))
+				else
+					rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), this.rubiksCube.rotationAxes[this.currentColor], (Math.PI / 2) - Math.abs(this.currentRotationAngle))
 			})
+			/**
+			 * TODO: change parameters here
+			 */
 			RotationHelper.rotateFace(
 				this.rubiksCube,
 				this.currentDirection,
@@ -127,8 +239,14 @@ class RubiksAnimationHelper {
 		 * Recalculate corner vectors after click and drag completes (in
 		 * case it changes)
 		 */
-		this.getCornerVectors()
 		console.log(this.rubiksCube.rotationGroups)
+		this.currentMesh = null
+		this.currentColor = null
+		this.currentDirection = null
+		this.cornerCandidates = []
+		this.currentWorldNormal = null
+		this.currentNormalColor = null
+		this.getCornerVectors()
 	}
 
 	/**
@@ -136,7 +254,6 @@ class RubiksAnimationHelper {
 	 * vectors used to detect faces being rotated from each view of the cube
 	 */
 	getCornerVectors() {
-
 		for (let i = 0; i < this.rubiksCube.corners.length; i++) {
 			for (let j = 0; j < this.rubiksCube.corners.length; j++) {
 				
@@ -145,8 +262,6 @@ class RubiksAnimationHelper {
 						this.rubiksCube.corners[i].colors,
 						this.rubiksCube.corners[j].colors
 					)) {
-						//console.log(this.rubiksCube.corners[i].mesh.name)
-						//console.log(this.rubiksCube.corners[j].mesh.name)
 						let pointA = this.get2DPosition(this.rubiksCube.corners[i])
 						let pointB = this.get2DPosition(this.rubiksCube.corners[j])
 						
@@ -158,6 +273,7 @@ class RubiksAnimationHelper {
 						)
 					} 
 				}
+
 			}
 		}
 

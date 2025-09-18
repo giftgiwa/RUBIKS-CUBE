@@ -5,7 +5,6 @@ import RubiksCube from './rubiks-cube'
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     let q = new THREE.Quaternion();
     return function rotateAroundWorldAxis(point, axis, angle) {
-
         q.setFromAxisAngle(axis, angle)
         this.applyQuaternion(q)
 
