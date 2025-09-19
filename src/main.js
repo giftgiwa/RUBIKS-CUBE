@@ -40,8 +40,8 @@ window.mobileCheck = function() {
 /**
  * Sharper resolution if user is not on a mobile device
  */
-//if (!window.mobileCheck())
-//    renderer.setPixelRatio(window.devicePixelRatio * 2)
+if (!window.mobileCheck())
+    renderer.setPixelRatio(window.devicePixelRatio * 2)
 
 document.body.appendChild(renderer.domElement)
 

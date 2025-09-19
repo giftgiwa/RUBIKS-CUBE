@@ -28,6 +28,7 @@ class RubiksAnimationHelper {
 		"B|cw": ["000->002", "002->202", "202->200", "200->000"],
 		"B|ccw": ["002->000", "202->002", "200->202", "000->200"],
 		"G|cw": ["022->020", "222->022", "220->222", "020->220"],
+		"G|ccw": ["020->022", "022->222", "222->220", "220->020"],
 		"R|cw": ["020->000", "220->020", "200->220", "000->200"],
 		"R|ccw": ["000->020", "020->220", "220->200", "200->000"],
 		"O|cw": ["002->022", "022->222", "222->202", "202->002"],
@@ -121,7 +122,7 @@ class RubiksAnimationHelper {
 			this.currentCornerVector = currentCornerVector
 			console.log(currentCornerVector)
 
-			let maximumDistance = 0
+			let maximumDistance = -1
 			let likelyFaceDirection = ""
 
 			for (const [faceDirection, cornerVectorSet] of Object.entries(this.directionCornerMap)) {
@@ -136,9 +137,9 @@ class RubiksAnimationHelper {
 						this.currentMeshPosition.z
 					)
 					let faceNormal = new THREE.Vector3(
-						rubiksCube.rotationAxes[faceDirection.substring(0, 1)].x * 0.02,
-						rubiksCube.rotationAxes[faceDirection.substring(0, 1)].y * 0.02,
-						rubiksCube.rotationAxes[faceDirection.substring(0, 1)].z * 0.02
+						rubiksCube.rotationAxes[faceDirection.substring(0, 1)].x * 0.01,
+						rubiksCube.rotationAxes[faceDirection.substring(0, 1)].y * 0.01,
+						rubiksCube.rotationAxes[faceDirection.substring(0, 1)].z * 0.01
 					)
 					facePosition.add(faceNormal)
 					//console.log(`Face position: ${facePosition.x},${facePosition.y},${facePosition.z}`)
@@ -187,15 +188,10 @@ class RubiksAnimationHelper {
 		 * and internal representation of the Rubik's cube aren't
 		 * properly set, then the rotation locking isn't attempted.
 		 */
-		if (!this.currentMesh ||
-			!this.currentMeshPosition ||
-			!this.currentColor ||
-			!this.currentDirection ||
-			this.cornerCandidates.length == 0 ||
-			this.colorCandidates.length == 0 ||
-			!this.currentWorldNormal ||
-			!this.currentNormalColor ||
-			!this.currentCornerVector) {
+		if (!this.currentMesh || !this.currentMeshPosition || !this.currentColor ||
+			!this.currentDirection || this.cornerCandidates.length == 0 ||
+			this.colorCandidates.length == 0 || !this.currentWorldNormal ||
+			!this.currentNormalColor || !this.currentCornerVector) {
 			this.currentMesh = null
 			this.currentMeshPosition = null
 			this.currentDirection = null
@@ -210,7 +206,7 @@ class RubiksAnimationHelper {
 			return
 		}
 		
-		console.log(this.currentRotationAngle)
+		//console.log(this.currentRotationAngle)
 		if (Math.abs(this.currentRotationAngle) - Math.abs(Math.PI / 2) <= 0.5) {
 			this.rubiksCube.rotationGroups[this.currentColor].forEach((rubiksPiece) => {
 				
