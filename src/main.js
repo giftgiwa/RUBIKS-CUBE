@@ -40,8 +40,8 @@ window.mobileCheck = function() {
 /**
  * Sharper resolution if user is not on a mobile device
  */
-//if (!window.mobileCheck())
-//    renderer.setPixelRatio(window.devicePixelRatio * 2)
+if (!window.mobileCheck())
+    renderer.setPixelRatio(window.devicePixelRatio * 2)
 
 document.body.appendChild(renderer.domElement)
 
@@ -174,7 +174,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
         && Math.abs(deltaMove.y) <= 75)
         && !(deltaMove.x == 0 && deltaMove.y == 0)
         && deltaMove.length() >= 2.50)
-        rah.handleDrag(rubiksCube, originPoint, deltaMove, intersects[0])
+        rah.handleDrag(deltaMove, intersects[0])
 
     if (mouseDown) {
         previousMousePosition = {
