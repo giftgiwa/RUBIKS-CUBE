@@ -5,7 +5,6 @@ import RubiksCube from './rubiks-cube'
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     let q = new THREE.Quaternion();
     return function rotateAroundWorldAxis(point, axis, angle) {
-
         q.setFromAxisAngle(axis, angle)
         this.applyQuaternion(q)
 
@@ -32,7 +31,7 @@ class RotationHelper {
      *                       either "R" (red), "O" (orange), "Y" (yellow),
      *                       "G" (green), "B" (blue), or "W" (white)
      */
-    static rotateFace(rubiksCube, direction, color) {
+    static rotateFace(rubiksCube, direction, color, swiping) {
         let origin = new THREE.Vector3(0, 0, 0)
         let rotationMap = null
         if (direction == "ccw")
@@ -40,13 +39,14 @@ class RotationHelper {
         else // direction == "cw"
             rotationMap = rubiksCube.clockwiseRotationMap
 
-        for (let piece of rubiksCube.rotationGroups[color]) {
-            if (direction == "ccw") {
-                piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
-                //piece.mesh.rotate
+        if (!swiping) {
+            for (let piece of rubiksCube.rotationGroups[color]) {
+                if (direction == "ccw") {
+                    piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
+                }
+                else
+                    piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
             }
-            else
-                piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
         }
         
         for (let piece of rubiksCube.rotationGroups[color]) {
@@ -182,13 +182,17 @@ class RotationHelper {
                 -x*Math.sin(angle) + z*Math.cos(angle) + x0*(1 - Math.cos(angle)) + z0*Math.sin(angle)
             ))
         } else { // "z"; color == "R" || color == "O"
-             rubiksPiece.coordinates[0] = Math.round(Math.abs(
+            rubiksPiece.coordinates[0] = Math.round(Math.abs(
                 x*Math.cos(angle) - y*Math.sin(angle) + x0*(1 - Math.cos(angle)) + y0*Math.sin(angle)
             ))
-             rubiksPiece.coordinates[1] = Math.round(Math.abs(
+            rubiksPiece.coordinates[1] = Math.round(Math.abs(
                 x*Math.sin(angle) + y*Math.cos(angle) + y0*(1 - Math.cos(angle)) - x0*Math.sin(angle)
             ))
-        }      
+        }
+        rubiksPiece.mesh.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
+        rubiksPiece.mesh.userData.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
+        //console.log(rubiksPiece)
+        
     }
 
     /**
