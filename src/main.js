@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
+import RubiksAnimationHelperV2 from './rubiks-animation-v2'
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -111,8 +112,8 @@ scene.add(rubiksCubeMesh)
 
 // initialize rubiks cube "data structure"
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
-let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
-rah.getCornerVectors()
+let rah = new RubiksAnimationHelperV2(rubiksCube, camera, renderer)
+// rah.getCornerVectors()
 
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
@@ -173,8 +174,9 @@ renderer.domElement.addEventListener('mousemove', (e) => {
         && (Math.abs(deltaMove.x) <= 75 
         && Math.abs(deltaMove.y) <= 75)
         && !(deltaMove.x == 0 && deltaMove.y == 0)
-        && deltaMove.length() >= 2.50)
-        rah.handleDrag(deltaMove, intersects[0])
+        && deltaMove.length() >= 2.50) {
+        // rah.handleDrag(deltaMove, intersects[0])
+    }
 
     if (mouseDown) {
         previousMousePosition = {
@@ -185,8 +187,8 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 })
 
 renderer.domElement.addEventListener('mouseup', (e) => {
-    if (!dragStartingOnCube)
-        rah.getCornerVectors()
+    // if (!dragStartingOnCube)
+        // rah.getCornerVectors()
     if (dragStartingOnCube) {
         dragStartingOnCube = false
         rah.handleMouseUp()

@@ -1,9 +1,6 @@
 import * as THREE from 'three'
-import RubiksCube from './rubiks-cube'
-import RubiksPiece from './rubiks-piece'
 import RubiksCubeVector from './rubiks-cube-vector'
 import RotationHelper from './rubiks-rotation-helper'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
 	let q = new THREE.Quaternion();
