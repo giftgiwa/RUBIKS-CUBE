@@ -107,12 +107,10 @@ class RubiksAnimationHelper {
 				this.currentNormalColor = color
 			}
 		}
-		console.log(this.currentMesh)
+		//console.log(this.currentMesh)
 	}
 
-	handleDrag(rubiksCube, originPoint, deltaMove, intersect) {
-		//if (this.currentMesh == null || this.currentMesh.name.includes("1"))
-		//	return
+	handleDrag(deltaMove, intersect) {
 
 		if (this.currentColor == null && this.currentDirection == null) {
 			const meshName = intersect.object.parent.name
@@ -159,21 +157,15 @@ class RubiksAnimationHelper {
 			this.currentColor = likelyFaceDirection.substring(0, 1)
 			this.currentDirection = likelyFaceDirection.substring(2)
 
-			console.log(`${this.currentColor} ${this.currentDirection}`)
-			console.log(this.currentCornerVector)
+			//console.log(`${this.currentColor} ${this.currentDirection}`)
+			//console.log(this.currentCornerVector)
 		}
 		
 		let currentDirection = this.rubiksCubeVectors[this.currentCornerVector].direction
-		//let cosine = Math.cos(deltaMove.angleTo(currentDirection))
-		
-		//let rotationAmount = cosine + 0.04
 		let rotationAmount = deltaMove.length() * 0.1
-		//if (this.currentMesh != null && this.currentColor != null && this.currentColor != "" && this.currentDirection != null && this.currentRotationAngle < Math.PI / 2) {
+
 		if (this.currentMesh != null && this.currentColor != null && this.currentColor != "" && this.currentDirection != null) {
 
-			//let deltaTheta = 0
-			//if (Math.abs(rotationAmount * -0.07))
-			
 			if (this.currentDirection == "cw") {
 
 				//let deltaTheta = rotationAmount * -0.07
@@ -187,9 +179,7 @@ class RubiksAnimationHelper {
 					})
 					this.currentRotationAngle += rotationAmount * -0.07
 				}
-				//this.currentRotationAngle += Math.min(rotationAmount * -0.07, Math.PI / 2 - rotationAmount * -0.07)
 			} else {
-				//console.log(this.currentColor)
 				if (this.currentRotationAngle + rotationAmount * 0.07 < Math.PI / 2) {
 					this.rubiksCube.rotationGroups[this.currentColor].forEach((rubiksPiece) => {
 						rubiksPiece.mesh.rotateAroundWorldAxis(
@@ -203,7 +193,7 @@ class RubiksAnimationHelper {
 			}
 		}
 
-		console.log(this.currentRotationAngle)
+		//console.log(this.currentRotationAngle)
 	}
 
 	handleMouseUp() {
@@ -281,7 +271,6 @@ class RubiksAnimationHelper {
 	 * vectors used to detect faces being rotated from each view of the cube
 	 */
 	getCornerVectors() {
-		console.log("getCornerVectors()")
 		for (let i = 0; i < this.rubiksCube.corners.length; i++) {
 			for (let j = 0; j < this.rubiksCube.corners.length; j++) {
 				
@@ -303,8 +292,7 @@ class RubiksAnimationHelper {
 				}
 			}
 		}
-
-		console.log(this.rubiksCubeVectors)
+		//console.log(this.rubiksCubeVectors)
 	}
 
 	areNeighbors(colorsA, colorsB) {
