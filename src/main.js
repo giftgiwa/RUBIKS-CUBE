@@ -59,8 +59,8 @@ orbitControls.minDistance = 0.15
 orbitControls.maxDistance = 0.3
 orbitControls.enablePan = false
 orbitControls.enableZoom = false
-orbitControls.minPolarAngle = Math.PI/4
-orbitControls.maxPolarAngle = 3 * Math.PI/4
+orbitControls.minPolarAngle = Math.PI / 4
+orbitControls.maxPolarAngle = 3 * Math.PI / 4
 
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
@@ -109,13 +109,25 @@ rubiksCubeMesh.scale.y = 2
 rubiksCubeMesh.scale.z = 2
 scene.add(rubiksCubeMesh)
 
+const collisionCubeGeometry = new THREE.BoxGeometry(0.120, 0.120, 0.120)
+const collisionCubeMaterial = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    transparent: true,
+    opacity: 0.0
+})
+const collisionCube = new THREE.Mesh(collisionCubeGeometry, collisionCubeMaterial)
+collisionCube.name = "collision_cube"
+collisionCube.updateMatrixWorld()
+scene.add(collisionCube)
+
+
 // initialize rubiks cube "data structure"
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
-rah.getCornerVectors()
 
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
+const mouseMovement = new THREE.Vector2()
 
 const axesHelper = new THREE.AxesHelper();
 axesHelper.name = "axes_helper";
@@ -142,6 +154,8 @@ let intersects = []
 let originPoint = new THREE.Vector2(0, 0)
 let dragStartingOnCube = false
 
+let intersectionPoint
+
 renderer.domElement.addEventListener('mousedown', (e) => {
     originPoint.x = e.clientX
     originPoint.y = e.clientY
@@ -158,23 +172,24 @@ renderer.domElement.addEventListener('mousedown', (e) => {
  */
 let previousMousePosition = { x: 0, y: 0 }
 renderer.domElement.addEventListener('mousemove', (e) => {
-    if (!mouseDown || intersects.length == 0)
+    //if (!mouseDown || intersects.length == 0)
+    //    return
+    if (!mouseDown)
         return
 
-    const deltaMove = new THREE.Vector2(
-        e.movementX, e.movementY
-    )
+    mouseMovement.x = e.movementX
+    mouseMovement.y = e.movementY
 
     /**
      * If the click and drag starts on the cube AND continues on the cube,
      * take the direction of the click and drag and rotate a face with it.
      */
-    if (!orbitControls.enabled 
-        && (Math.abs(deltaMove.x) <= 75 
-        && Math.abs(deltaMove.y) <= 75)
-        && !(deltaMove.x == 0 && deltaMove.y == 0)
-        && deltaMove.length() >= 2.50)
-        rah.handleDrag(deltaMove, intersects[0])
+    if (dragStartingOnCube &&
+        !(intersectionPoint.x.toPrecision(1) == 0
+            && intersectionPoint.y.toPrecision(1) == 0
+            && intersectionPoint.z.toPrecision(1) == 0)) {
+        rah.handleDrag(intersects[0], mouseMovement)
+    }
 
     if (mouseDown) {
         previousMousePosition = {
@@ -185,19 +200,20 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 })
 
 renderer.domElement.addEventListener('mouseup', (e) => {
-    if (!dragStartingOnCube)
-        rah.getCornerVectors()
     if (dragStartingOnCube) {
         dragStartingOnCube = false
         rah.handleMouseUp()
     }
 })
 
-const filteredChildren = scene.children.filter(item => item.name !== "axes_helper")
+const filteredChildren = scene.children.filter(item => item.name == "collision_cube")
 
 function animate() {
     raycaster.setFromCamera(pointer, camera)
-    intersects = raycaster.intersectObjects(filteredChildren)
+    intersects = raycaster.intersectObjects(filteredChildren, false)
+    if (intersects.length > 0)
+        intersectionPoint = intersects[0].point
+
     if (!mouseDown) {
         if (intersects.length > 0)
             orbitControls.enabled = false
@@ -205,7 +221,7 @@ function animate() {
             orbitControls.enabled = true
     }
 
-	requestAnimationFrame(animate)
+	window.requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 }
 
