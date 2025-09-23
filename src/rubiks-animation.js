@@ -15,6 +15,8 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     }
 }()
 
+const FRAME_COUNT = 10
+
 class RubiksAnimationHelper {
     currentDirection = null
     currentColor = null
@@ -103,7 +105,7 @@ class RubiksAnimationHelper {
 
 	handleDrag(intersect, mouseMovement) {
         if (this.currentColor == null && this.currentDirection == null) {
-            if (this.frameCounter == 10) {
+            if (this.frameCounter == FRAME_COUNT) {
 
                 let largestVectorComponent = this.getLargestVectorComponent(this.avgDeltaMove)
                 this.colorCandidates.forEach((colorCandidate) => {
@@ -125,7 +127,7 @@ class RubiksAnimationHelper {
 
             }
             else {
-                if (this.previousRaycasterPosition && this.frameCounter != 10) {
+                if (this.previousRaycasterPosition && this.frameCounter != FRAME_COUNT) {
                     //let deltaMove = intersect.point.clone()
                     let deltaMove
                     if (intersect)
@@ -134,6 +136,7 @@ class RubiksAnimationHelper {
                         deltaMove = this.deltaMove
                     deltaMove.sub(this.previousRaycasterPosition)
                     deltaMove = this.roundVector(deltaMove)
+                    this.deltaMove = deltaMove
 
                     this.avgDeltaMove.x *= (this.frameCounter / (this.frameCounter + 1))
                     this.avgDeltaMove.x += deltaMove.x / (this.frameCounter + 1)
@@ -153,19 +156,21 @@ class RubiksAnimationHelper {
                     this.previousRaycasterPosition = this.deltaMove
             }
         } else {
-            console.log(`${this.currentColor} ${this.currentDirection}`)
+            //console.log(`${this.currentColor} ${this.currentDirection}`)
 
             let deltaMove
-            if (intersect)
+            if (intersect) {
                 deltaMove = intersect.point.clone()
-            else
+            }
+            else {
                 deltaMove = this.deltaMove
+            }
             deltaMove.sub(this.previousRaycasterPosition)
             deltaMove = this.roundVector(deltaMove)
             this.deltaMove = deltaMove
 
             //let rotationAmount = Number(mouseMovement.length().toPrecision(3)) * Math.PI / 128
-            let rotationAmount = mouseMovement.length() * Math.PI / 128
+            let rotationAmount = mouseMovement.length() * 1.15 * Math.PI / 90
 
             if (this.currentColor != null && this.currentDirection != null) {
                 console.log(this.currentRotationAngle)
@@ -181,9 +186,6 @@ class RubiksAnimationHelper {
                         this.currentRotationAngle -= rotationAmount
                     }
                 } else if (this.currentDirection == "ccw") { // this.currentDirection == "ccw"
-                    console.log("here")
-                    console.log(this.currentRotationAngle)
-                    console.log(this.currentRotationAngle + rotationAmount)
                     if (this.currentRotationAngle + rotationAmount < Math.PI / 2) {
                         this.rubiksCube.rotationGroups[this.currentColor].forEach((rubiksPiece) => {
                             rubiksPiece.mesh.rotateAroundWorldAxis(
@@ -256,6 +258,8 @@ class RubiksAnimationHelper {
 		this.colorCandidates = []
         this.previousRaycasterPosition = null
         this.frameCounter = 0
+        this.avgDeltaMove = new THREE.Vector3(0, 0, 0)
+        this.deltaMove = null
     }
 
 }
