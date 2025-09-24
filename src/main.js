@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
+import { TrackballControls } from 'three/examples/jsm/Addons.js'
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -54,13 +55,20 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight)
 }
 
-const orbitControls = new OrbitControls(camera, renderer.domElement)
-orbitControls.minDistance = 0.15
-orbitControls.maxDistance = 0.3
-orbitControls.enablePan = false
-orbitControls.enableZoom = false
-orbitControls.minPolarAngle = Math.PI / 4
-orbitControls.maxPolarAngle = 3 * Math.PI / 4
+//const orbitControls = new OrbitControls(camera, renderer.domElement)
+//orbitControls.minDistance = 0.15
+//orbitControls.maxDistance = 0.3
+//orbitControls.enablePan = false
+//orbitControls.enableZoom = false
+//orbitControls.minPolarAngle = Math.PI / 4
+//orbitControls.maxPolarAngle = 3 * Math.PI / 4
+
+const trackballControls = new TrackballControls(camera, renderer.domElement)
+trackballControls.rotateSpeed = 3.5
+//trackballControls.minDistance = 0.15
+//trackballControls.maxDistance = 0.3
+trackballControls.enablePan = false
+//trackballControls.enableZoom = false
 
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
@@ -150,6 +158,25 @@ document.body.onmouseup = () => {
     mouseDown = false
 }
 
+let cylinderGeometry = new THREE.CylinderGeometry(0.002, 0.002, 0.25)
+
+let cylinderMaterial = new THREE.ShaderMaterial({
+    vertexShader: `
+        void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );
+        }
+    `,
+    fragmentShader: `
+        void main() {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    `
+})
+
+let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
+cylinderMesh.position.y = 0.125
+scene.add(cylinderMesh)
+
 let intersects = []
 let originPoint = new THREE.Vector2(0, 0)
 let dragStartingOnCube = false
@@ -172,8 +199,6 @@ renderer.domElement.addEventListener('mousedown', (e) => {
  */
 let previousMousePosition = { x: 0, y: 0 }
 renderer.domElement.addEventListener('mousemove', (e) => {
-    //if (!mouseDown || intersects.length == 0)
-    //    return
     if (!mouseDown)
         return
 
@@ -199,12 +224,14 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     }
 })
 
+
 renderer.domElement.addEventListener('mouseup', (e) => {
     if (dragStartingOnCube) {
         dragStartingOnCube = false
         rah.handleMouseUp()
     }
 })
+
 
 const filteredChildren = scene.children.filter(item => item.name == "collision_cube")
 
@@ -215,11 +242,17 @@ function animate() {
         intersectionPoint = intersects[0].point
 
     if (!mouseDown) {
-        if (intersects.length > 0)
-            orbitControls.enabled = false
-        else
-            orbitControls.enabled = true
+        if (intersects.length > 0) {
+            //orbitControls.enabled = false
+            trackballControls.enabled = false
+        }
+        else {
+            //orbitControls.enabled = true
+            trackballControls.enabled = true
+        }
     }
+
+    trackballControls.update();
 
 	window.requestAnimationFrame(animate)
 	renderer.render(scene, camera)

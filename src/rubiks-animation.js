@@ -15,7 +15,7 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     }
 }()
 
-const FRAME_COUNT = 10
+const FRAME_COUNT = 8
 
 class RubiksAnimationHelper {
     currentDirection = null
