@@ -53,6 +53,9 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
+
+    uniforms.u_resolution.value.x = renderer.domElement.width
+    uniforms.u_resolution.value.y = renderer.domElement.height
 }
 
 //const orbitControls = new OrbitControls(camera, renderer.domElement)
@@ -65,10 +68,10 @@ function onWindowResize() {
 
 const trackballControls = new TrackballControls(camera, renderer.domElement)
 trackballControls.rotateSpeed = 3.5
-//trackballControls.minDistance = 0.15
-//trackballControls.maxDistance = 0.3
+trackballControls.minDistance = 0.15
+trackballControls.maxDistance = 0.3
 trackballControls.enablePan = false
-//trackballControls.enableZoom = false
+trackballControls.enableZoom = false
 
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
@@ -158,7 +161,7 @@ document.body.onmouseup = () => {
     mouseDown = false
 }
 
-let cylinderGeometry = new THREE.CylinderGeometry(0.002, 0.002, 0.25)
+let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.15)
 
 let cylinderMaterial = new THREE.ShaderMaterial({
     vertexShader: `
@@ -175,7 +178,7 @@ let cylinderMaterial = new THREE.ShaderMaterial({
 
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
 cylinderMesh.position.y = 0.125
-scene.add(cylinderMesh)
+//scene.add(cylinderMesh)
 
 let intersects = []
 let originPoint = new THREE.Vector2(0, 0)
