@@ -122,8 +122,6 @@ class RubiksCube {
 
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
-
-        //Keybinds.addInputs(this)
     }
 
     /**
