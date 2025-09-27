@@ -36,7 +36,6 @@ class UIControls {
 		 * top-right corner.
 		 */
 		this.menuIcon.addEventListener("click", (event) => {
-
 			if (this.UI.style.display == 'none') {
 				this.UI.style.display = 'block'
 				this.menuIcon.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
