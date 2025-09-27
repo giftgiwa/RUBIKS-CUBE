@@ -1,9 +1,9 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
 import { TrackballControls } from 'three/examples/jsm/Addons.js'
+import UIControls from './ui-controls'
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -38,6 +38,8 @@ window.mobileCheck = function() {
   return check
 }
 
+UIControls.initUIControls()
+
 /**
  * Sharper resolution if user is not on a mobile device
  */
@@ -54,17 +56,9 @@ function onWindowResize() {
     camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
 
-    uniforms.u_resolution.value.x = renderer.domElement.width
-    uniforms.u_resolution.value.y = renderer.domElement.height
+    //uniforms.u_resolution.value.x = renderer.domElement.width
+    //uniforms.u_resolution.value.y = renderer.domElement.height
 }
-
-//const orbitControls = new OrbitControls(camera, renderer.domElement)
-//orbitControls.minDistance = 0.15
-//orbitControls.maxDistance = 0.3
-//orbitControls.enablePan = false
-//orbitControls.enableZoom = false
-//orbitControls.minPolarAngle = Math.PI / 4
-//orbitControls.maxPolarAngle = 3 * Math.PI / 4
 
 const trackballControls = new TrackballControls(camera, renderer.domElement)
 trackballControls.rotateSpeed = 3.5
@@ -227,14 +221,12 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     }
 })
 
-
 renderer.domElement.addEventListener('mouseup', (e) => {
     if (dragStartingOnCube) {
         dragStartingOnCube = false
         rah.handleMouseUp()
     }
 })
-
 
 const filteredChildren = scene.children.filter(item => item.name == "collision_cube")
 
@@ -246,17 +238,14 @@ function animate() {
 
     if (!mouseDown) {
         if (intersects.length > 0) {
-            //orbitControls.enabled = false
             trackballControls.enabled = false
         }
         else {
-            //orbitControls.enabled = true
             trackballControls.enabled = true
         }
     }
 
     trackballControls.update();
-
 	window.requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 }

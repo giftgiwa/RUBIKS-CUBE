@@ -11,15 +11,37 @@
     <body style="background-color: #f5f5f5;">
 		<script type="module" src="./src/main.js"></script>
 
-		<div id="user-interface">
+		<div id="menu-icon">
 			<button class="btn">
 				<span class="material-symbols-outlined">menu</span>
 			</button>
+		</div>
 
-			<div class="roboto-mono setting-label">
-				<p>keybinds: </p>
-				<p>mode: </p>
-				<p>animation speed: </p>
+		<div id="user-interface">
+
+			<div class="roboto-mono settings">
+				<div class="settings-row">
+					<p>keybinds: </p>
+					<button class="btn settings-btn roboto-mono" id="keybinds-on">On</button>
+					<button class="btn settings-btn roboto-mono" id="keybinds-off">Off</button>
+				</div>
+				<div class="settings-row">
+					<p>mode: </p>
+					<button class="btn settings-btn roboto-mono" id="button-mode">Button</button>
+					<button class="btn settings-btn roboto-mono" id="swipe-mode">Swipe</button>
+					<button class="btn settings-btn roboto-mono" id="mix-mode">Mix</button>
+				</div>
+				<div class="settings-row">
+					<p>keypress speed: </p>
+					<button class="btn settings-btn roboto-mono" id="keypress-fast">Fast</button>
+					<button class="btn settings-btn roboto-mono" id="keypress-slow">Slow</button>
+				</div>
+				<div class="settings-row">
+					<p>quick drag: </p>
+					<button class="btn settings-btn roboto-mono" id="quick-drag-on">On</button>
+					<button class="btn settings-btn roboto-mono" id="quick-drag-off">Off</button>
+				</div>
+				<button class="btn roboto-mono" id="shuffle-btn">Shuffle</button>
 			</div>
 		</div>
 	</body>

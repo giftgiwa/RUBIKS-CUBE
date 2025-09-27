@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import RubiksCubeVector from './rubiks-cube-vector'
 import RotationHelper from './rubiks-rotation-helper'
 
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
