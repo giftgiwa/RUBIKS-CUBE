@@ -17,7 +17,7 @@
 }
 
 .btn:hover {
-	background-color: rgba(0, 0, 0, 0.15);
+	background-color: rgba(0, 0, 0, 0.15) !important;
 }
 
 .roboto-mono {
@@ -29,9 +29,9 @@
 }
 
 .roboto-mono::selection {
-    background: #000;
-    color: white;
-    text-shadow: none;
+    background: #000 !important;
+    color: white !important;
+    text-shadow: none !important;
 }
 
 .settings {
@@ -71,12 +71,12 @@
 	padding-bottom: 10px;
 	border-color: black;
 	border-width: 2px;
-	border-style:solid;
+	border-style: solid;
 }
 
 #shuffle-btn:hover {
-	background-color: black;
-	color: white;
+	background-color: black !important;
+	color: white !important;
 }
 
 body {

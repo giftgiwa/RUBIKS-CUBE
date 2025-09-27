@@ -1,7 +1,7 @@
 
 
 class UIControls {
-	static initUIControls() {
+	constructor() {
 		this.UI = document.getElementById("user-interface")
 		this.menuIcon = document.getElementById("menu-icon")
 		this.keybinds = [
@@ -31,6 +31,8 @@ class UIControls {
 		
 		this.UI.style.display = 'none' // initially hide UI
 
+		this.keybindsEnabled = false
+
 		/**
 		 * Hide and show settings as user clicks on the menu icon in the
 		 * top-right corner.
@@ -44,8 +46,23 @@ class UIControls {
 				this.menuIcon.style.backgroundColor = 'rgba(0, 0, 0, 0)'
 			}
 		})
+	}
 
+	setupKeybinds() {
 
+		this.keybinds.forEach((button) => {
+			button.addEventListener("click", (event) => {
+				if (event.target.textContent == "On") {
+					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+					this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0)'
+					this.keybindsEnabled = true
+				} else {
+					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+					this.keybinds[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
+					this.keybindsEnabled = false
+				}
+			})
+		})
 	}
 }
 

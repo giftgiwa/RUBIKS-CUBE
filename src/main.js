@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import Keybinds from './keybinds'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
 import { TrackballControls } from 'three/examples/jsm/Addons.js'
@@ -38,7 +39,6 @@ window.mobileCheck = function() {
   return check
 }
 
-UIControls.initUIControls()
 
 /**
  * Sharper resolution if user is not on a mobile device
@@ -129,6 +129,12 @@ scene.add(collisionCube)
 // initialize rubiks cube "data structure"
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
+
+
+let ui = new UIControls()
+ui.setupKeybinds()
+
+let keybindsObj = new Keybinds(ui, rubiksCube)
 
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
