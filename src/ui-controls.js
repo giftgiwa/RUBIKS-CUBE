@@ -8,11 +8,11 @@ class UIControls {
 			document.getElementById("keybinds-on"),
 			document.getElementById("keybinds-off")
 		]
-		this.mode = [
-			document.getElementById("button-mode"),
-			document.getElementById("swipe-mode"),
-			document.getElementById("mix-mode")
-		]
+		//this.mode = [
+		//	document.getElementById("button-mode"),
+		//	document.getElementById("swipe-mode"),
+		//	document.getElementById("mix-mode")
+		//]
 		this.keypressSpeed = [
 			document.getElementById("keypress-fast"),
 			document.getElementById("keypress-slow")
