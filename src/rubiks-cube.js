@@ -59,6 +59,13 @@ class RubiksCube {
      * e.g. If a yellow/blue/red corner were to reside on the corner between
      *      the white, red, and blue faces such that the yellow tile is on
      *      the white face, the red tile
+     * 
+     * Since the coordinateMap has the indices of each of the
+     * RubiksPiece objects constant (while the actual position and orientation
+     * of each of the pieces change on rotations), the cube would be detected
+     * as solved when each of the orientationMaps for each of the RubiksPiece
+     * objects at each position matches those in the solvedStateOrientations
+     * array.
      */
     solvedStateOrientations = [
         [
@@ -101,6 +108,11 @@ class RubiksCube {
         'Y': [],
     }
 
+    /**
+     * Hashmap that stores the axes around which each face rotates. Complementary
+     * faces (white and yellow, red and orange, blue and green) have axes with
+     * the same directions, but opposite signs.
+     */
     rotationAxes = {
         'W': new THREE.Vector3(0, 1, 0), /* y */
         'B': new THREE.Vector3(0, 0, 1), /* z */
@@ -111,19 +123,14 @@ class RubiksCube {
     }
 
     /**
-     * Constructor for RubiksCube class.
+     * Constructor for RubiksCube class. The rotationGroups hash map and
+     * coordinateMap array get
      * @param {*} gltf actual GLTF file imported into the THREE.js Scene
      */
     constructor(gltf) {
         this.gltf = gltf // store the model file
-        //this.edges = []
-        //this.faces = []
-        this.corners = []
-
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
-
-        Keybinds.addInputs(this)
     }
 
     /**
@@ -177,12 +184,7 @@ class RubiksCube {
                 currentOrientationMap, /* orientaton map */
                 currentPiece /* mesh (within GLTF file) */
             )
-
-            if (this.coordinateMap[x][y][z].colors.length == 3) {
-                this.corners.push(this.coordinateMap[x][y][z])
-            }
         }
-        //console.log(this.corners)
     }
 
     /**

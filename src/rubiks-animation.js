@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import RubiksCubeVector from './rubiks-cube-vector'
 import RotationHelper from './rubiks-rotation-helper'
 
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
@@ -15,7 +14,7 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     }
 }()
 
-const FRAME_COUNT = 10
+const FRAME_COUNT = 8
 
 class RubiksAnimationHelper {
     currentDirection = null
@@ -115,15 +114,16 @@ class RubiksAnimationHelper {
                 })
 
                 let crossProduct = this.avgDeltaMove.clone()
-                crossProduct.cross(this.rubiksCube.rotationAxes[this.currentColor].clone())
-                
-                let normalizedCrossProduct = this.roundVector(crossProduct.normalize())
-                console.log(normalizedCrossProduct)
-                console.log(this.currentIntersectionNormal)
-                if (normalizedCrossProduct.dot(this.currentIntersectionNormal) < 0) 
-                    this.currentDirection = "cw"
-                else
-                    this.currentDirection = "ccw"
+                if (this.currentColor) {
+                    crossProduct.cross(this.rubiksCube.rotationAxes[this.currentColor].clone())
+                    
+                    let normalizedCrossProduct = this.roundVector(crossProduct.normalize())
+
+                    if (normalizedCrossProduct.dot(this.currentIntersectionNormal) < 0) 
+                        this.currentDirection = "cw"
+                    else
+                        this.currentDirection = "ccw"
+                }
 
             }
             else {
@@ -169,11 +169,9 @@ class RubiksAnimationHelper {
             deltaMove = this.roundVector(deltaMove)
             this.deltaMove = deltaMove
 
-            //let rotationAmount = Number(mouseMovement.length().toPrecision(3)) * Math.PI / 128
             let rotationAmount = mouseMovement.length() * 1.15 * Math.PI / 90
 
             if (this.currentColor != null && this.currentDirection != null) {
-                console.log(this.currentRotationAngle)
                 if (this.currentDirection == "cw") {
                     if (this.currentRotationAngle - rotationAmount > -Math.PI / 2) {
                         this.rubiksCube.rotationGroups[this.currentColor].forEach((rubiksPiece) => {
