@@ -21,6 +21,10 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
  */
 class RotationHelper {
 
+    constructor() {
+        
+    }
+
     /**
      * For a given face and direction, modifies the stored groups for the
      * Rubik's cube's pieces to reflect the cube's side's physical rotation.
@@ -31,7 +35,7 @@ class RotationHelper {
      *                       either "R" (red), "O" (orange), "Y" (yellow),
      *                       "G" (green), "B" (blue), or "W" (white)
      */
-    static rotateFace(rubiksCube, direction, color, swiping) {
+    static rotateFace(rubiksCube, direction, color, swiping, keypressMode, ) {
         let origin = new THREE.Vector3(0, 0, 0)
         let rotationMap = null
         if (direction == "ccw")
@@ -39,7 +43,10 @@ class RotationHelper {
         else // direction == "cw"
             rotationMap = rubiksCube.clockwiseRotationMap
 
-        if (!swiping) {
+        /**
+         * Fast animation – rotation is instant
+         */
+        if (!swiping && (keypressMode == "Fast")) {
             for (let piece of rubiksCube.rotationGroups[color]) {
                 if (direction == "ccw") {
                     piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
@@ -47,6 +54,12 @@ class RotationHelper {
                 else
                     piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
             }
+        }
+        /**
+         * Slow animation – full rotation appears on screen
+         */
+        else if (!swiping && (keypressMode == "Slow")) {
+            
         }
         
         for (let piece of rubiksCube.rotationGroups[color]) {

@@ -1,5 +1,3 @@
-
-
 class UIControls {
 	constructor() {
 		this.UI = document.getElementById("user-interface")
@@ -30,8 +28,12 @@ class UIControls {
 		//console.log(this.quickDrag)
 		
 		this.UI.style.display = 'none' // initially hide UI
+		this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+		this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+
 
 		this.keybindsEnabled = false
+		this.keypressMode = "Fast"
 
 		/**
 		 * Hide and show settings as user clicks on the menu icon in the
@@ -49,17 +51,32 @@ class UIControls {
 	}
 
 	setupKeybinds() {
-
 		this.keybinds.forEach((button) => {
 			button.addEventListener("click", (event) => {
 				if (event.target.textContent == "On") {
+					this.keybindsEnabled = true
 					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 					this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0)'
-					this.keybindsEnabled = true
-				} else {
+				} else { // event.target.textContent == "Off"
+					this.keybindsEnabled = false
 					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 					this.keybinds[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
-					this.keybindsEnabled = false
+				}
+			})
+		})
+	}
+
+	setupKeypressSpeed() {
+		this.keypressSpeed.forEach((button) => {
+			button.addEventListener("click", (event) => {
+				if (event.target.textContent == "Fast") {
+					this.keypressMode = "Fast"
+					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+					this.keypressSpeed[1].style.backgroundColor = 'rgba(0, 0, 0, 0)'
+				} else { // event.target.textContent == "Slow"
+					this.keypressMode = "Slow"
+					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+					this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
 				}
 			})
 		})

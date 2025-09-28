@@ -10,14 +10,27 @@ class Keybinds {
 
         let colors = new Set(["r", "o", "y", "g", "b", "w"])
         window.addEventListener("keypress", (event) => {
+            console.log(this.uiControls)
             if (this.uiControls.keybindsEnabled) {
                 if (colors.has(event.key.toLowerCase())) {
                     if (event.shiftKey) {
-                        RotationHelper.rotateFace(rubiksCube, "ccw", event.key.toUpperCase())
+                        RotationHelper.rotateFace(
+                            rubiksCube,
+                            "ccw",
+                            event.key.toUpperCase(),
+                            false,
+                            this.uiControls.keypressMode
+                        )
                         console.log(rubiksCube.rotationGroups)
                     }
                     else {
-                        RotationHelper.rotateFace(rubiksCube, "cw", event.key.toUpperCase())
+                        RotationHelper.rotateFace(
+                            rubiksCube,
+                            "cw",
+                            event.key.toUpperCase(),
+                            false,
+                            this.uiControls.keypressMode
+                        )
                         console.log(rubiksCube.rotationGroups)
                     }
                 }

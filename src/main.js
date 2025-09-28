@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import Keybinds from './keybinds'
+import RotationHelper from './rubiks-rotation-helper'
 import RubiksCube from './rubiks-cube'
 import RubiksAnimationHelper from './rubiks-animation'
 import { TrackballControls } from 'three/examples/jsm/Addons.js'
@@ -13,6 +14,13 @@ const camera = new THREE.PerspectiveCamera(
     0.1, /* closest visible distance */
     1000 /* furthest visible distance */
 )
+//const camera = new THREE.OrthographicCamera(
+//    0,
+//    window.innerWidth,
+//    window.innerHeight,
+//    0.1,
+//    1000
+//)
 
 camera.position.x = -0.15
 camera.position.y = 0.15
@@ -55,9 +63,6 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
-
-    //uniforms.u_resolution.value.x = renderer.domElement.width
-    //uniforms.u_resolution.value.y = renderer.domElement.height
 }
 
 const trackballControls = new TrackballControls(camera, renderer.domElement)
@@ -125,14 +130,18 @@ collisionCube.name = "collision_cube"
 collisionCube.updateMatrixWorld()
 scene.add(collisionCube)
 
+let ui = new UIControls()
+ui.setupKeybinds()
+ui.setupKeypressSpeed()
+console.log(ui.keypressMode)
+
+
+
 
 // initialize rubiks cube "data structure"
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
 
-
-let ui = new UIControls()
-ui.setupKeybinds()
 
 let keybindsObj = new Keybinds(ui, rubiksCube)
 
