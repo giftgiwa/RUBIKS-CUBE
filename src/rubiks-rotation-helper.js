@@ -21,8 +21,12 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
  */
 class RotationHelper {
 
-    constructor() {
-        
+    static currentRotationAnimationAngle = 0.0
+    static doAnimate = false
+
+    constructor(uiControls, trackballControls) {
+        this.uiControls = uiControls
+        RotationHelper.trackballControls = trackballControls
     }
 
     /**
@@ -35,7 +39,7 @@ class RotationHelper {
      *                       either "R" (red), "O" (orange), "Y" (yellow),
      *                       "G" (green), "B" (blue), or "W" (white)
      */
-    static rotateFace(rubiksCube, direction, color, swiping, keypressMode, ) {
+    static rotateFace(rubiksCube, direction, color, swiping, keypressMode) {
         let origin = new THREE.Vector3(0, 0, 0)
         let rotationMap = null
         if (direction == "ccw")
@@ -59,7 +63,40 @@ class RotationHelper {
          * Slow animation – full rotation appears on screen
          */
         else if (!swiping && (keypressMode == "Slow")) {
-            
+            if (!this.doAnimate) {
+                /**
+                 * When isRotating is set to true, clicks/drags and other
+                 * keybinds are ignored. If not, the cube will break if the user
+                 * attempts to do either during an ongoing animation!
+                 */
+                rubiksCube.isRotating = true
+                this.doAnimate = true
+
+                let currentRotationAngle = 0.0
+                let frameStep = 1 / 10
+
+                function step() {
+                    currentRotationAngle += ((Math.PI / 2) * frameStep)
+                    for (let piece of rubiksCube.rotationGroups[color]) {
+                        if (direction == "ccw")
+                            piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], ((Math.PI / 2) * frameStep))
+                        else
+                            piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -((Math.PI / 2) * frameStep))
+                    }
+
+                    if (currentRotationAngle < Math.PI / 2) {
+                        requestAnimationFrame(step)
+                    } else {
+                        rubiksCube.isRotating = false
+                        //this.doAnimate = false
+                    }
+                }
+
+                requestAnimationFrame(step)
+                //rubiksCube.isRotating = false
+                this.doAnimate = false
+            }
+
         }
         
         for (let piece of rubiksCube.rotationGroups[color]) {
@@ -107,7 +144,6 @@ class RotationHelper {
             } else // handling center piece of face – do nothing
                 continue
         }
-        //console.log(rubiksCube.coordinateMap)
     }
 
     /**
@@ -153,7 +189,6 @@ class RotationHelper {
      *                       "G" (green), "B" (blue), or "W" (white)
      */
     static updateCoordinates(rubiksPiece, direction, color) {
-        //console.log(rubiksPiece)
         let rotationOrigins = {
             "W": [0, 1, 1],
             "B": [1, 0, 1],

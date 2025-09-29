@@ -131,6 +131,8 @@ class RubiksCube {
         this.gltf = gltf // store the model file
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
+
+        this.isRotating = false
     }
 
     /**

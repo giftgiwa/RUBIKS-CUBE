@@ -130,10 +130,10 @@ collisionCube.name = "collision_cube"
 collisionCube.updateMatrixWorld()
 scene.add(collisionCube)
 
+
 let ui = new UIControls()
 ui.setupKeybinds()
 ui.setupKeypressSpeed()
-console.log(ui.keypressMode)
 
 
 
@@ -144,6 +144,8 @@ let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
 
 
 let keybindsObj = new Keybinds(ui, rubiksCube)
+console.log(trackballControls)
+let rotationHelper = new RotationHelper(ui, trackballControls)
 
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
@@ -224,7 +226,8 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     if (dragStartingOnCube &&
         !(intersectionPoint.x.toPrecision(1) == 0
             && intersectionPoint.y.toPrecision(1) == 0
-            && intersectionPoint.z.toPrecision(1) == 0)) {
+            && intersectionPoint.z.toPrecision(1) == 0)
+            && !rubiksCube.isRotating) {
         rah.handleDrag(intersects[0], mouseMovement)
     }
 
@@ -259,6 +262,7 @@ function animate() {
             trackballControls.enabled = true
         }
     }
+    
 
     trackballControls.update();
 	window.requestAnimationFrame(animate)

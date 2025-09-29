@@ -3,15 +3,15 @@ import RotationHelper from './rubiks-rotation-helper'
 class Keybinds {
     constructor(uiControls, rubiksCube) {
         this.uiControls = uiControls
+        //this.isRotating = false
         this.addInputs(rubiksCube)
     }
 
     addInputs(rubiksCube) {
-
         let colors = new Set(["r", "o", "y", "g", "b", "w"])
+
         window.addEventListener("keypress", (event) => {
-            console.log(this.uiControls)
-            if (this.uiControls.keybindsEnabled) {
+            if (this.uiControls.keybindsEnabled && !rubiksCube.isRotating) {
                 if (colors.has(event.key.toLowerCase())) {
                     if (event.shiftKey) {
                         RotationHelper.rotateFace(
@@ -21,7 +21,6 @@ class Keybinds {
                             false,
                             this.uiControls.keypressMode
                         )
-                        console.log(rubiksCube.rotationGroups)
                     }
                     else {
                         RotationHelper.rotateFace(
@@ -31,7 +30,6 @@ class Keybinds {
                             false,
                             this.uiControls.keypressMode
                         )
-                        console.log(rubiksCube.rotationGroups)
                     }
                 }
             }
