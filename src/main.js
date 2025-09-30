@@ -72,7 +72,6 @@ trackballControls.maxDistance = 0.3
 trackballControls.enablePan = false
 trackballControls.enableZoom = false
 
-
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
 
@@ -133,10 +132,6 @@ scene.add(collisionCube)
 let ui = new UIControls()
 ui.setupKeybinds()
 ui.setupKeypressSpeed()
-console.log(ui.keypressMode)
-
-
-
 
 // initialize rubiks cube "data structure"
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
@@ -144,6 +139,7 @@ let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
 
 
 let keybindsObj = new Keybinds(ui, rubiksCube)
+let rotationHelper = new RotationHelper(ui, trackballControls)
 
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
@@ -154,7 +150,7 @@ axesHelper.name = "axes_helper";
 axesHelper.scale.x = 0.35
 axesHelper.scale.y = 0.35
 axesHelper.scale.z = 0.35
-//scene.add(axesHelper)
+scene.add(axesHelper)
 
 function onPointerMove(event) {
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1
@@ -224,7 +220,8 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     if (dragStartingOnCube &&
         !(intersectionPoint.x.toPrecision(1) == 0
             && intersectionPoint.y.toPrecision(1) == 0
-            && intersectionPoint.z.toPrecision(1) == 0)) {
+            && intersectionPoint.z.toPrecision(1) == 0)
+            && !rubiksCube.isRotating) {
         rah.handleDrag(intersects[0], mouseMovement)
     }
 
@@ -259,6 +256,7 @@ function animate() {
             trackballControls.enabled = true
         }
     }
+    
 
     trackballControls.update();
 	window.requestAnimationFrame(animate)
