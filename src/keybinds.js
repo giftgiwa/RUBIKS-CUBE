@@ -3,7 +3,6 @@ import RotationHelper from './rubiks-rotation-helper'
 class Keybinds {
     constructor(uiControls, rubiksCube) {
         this.uiControls = uiControls
-        //this.isRotating = false
         this.addInputs(rubiksCube)
     }
 

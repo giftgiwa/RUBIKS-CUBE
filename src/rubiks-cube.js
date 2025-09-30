@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
-import Keybinds from './keybinds'
 
 class RubiksCube {
     /* Global Variables */

@@ -72,7 +72,6 @@ trackballControls.maxDistance = 0.3
 trackballControls.enablePan = false
 trackballControls.enableZoom = false
 
-
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add( ambientLight )
 
@@ -130,13 +129,9 @@ collisionCube.name = "collision_cube"
 collisionCube.updateMatrixWorld()
 scene.add(collisionCube)
 
-
 let ui = new UIControls()
 ui.setupKeybinds()
 ui.setupKeypressSpeed()
-
-
-
 
 // initialize rubiks cube "data structure"
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
@@ -144,7 +139,6 @@ let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
 
 
 let keybindsObj = new Keybinds(ui, rubiksCube)
-console.log(trackballControls)
 let rotationHelper = new RotationHelper(ui, trackballControls)
 
 const raycaster = new THREE.Raycaster()
@@ -156,7 +150,7 @@ axesHelper.name = "axes_helper";
 axesHelper.scale.x = 0.35
 axesHelper.scale.y = 0.35
 axesHelper.scale.z = 0.35
-//scene.add(axesHelper)
+scene.add(axesHelper)
 
 function onPointerMove(event) {
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1

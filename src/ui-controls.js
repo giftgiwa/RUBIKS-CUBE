@@ -15,9 +15,9 @@ class UIControls {
 			document.getElementById("keypress-fast"),
 			document.getElementById("keypress-slow")
 		]
-		this.quickDrag = [
-			document.getElementById("quick-drag-on"),
-			document.getElementById("quick-drag-off")]
+		//this.quickDrag = [
+		//	document.getElementById("quick-drag-on"),
+		//	document.getElementById("quick-drag-off")]
 		this.shuffleButton = document.getElementById("shuffle-btn")
 
 		//console.log(this.UI)
