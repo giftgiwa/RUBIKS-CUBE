@@ -1,5 +1,6 @@
 class UIControls {
-	constructor() {
+	constructor(rubiksCube) {
+		this.rubiksCube = rubiksCube
 		this.UI = document.getElementById("user-interface")
 		this.menuIcon = document.getElementById("menu-icon")
 		this.keybinds = [
@@ -23,7 +24,6 @@ class UIControls {
 		this.UI.style.display = 'none' // initially hide UI
 		this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 		this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
-
 
 		this.keybindsEnabled = false
 		this.keypressMode = "Fast"
@@ -72,6 +72,12 @@ class UIControls {
 					this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
 				}
 			})
+		})
+	}
+
+	setupShuffle() {
+		this.shuffleButton.addEventListener("click", (event) => {
+			this.rubiksCube.shuffle(this.rubiksCube, this.keypressMode)
 		})
 	}
 }

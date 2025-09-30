@@ -67,8 +67,8 @@ function onWindowResize() {
 
 const trackballControls = new TrackballControls(camera, renderer.domElement)
 trackballControls.rotateSpeed = 3.5
-trackballControls.minDistance = 0.15
-trackballControls.maxDistance = 0.3
+trackballControls.minDistance = 0.25
+trackballControls.maxDistance = 0.25
 trackballControls.enablePan = false
 trackballControls.enableZoom = false
 
@@ -129,13 +129,15 @@ collisionCube.name = "collision_cube"
 collisionCube.updateMatrixWorld()
 scene.add(collisionCube)
 
-let ui = new UIControls()
-ui.setupKeybinds()
-ui.setupKeypressSpeed()
 
 // initialize rubiks cube "data structure"
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
+
+let ui = new UIControls(rubiksCube)
+ui.setupKeybinds()
+ui.setupKeypressSpeed()
+ui.setupShuffle()
 
 
 let keybindsObj = new Keybinds(ui, rubiksCube)
@@ -221,7 +223,8 @@ renderer.domElement.addEventListener('mousemove', (e) => {
         !(intersectionPoint.x.toPrecision(1) == 0
             && intersectionPoint.y.toPrecision(1) == 0
             && intersectionPoint.z.toPrecision(1) == 0)
-            && !rubiksCube.isRotating) {
+            && !rubiksCube.isRotating
+            && !rubiksCube.isShuffling) {
         rah.handleDrag(intersects[0], mouseMovement)
     }
 
@@ -255,8 +258,7 @@ function animate() {
         else {
             trackballControls.enabled = true
         }
-    }
-    
+    } 
 
     trackballControls.update();
 	window.requestAnimationFrame(animate)

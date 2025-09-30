@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
+import RotationHelper from './rubiks-rotation-helper'
 
 class RubiksCube {
-    /* Global Variables */
+    /* Member Variables */
 
     /**
      * lists complementary faces on rubiks cube (i.e. faces that exist on
@@ -121,6 +122,11 @@ class RubiksCube {
         'Y': new THREE.Vector3(0, -1, 0), /* y */
     }
 
+    moves = [
+        "W|cw", "W|ccw", "B|cw", "B|ccw", "O|cw", "O|ccw",
+        "G|cw", "G|ccw", "R|cw", "R|ccw", "Y|cw", "Y|ccw"
+    ]
+
     /**
      * Constructor for RubiksCube class. The rotationGroups hash map and
      * coordinateMap array get
@@ -131,7 +137,15 @@ class RubiksCube {
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
 
+        /**
+         * 
+         */
         this.isRotating = false
+
+        /**
+         * 
+         */
+        this.isShuffling = false
     }
 
     /**
@@ -218,6 +232,45 @@ class RubiksCube {
             }
         }
 
+    }
+
+    shuffle(rubiksCube, keypressMode) {
+        this.isShuffling = true
+        let previousMove = null
+
+        let moves = []
+
+        let numMoves = 0
+        while (numMoves < 40) {
+            let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)];
+            if (previousMove != currentMove) {
+                //console.log("shuffle step")
+                let color = currentMove.substring(0, 1)
+                let direction = currentMove.substring(2)
+
+                previousMove = currentMove
+                numMoves += 1
+                moves.push([color, direction])
+            }
+        }
+
+        let i = 0
+        function animateMove() {
+            setTimeout(() => {
+                RotationHelper.rotateFace(
+                    rubiksCube, moves[i][1], moves[i][0], false, keypressMode
+                )
+
+                i += 1
+                if (i == moves.length) {
+                    rubiksCube.isShuffling = false
+                    return
+                }
+
+                animateMove()
+            }, keypressMode == "Fast" ? 100 : 350)
+        }
+        animateMove()
     }
 }
 
