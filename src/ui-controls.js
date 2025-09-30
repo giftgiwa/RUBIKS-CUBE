@@ -19,13 +19,6 @@ class UIControls {
 		//	document.getElementById("quick-drag-on"),
 		//	document.getElementById("quick-drag-off")]
 		this.shuffleButton = document.getElementById("shuffle-btn")
-
-		//console.log(this.UI)
-		//console.log(this.menuIcon)
-		//console.log(this.keybinds)
-		//console.log(this.mode)
-		//console.log(this.keypressSpeed)
-		//console.log(this.quickDrag)
 		
 		this.UI.style.display = 'none' // initially hide UI
 		this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
