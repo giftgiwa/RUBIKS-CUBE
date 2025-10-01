@@ -254,6 +254,13 @@ class RubiksCube {
             }
         }
 
+        /**
+         * The animateMove() helper function recursively calls itself while
+         * updating a counter variable until it reaches the desired number of
+         * moves animated in the Rubik's Cube. This serves as an 
+         * alternative to using a for loop that repeatedly calls rotateFace()
+         * to account for the asynchronous nature of the rotations of the faces.
+         */
         let i = 0
         function animateMove() {
             setTimeout(() => {
@@ -271,6 +278,8 @@ class RubiksCube {
             }, keypressMode == "Fast" ? 100 : 350)
         }
         animateMove()
+
+
     }
 }
 

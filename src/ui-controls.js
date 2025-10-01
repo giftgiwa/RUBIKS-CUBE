@@ -76,6 +76,19 @@ class UIControls {
 	}
 
 	setupShuffle() {
+		/**
+		 * On click, the Rubik's cube shuffles on screen, either quickly or
+		 * slowly.
+		 * 
+		 * Admittedly, an unconventional choice I made here were having the
+		 * shuffle() function called on the RubiksCube object AND having a
+		 * reference to the RubiksCube object passed in as a parameter. The
+		 * reason for this was that the shuffle() function references member
+		 * variables for the cube itslef, but the RotationHelper.rotateFace()
+		 * function call references the passed-in parameter since it used a
+		 * different context and would fail if rotateFace(this, ...) were used
+		 * instead.
+		 */
 		this.shuffleButton.addEventListener("click", (event) => {
 			this.rubiksCube.shuffle(this.rubiksCube, this.keypressMode)
 		})
