@@ -5,6 +5,7 @@
 	'GRAD' 0,
 	'opsz' 48;
 	font-size: 44px;
+	color: black;
 }
 
 .btn {
@@ -41,6 +42,7 @@
 .settings-row {
 	display: flex;
 	margin: 5px;
+	color: black;
 }
 
 .settings-btn {
@@ -57,6 +59,7 @@
 	top: 70px;
 	margin: 10px;
 	display: none;
+	color: black;
 }
 
 #menu-icon {

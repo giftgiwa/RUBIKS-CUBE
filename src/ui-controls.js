@@ -1,5 +1,6 @@
 class UIControls {
-	constructor() {
+	constructor(rubiksCube) {
+		this.rubiksCube = rubiksCube
 		this.UI = document.getElementById("user-interface")
 		this.menuIcon = document.getElementById("menu-icon")
 		this.keybinds = [
@@ -19,18 +20,10 @@ class UIControls {
 		//	document.getElementById("quick-drag-on"),
 		//	document.getElementById("quick-drag-off")]
 		this.shuffleButton = document.getElementById("shuffle-btn")
-
-		//console.log(this.UI)
-		//console.log(this.menuIcon)
-		//console.log(this.keybinds)
-		//console.log(this.mode)
-		//console.log(this.keypressSpeed)
-		//console.log(this.quickDrag)
 		
 		this.UI.style.display = 'none' // initially hide UI
 		this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 		this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
-
 
 		this.keybindsEnabled = false
 		this.keypressMode = "Fast"
@@ -79,6 +72,25 @@ class UIControls {
 					this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
 				}
 			})
+		})
+	}
+
+	setupShuffle() {
+		/**
+		 * On click, the Rubik's cube shuffles on screen, either quickly or
+		 * slowly.
+		 * 
+		 * Admittedly, an unconventional choice I made here were having the
+		 * shuffle() function called on the RubiksCube object AND having a
+		 * reference to the RubiksCube object passed in as a parameter. The
+		 * reason for this was that the shuffle() function references member
+		 * variables for the cube itslef, but the RotationHelper.rotateFace()
+		 * function call references the passed-in parameter since it used a
+		 * different context and would fail if rotateFace(this, ...) were used
+		 * instead.
+		 */
+		this.shuffleButton.addEventListener("click", (event) => {
+			this.rubiksCube.shuffle(this.rubiksCube, this.keypressMode)
 		})
 	}
 }
