@@ -175,7 +175,7 @@ renderer.domElement.addEventListener('pointerup', (e) => {
 let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.2)
 let cylinderMaterial = new THREE.ShaderMaterial({
     uniforms: {
-        power: { value: 1.5 } // Adjust this value to change the exponential curve
+        power: { value: 0.5 } // Adjust this value to change the exponential curve
     },
     vertexShader: `
         varying vec2 vUv; // Pass UV coordinates to the fragment shader
@@ -209,7 +209,7 @@ let cylinderMaterial = new THREE.ShaderMaterial({
 })
 
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
-cylinderMesh.position.y = 0.125
+cylinderMesh.position.y = 0.13
 scene.add(cylinderMesh)
 
 let intersects = []
