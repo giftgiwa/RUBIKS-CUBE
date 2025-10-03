@@ -152,7 +152,7 @@ axesHelper.name = "axes_helper";
 axesHelper.scale.x = 0.35
 axesHelper.scale.y = 0.35
 axesHelper.scale.z = 0.35
-scene.add(axesHelper)
+//scene.add(axesHelper)
 
 function onPointerMove(event) {
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1
@@ -161,31 +161,56 @@ function onPointerMove(event) {
 window.addEventListener('pointermove', onPointerMove)
 
 let mouseDown = false
-document.body.onmousedown = () => {
+document.body.onmousedown = () => {mouseDown = true}
+document.body.onmouseup = () => {mouseDown = false}
+
+renderer.domElement.addEventListener('pointerdown', (e) => {
     mouseDown = true
-}
-document.body.onmouseup = () => {
+})
+
+renderer.domElement.addEventListener('pointerup', (e) => {
     mouseDown = false
-}
+})
 
-let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.15)
-
+let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.2)
 let cylinderMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+        power: { value: 1.5 } // Adjust this value to change the exponential curve
+    },
     vertexShader: `
+        varying vec2 vUv; // Pass UV coordinates to the fragment shader
+
         void main() {
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );
+            vUv = uv; // Assign default UVs
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
     `,
     fragmentShader: `
-        void main() {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        varying vec2 vUv;
+        uniform float power;
+
+        float expStep( float x, float k, float n ){
+            return exp( -k*pow(x,n) );
         }
-    `
+
+        void main() {
+            float gradientFactor = vUv.y;
+            //float st = vUv.y / 6.0;
+            //float y = expStep(st,10.,1.0);
+
+            float alpha = pow(gradientFactor, power);
+            //float alpha = (1.0-(y));
+
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0 - alpha); // White color (RGB) with calculated alpha
+        }
+    `,
+    transparent: true, // Crucial: enable transparency for the material
+    side: THREE.DoubleSide 
 })
 
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
 cylinderMesh.position.y = 0.125
-//scene.add(cylinderMesh)
+scene.add(cylinderMesh)
 
 let intersects = []
 let originPoint = new THREE.Vector2(0, 0)
@@ -193,7 +218,8 @@ let dragStartingOnCube = false
 
 let intersectionPoint
 
-renderer.domElement.addEventListener('mousedown', (e) => {
+renderer.domElement.addEventListener('pointerdown', (e) => {
+    e.preventDefault()
     originPoint.x = e.clientX
     originPoint.y = e.clientY
 
@@ -208,7 +234,9 @@ renderer.domElement.addEventListener('mousedown', (e) => {
  * on the screen.
  */
 let previousMousePosition = { x: 0, y: 0 }
-renderer.domElement.addEventListener('mousemove', (e) => {
+//renderer.domElement.addEventListener('mousemove', (e) => {
+renderer.domElement.addEventListener('pointermove', (e) => {
+    e.preventDefault()
     if (!mouseDown)
         return
 
@@ -236,7 +264,8 @@ renderer.domElement.addEventListener('mousemove', (e) => {
     }
 })
 
-renderer.domElement.addEventListener('mouseup', (e) => {
+renderer.domElement.addEventListener('pointerup', (e) => {
+    e.preventDefault()
     if (dragStartingOnCube) {
         dragStartingOnCube = false
         rah.handleMouseUp()
