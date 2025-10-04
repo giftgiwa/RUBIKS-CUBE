@@ -146,6 +146,11 @@ class RubiksCube {
          * 
          */
         this.isShuffling = false
+
+        /**
+         * 
+         */
+        this.isAnimated = false
     }
 
     /**

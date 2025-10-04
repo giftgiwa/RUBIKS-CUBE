@@ -14,13 +14,6 @@ const camera = new THREE.PerspectiveCamera(
     0.1, /* closest visible distance */
     1000 /* furthest visible distance */
 )
-//const camera = new THREE.OrthographicCamera(
-//    0,
-//    window.innerWidth,
-//    window.innerHeight,
-//    0.1,
-//    1000
-//)
 
 camera.position.x = -0.15
 camera.position.y = 0.15
@@ -251,7 +244,7 @@ renderer.domElement.addEventListener('pointermove', (e) => {
         !(intersectionPoint.x.toPrecision(1) == 0
             && intersectionPoint.y.toPrecision(1) == 0
             && intersectionPoint.z.toPrecision(1) == 0)
-            && !rubiksCube.isRotating
+            && !rubiksCube.isAnimated
             && !rubiksCube.isShuffling) {
         rah.handleDrag(intersects[0], mouseMovement)
     }

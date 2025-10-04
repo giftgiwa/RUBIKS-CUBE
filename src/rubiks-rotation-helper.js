@@ -47,6 +47,8 @@ class RotationHelper {
         else // direction == "cw"
             rotationMap = rubiksCube.clockwiseRotationMap
 
+        rubiksCube.isAnimated = true
+
         /**
          * Fast animation – rotation is instant
          */
@@ -88,15 +90,11 @@ class RotationHelper {
                         requestAnimationFrame(step)
                     } else {
                         rubiksCube.isRotating = false
-                        //this.doAnimate = false
                     }
                 }
-
                 requestAnimationFrame(step)
-                //rubiksCube.isRotating = false
                 this.doAnimate = false
             }
-
         }
         
         for (let piece of rubiksCube.rotationGroups[color]) {
@@ -144,6 +142,7 @@ class RotationHelper {
             } else // handling center piece of face – do nothing
                 continue
         }
+        rubiksCube.isAnimated = false
     }
 
     /**
