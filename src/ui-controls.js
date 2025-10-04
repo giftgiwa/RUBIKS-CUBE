@@ -90,7 +90,12 @@ class UIControls {
 		 * instead.
 		 */
 		this.shuffleButton.addEventListener("click", (event) => {
-			this.rubiksCube.shuffle(this.rubiksCube, this.keypressMode)
+			this.shuffleButton.disabled = true
+			this.shuffleButton.style.borderColor = "#b3b3b3"
+			this.shuffleButton.style.color = "#b3b3b3"
+			this.shuffleButton.style.cursor = "not-allowed"
+			
+			this.rubiksCube.shuffle(this.rubiksCube, this.keypressMode, this.shuffleButton)
 		})
 	}
 }

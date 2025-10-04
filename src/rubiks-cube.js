@@ -234,7 +234,7 @@ class RubiksCube {
 
     }
 
-    shuffle(rubiksCube, keypressMode) {
+    shuffle(rubiksCube, keypressMode, shuffleButton) {
         this.isShuffling = true
         let previousMove = null
 
@@ -244,7 +244,6 @@ class RubiksCube {
         while (numMoves < 40) {
             let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)];
             if (previousMove != currentMove) {
-                //console.log("shuffle step")
                 let color = currentMove.substring(0, 1)
                 let direction = currentMove.substring(2)
 
@@ -271,6 +270,11 @@ class RubiksCube {
                 i += 1
                 if (i == moves.length) {
                     rubiksCube.isShuffling = false
+                    
+                    shuffleButton.disabled = false
+                    shuffleButton.style.borderColor = "#000"
+                    shuffleButton.style.color = "#000"
+                    shuffleButton.style.cursor = "pointer"
                     return
                 }
 
