@@ -85,6 +85,7 @@ class RubiksAnimationHelper {
     handleMouseDown(intersect) {
         this.currentIntersectionNormal = intersect.face.normal.clone()
         this.startingPosition = this.roundVector(intersect.point)
+        this.rubiksCube.isRotating = true
 
         /**
          * Check which of the faces on the Rubik's Cube the user could be
@@ -128,7 +129,6 @@ class RubiksAnimationHelper {
             }
             else {
                 if (this.previousRaycasterPosition && this.frameCounter != FRAME_COUNT) {
-                    //let deltaMove = intersect.point.clone()
                     let deltaMove
                     if (intersect)
                         deltaMove = intersect.point.clone()
@@ -156,8 +156,6 @@ class RubiksAnimationHelper {
                     this.previousRaycasterPosition = this.deltaMove
             }
         } else {
-            //console.log(`${this.currentColor} ${this.currentDirection}`)
-
             let deltaMove
             if (intersect) {
                 deltaMove = intersect.point.clone()
@@ -217,6 +215,8 @@ class RubiksAnimationHelper {
             this.colorCandidates = []
             this.previousRaycasterPosition = null
             this.frameCounter = 0
+
+            this.rubiksCube.isRotating = false
             return
         }
 
@@ -258,6 +258,8 @@ class RubiksAnimationHelper {
         this.frameCounter = 0
         this.avgDeltaMove = new THREE.Vector3(0, 0, 0)
         this.deltaMove = null
+
+        this.rubiksCube.isRotating = false
     }
 
 }
