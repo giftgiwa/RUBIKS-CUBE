@@ -72,6 +72,7 @@ class RotationHelper {
                  * attempts to do either during an ongoing animation!
                  */
                 rubiksCube.isRotating = true
+                rubiksCube.isAnimated = true
                 this.doAnimate = true
 
                 let currentRotationAngle = 0.0
@@ -90,6 +91,7 @@ class RotationHelper {
                         requestAnimationFrame(step)
                     } else {
                         rubiksCube.isRotating = false
+                        rubiksCube.isAnimated = false
                     }
                 }
                 requestAnimationFrame(step)
