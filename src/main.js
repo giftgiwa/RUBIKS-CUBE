@@ -49,6 +49,35 @@ if (!window.mobileCheck())
 
 document.body.appendChild(renderer.domElement)
 
+if (window.mobileCheck()) {
+    let div = document.createElement('div')
+    div.style.backgroundColor = "rgba(255, 255, 255, 0.5)"
+    div.style.backdropFilter = "blur(8px)"
+    div.style.zIndex = "99"
+    div.style.position = "absolute"
+    div.style.width = "90vw"
+    div.style.verticalAlign = "middle"
+    div.style.marginLeft = "5vw"
+    div.style.marginRight = "5vw"
+    div.style.bottom = "40px"
+
+    let mobileMessage = document.createElement('p')
+    mobileMessage.style.textAlign = "left"
+    mobileMessage.style.width = "100%"
+    mobileMessage.innerHTML = `Hello, it appears you are on a mobile device.
+    <br>
+    <br>
+    Unfortunately, due to the nature of the implementation, of user interaction,
+    the cube doesn't work very well on mobile devices :( You can even try it out
+    and the faces will completely mismatch lol.
+    <br>
+    <br>
+    I'm still trying to figure out a fix, but haven't quite found one yet.`
+
+    div.appendChild(mobileMessage)
+    document.body.appendChild(div)
+}
+
 // resize render on window resize
 window.addEventListener('resize', onWindowResize, false)
 
