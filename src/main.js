@@ -65,6 +65,7 @@ if (window.mobileCheck()) {
     let mobileMessage = document.createElement('p')
     mobileMessage.style.textAlign = "left"
     mobileMessage.style.width = "100%"
+    mobileMessage.style.fontSize = "13px"
     mobileMessage.innerHTML = `Hello, it appears you are on a mobile device.
     <br>
     <br>
@@ -156,7 +157,7 @@ scene.add(collisionCube)
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
 
-let ui = new UIControls(rubiksCube)
+let ui = new UIControls(rubiksCube, window.mobileCheck())
 ui.setupKeybinds()
 ui.setupKeypressSpeed()
 ui.setupShuffle()

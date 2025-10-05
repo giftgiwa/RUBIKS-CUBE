@@ -1,5 +1,5 @@
 class UIControls {
-	constructor(rubiksCube) {
+	constructor(rubiksCube, isMobileDevice) {
 		this.rubiksCube = rubiksCube
 		this.UI = document.getElementById("user-interface")
 		this.menuIcon = document.getElementById("menu-icon")
@@ -19,9 +19,17 @@ class UIControls {
 		//this.quickDrag = [
 		//	document.getElementById("quick-drag-on"),
 		//	document.getElementById("quick-drag-off")]
+		this.showCubeMap = [
+			document.getElementById("show-cubemap"),
+			document.getElementById("hide-cubemap")
+		]
 		this.shuffleButton = document.getElementById("shuffle-btn")
 		
 		this.UI.style.display = 'none' // initially hide UI
+
+		if (isMobileDevice)
+			document.getElementById("cube-map-settings").style.display = "none"
+		
 		this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 		this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 
