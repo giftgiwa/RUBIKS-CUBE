@@ -29,12 +29,14 @@ class UIControls {
 
 		if (isMobileDevice)
 			document.getElementById("cube-map-settings").style.display = "none"
-		
+
 		this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 		this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+		this.showCubeMap[0].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 
 		this.keybindsEnabled = false
 		this.keypressMode = "Fast"
+		this.cubeMapMode = "On"
 
 		/**
 		 * Hide and show settings as user clicks on the menu icon in the
@@ -49,6 +51,11 @@ class UIControls {
 				this.menuIcon.style.backgroundColor = 'rgba(0, 0, 0, 0)'
 			}
 		})
+
+		this.setupKeybinds()
+		this.setupKeypressSpeed()
+		this.setupCubeMap()
+		this.setupShuffle()
 	}
 
 	setupKeybinds() {
@@ -78,6 +85,22 @@ class UIControls {
 					this.keypressMode = "Slow"
 					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 					this.keypressSpeed[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
+				}
+			})
+		})
+	}
+
+	setupCubeMap() {
+		this.showCubeMap.forEach((button) => {
+			button.addEventListener("click", (event) => {
+				if (event.target.textContent == "On") {
+					this.cubeMapMode = "On"
+					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+					this.showCubeMap[1].style.backgroundColor = 'rgba(0, 0, 0, 0)'
+				} else { // event.target.textContent == "Off"
+					this.cubeMapMode = "Off"
+					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
+					this.showCubeMap[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
 				}
 			})
 		})

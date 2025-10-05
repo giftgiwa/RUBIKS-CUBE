@@ -158,9 +158,6 @@ let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
 
 let ui = new UIControls(rubiksCube, window.mobileCheck())
-ui.setupKeybinds()
-ui.setupKeypressSpeed()
-ui.setupShuffle()
 
 let cubeMap = new CubeMap(rubiksCube)
 
