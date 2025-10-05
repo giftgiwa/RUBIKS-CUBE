@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import CubeMap from './cube-map'
 import Keybinds from './keybinds'
 import RotationHelper from './rubiks-rotation-helper'
 import RubiksCube from './rubiks-cube'
@@ -151,8 +152,7 @@ collisionCube.name = "collision_cube"
 collisionCube.updateMatrixWorld()
 scene.add(collisionCube)
 
-
-// initialize rubiks cube "data structure"
+/* initialize rubiks cube "data structure" and helper classes */
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
 
@@ -161,6 +161,7 @@ ui.setupKeybinds()
 ui.setupKeypressSpeed()
 ui.setupShuffle()
 
+let cubeMap = new CubeMap(rubiksCube)
 
 let keybindsObj = new Keybinds(ui, rubiksCube)
 let rotationHelper = new RotationHelper(ui, trackballControls)
