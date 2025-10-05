@@ -280,16 +280,21 @@ class RubiksCube {
                     shuffleButton.style.borderColor = "#000"
                     shuffleButton.style.color = "#000"
                     shuffleButton.style.cursor = "pointer"
+
+                    console.log(rubiksCube.coordinateMap)
                     return
                 }
 
                 animateMove()
-            }, keypressMode == "Fast" ? 100 : 350)
+            }, keypressMode == "Fast" ? 100 : 400)
         }
         animateMove()
+    }
 
+    checkSolvedState() {
 
     }
+    
 }
 
 export default RubiksCube
