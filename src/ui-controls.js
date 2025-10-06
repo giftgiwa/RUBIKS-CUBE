@@ -1,3 +1,5 @@
+import CubeMap from './cube-map'
+
 class UIControls {
 	constructor(rubiksCube, isMobileDevice) {
 		this.rubiksCube = rubiksCube
@@ -37,6 +39,8 @@ class UIControls {
 		this.keybindsEnabled = false
 		this.keypressMode = "Fast"
 		this.cubeMapMode = "On"
+
+		this.cubeMap = new CubeMap(rubiksCube)
 
 		/**
 		 * Hide and show settings as user clicks on the menu icon in the
@@ -97,10 +101,16 @@ class UIControls {
 					this.cubeMapMode = "On"
 					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 					this.showCubeMap[1].style.backgroundColor = 'rgba(0, 0, 0, 0)'
+					this.cubeMap.show()
+
+					//console.log(this.cubeMap.visible)
 				} else { // event.target.textContent == "Off"
 					this.cubeMapMode = "Off"
 					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 					this.showCubeMap[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
+					this.cubeMap.hide()
+
+					//console.log(this.cubeMap.visible)
 				}
 			})
 		})
