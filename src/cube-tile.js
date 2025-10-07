@@ -1,7 +1,8 @@
 class CubeMapTile {
-	constructor(tileElement, coordinates) {
+	constructor(tileElement, coordinates, faceColor) {
 		this.tileElement = tileElement
 		this.coordinates = coordinates
+		this.faceColor = faceColor
 	}
 }
 

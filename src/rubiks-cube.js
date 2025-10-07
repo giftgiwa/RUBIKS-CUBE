@@ -152,6 +152,8 @@ class RubiksCube {
          * 
          */
         this.isAnimated = false
+
+        this.cubeMap = null
     }
 
     /**
@@ -303,7 +305,7 @@ class RubiksCube {
                 this.coordinateHashmap[`${value[i].coordinates[0]}${value[i].coordinates[1]}${value[i].coordinates[2]}`] = value[i]
             }
         }
-        console.log(this.coordinateHashmap)
+        //console.log(this.coordinateHashmap)
     }
     
 }

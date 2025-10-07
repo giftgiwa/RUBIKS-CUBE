@@ -144,6 +144,8 @@ class RotationHelper {
             } else // handling center piece of face – do nothing
                 continue
         }
+        rubiksCube.updateCoordinateHashmap()
+        rubiksCube.cubeMap.populateCubeMap()
         rubiksCube.isAnimated = false
     }
 
