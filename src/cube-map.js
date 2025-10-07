@@ -26,7 +26,7 @@ class CubeMap {
 	createCubeMap() {
 		// outer div
 		this.outerDiv = document.createElement("div")
-		this.outerDiv.style.width = "280px"
+		this.outerDiv.style.width = "260px"
 		this.outerDiv.style.height = "200px"
 		this.outerDiv.style.backgroundColor = "rgba(255, 255, 255, 0.5)"
 		this.outerDiv.style.position = "absolute"
@@ -37,7 +37,7 @@ class CubeMap {
 		this.outerDiv.style.boxSizing = "border-box"
 
 		let applyTileStyle = (tile) => {
-			tile.style.borderWidth = "2px"
+			tile.style.borderWidth = "1.5px"
 			tile.style.borderRadius = "2px"
 			tile.style.borderColor = "black"
 			tile.style.boxSizing = "border-box"
@@ -74,7 +74,6 @@ class CubeMap {
 							faceTiles[i][j],
 							[2 - i, 2, j]
 						)
-
 						// color center piece green
 						if (2 - i == 1 && j == 1)
 							faceTiles[i][j].style.backgroundColor = "#03E700"
@@ -87,7 +86,6 @@ class CubeMap {
 							faceTiles[i][j],
 							[0, 2 - i, j]
 						)
-
 						// color center piece white
 						if (2 - i == 1 && j == 1)
 							faceTiles[i][j].style.backgroundColor = "#FFFFFF"
@@ -98,26 +96,58 @@ class CubeMap {
 					for (let j = 2; j >= 0; j--) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[2 - j, 2 - i, 0]// [0, 2 - i, j]
+							[2 - j, 2 - i, 0]
 						)
-
 						// color center piece red
 						if (2 - j == 1 && 2 - i == 1)
 							faceTiles[i][j].style.backgroundColor = "#E70005"
 					}
 				}
 			} else if (faceColor == "O") {
-				// TODO
+				for (let i = 2; i >= 0; i--) {
+					for (let j = 0; j <= 2; j++) {
+						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
+							faceTiles[i][j],
+							[j, 2 - i, 2]
+						)
+						// color center piece orange
+						if (j == 1 && 2 - i == 1)
+							faceTiles[i][j].style.backgroundColor = "#E77100"
+					}
+				}
 			} else if (faceColor == "Y") {
-				// TODO
+				for (let i = 2; i >= 0; i--) {
+					for (let j = 2; j >= 0; j--) {
+						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
+							faceTiles[i][j],
+							[2, 2 - i, 2 - j]
+						)
+						// color center piece red
+						if (2 - i == 1 && 2 - j == 1)
+							faceTiles[i][j].style.backgroundColor = "#E7CD00"
+					}
+				}
 			} else if (faceColor == "B") {
-				// TODO
+				for (let i = 0; i <= 2; i++) {
+					for (let j = 0; j <= 2; j++) {
+						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
+							faceTiles[i][j],
+							[i, 0, j]
+						)
+						// color center piece red
+						if (i == 1 && j == 1)
+							faceTiles[i][j].style.backgroundColor = "#0068DD"
+					}
+				}
 			}
 		}
 		
 		createMapFace(3, 0, "G") // green face
 		createMapFace(3, 3, "W") // white face
 		createMapFace(0, 3, "R") // red face
+		createMapFace(6, 3, "O") // orange face
+		createMapFace(3, 6, "B") // red face
+		createMapFace(9, 3, "Y") // yellow face
 
 
 		document.body.appendChild(this.outerDiv)
