@@ -40,7 +40,8 @@ class UIControls {
 		this.keypressMode = "Fast"
 		this.cubeMapMode = "On"
 
-		this.cubeMap = new CubeMap(rubiksCube)
+		this.cubeMap = new CubeMap(rubiksCube, isMobileDevice)
+		this.isMobileDevice = window.mobileCheck()
 
 		/**
 		 * Hide and show settings as user clicks on the menu icon in the

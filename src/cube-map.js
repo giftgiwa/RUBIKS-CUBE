@@ -10,9 +10,11 @@ class CubeMap {
 		"B": "#0068DD"
 	}
 
-	constructor(rubiksCube) {
+	constructor(rubiksCube, isMobileDevice) {
 		this.rubiksCube = rubiksCube
 		this.rubiksCube.cubeMap = this
+		this.isMobileDevice = isMobileDevice
+
 		this.cubeMap = []
 		for (let i = 0; i < 9; i++) {
 			this.cubeMap.push(
@@ -46,6 +48,9 @@ class CubeMap {
 		this.outerDiv.style.backdropFilter = "blur(8px)"
 		this.outerDiv.style.padding = "10px";
 		this.outerDiv.style.boxSizing = "border-box"
+		if (this.isMobileDevice) {
+			this.outerDiv.style.display = "none"
+		}
 
 		let applyTileStyle = (tile) => {
 			tile.style.borderWidth = "1.5px"

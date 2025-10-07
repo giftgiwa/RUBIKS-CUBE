@@ -60,6 +60,8 @@ if (window.mobileCheck()) {
     div.style.marginLeft = "5vw"
     div.style.marginRight = "5vw"
     div.style.bottom = "40px"
+    div.style.padding = "10px"
+    div.style.boxSizing = "border-box"
 
     let mobileMessage = document.createElement('p')
     mobileMessage.style.textAlign = "left"
