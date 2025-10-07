@@ -136,6 +136,7 @@ class RubiksCube {
         this.gltf = gltf // store the model file
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
+        this.updateCoordinateHashmap()
 
         /**
          * 
@@ -293,6 +294,16 @@ class RubiksCube {
 
     checkSolvedState() {
 
+    }
+
+    updateCoordinateHashmap() {
+        this.coordinateHashmap = {}
+        for (const [key, value] of Object.entries(this.rotationGroups)) {
+            for (let i = 0; i < 9; i++) {
+                this.coordinateHashmap[`${value[i].coordinates[0]}${value[i].coordinates[1]}${value[i].coordinates[2]}`] = value[i]
+            }
+        }
+        console.log(this.coordinateHashmap)
     }
     
 }
