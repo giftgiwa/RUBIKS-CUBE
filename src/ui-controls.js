@@ -60,7 +60,9 @@ class UIControls {
 
 		this.setupKeybinds()
 		this.setupKeypressSpeed()
-		this.setupCubeMap()
+
+		if (!isMobileDevice && window.innerWidth > 450)
+			this.setupCubeMap()
 		this.setupShuffle()
 		this.setupReset()
 	}
