@@ -41,7 +41,8 @@ class UIControls {
 		this.keypressMode = "Fast"
 		this.cubeMapMode = "On"
 
-		this.cubeMap = new CubeMap(rubiksCube, isMobileDevice)
+		if (!isMobileDevice && window.innerWidth > 450)
+			this.cubeMap = new CubeMap(rubiksCube, isMobileDevice)
 		this.isMobileDevice = window.mobileCheck()
 
 		/**
@@ -60,7 +61,9 @@ class UIControls {
 
 		this.setupKeybinds()
 		this.setupKeypressSpeed()
-		this.setupCubeMap()
+
+		if (!isMobileDevice && window.innerWidth > 450)
+			this.setupCubeMap()
 		this.setupShuffle()
 		this.setupReset()
 	}

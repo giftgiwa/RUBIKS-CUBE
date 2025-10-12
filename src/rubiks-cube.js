@@ -117,9 +117,9 @@ class RubiksCube {
         'W': new THREE.Vector3(0, 1, 0), /* y */
         'B': new THREE.Vector3(0, 0, 1), /* z */
         'O': new THREE.Vector3(1, 0, 0), /* x */
-        'G': new THREE.Vector3(0, 0, -1), /* z */
-        'R': new THREE.Vector3(-1, 0, 0), /* x */
-        'Y': new THREE.Vector3(0, -1, 0), /* y */
+        'G': new THREE.Vector3(0, 0, -1), /* -z */
+        'R': new THREE.Vector3(-1, 0, 0), /* -x */
+        'Y': new THREE.Vector3(0, -1, 0), /* -y */
     }
 
     moves = [

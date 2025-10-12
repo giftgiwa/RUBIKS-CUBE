@@ -53,7 +53,7 @@ if (!window.mobileCheck())
 
 document.body.appendChild(renderer.domElement)
 
-console.log(window.innerWidth)
+//console.log(window.innerWidth)
 if (window.mobileCheck() || window.innerWidth <= 450) {
     let div = document.createElement('div')
     div.style.backgroundColor = "rgba(255, 255, 255, 0.5)"
@@ -234,7 +234,7 @@ let cylinderMaterial = new THREE.ShaderMaterial({
 
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
 cylinderMesh.position.y = 0.13
-//scene.add(cylinderMesh)
+scene.add(cylinderMesh)
 
 let intersects = []
 let originPoint = new THREE.Vector2(0, 0)
