@@ -41,7 +41,8 @@ class UIControls {
 		this.keypressMode = "Fast"
 		this.cubeMapMode = "On"
 
-		this.cubeMap = new CubeMap(rubiksCube, isMobileDevice)
+		if (!isMobileDevice && window.innerWidth > 450)
+			this.cubeMap = new CubeMap(rubiksCube, isMobileDevice)
 		this.isMobileDevice = window.mobileCheck()
 
 		/**
