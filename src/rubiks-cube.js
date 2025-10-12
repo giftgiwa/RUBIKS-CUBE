@@ -292,8 +292,30 @@ class RubiksCube {
         animateMove()
     }
 
-    checkSolvedState() {
+    isSolved() {
+        for (let i = 0; i < this.coordinateMap.length; i++) {
+            for (let j = 0; j < this.coordinateMap[0].length; j++) {
+                for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
+                    let piece = this.coordinateMap[i][j][k]
 
+                    if (piece != null) {
+                        let hasCorrectPositions = piece.coordinates[0] == i &&
+                                                  piece.coordinates[1] == j &&
+                                                  piece.coordinates[2] == k
+                        let hasCorrectOrientations = true
+
+                        for (const [key, value] of Object.entries(piece.orientationMap)) {
+                            hasCorrectOrientations &= (key == value)
+                        }
+
+                        if (!(hasCorrectPositions && hasCorrectOrientations)) {
+                            return false
+                        }
+                    }
+                }
+            }
+        }
+        return true
     }
 
     updateCoordinateHashmap() {
