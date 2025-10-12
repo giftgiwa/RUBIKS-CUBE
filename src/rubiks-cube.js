@@ -283,8 +283,6 @@ class RubiksCube {
                     shuffleButton.style.borderColor = "#000"
                     shuffleButton.style.color = "#000"
                     shuffleButton.style.cursor = "pointer"
-
-                    console.log(rubiksCube.coordinateMap)
                     return
                 }
 
@@ -305,7 +303,40 @@ class RubiksCube {
                 this.coordinateHashmap[`${value[i].coordinates[0]}${value[i].coordinates[1]}${value[i].coordinates[2]}`] = value[i]
             }
         }
-        //console.log(this.coordinateHashmap)
+    }
+
+    reset() {
+        for (let i = 0; i < this.coordinateMap.length; i++) {
+            for (let j = 0; j < this.coordinateMap[0].length; j++) {
+                for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
+                    let piece = this.coordinateMap[i][j][k]
+
+                    if (piece != null) {
+                        piece.coordinates = [i, j, k]
+
+                        for (const [key, value] of Object.entries(piece.orientationMap)) {
+                            piece.orientationMap[key] = key
+                        }
+
+                        piece.mesh.position.x = -0.02 + (k * 0.02)
+                        piece.mesh.position.y = 0.02 - (i * 0.02)
+                        piece.mesh.position.z = 0.02 - (j * 0.02)
+
+                        piece.mesh.rotation.x = 0
+                        piece.mesh.rotation.y = 0
+                        piece.mesh.rotation.z = 0
+                    }
+                }
+            }
+        }
+        this.resetMeshGroups()
+    }
+
+    resetMeshGroups() {
+        for (const [key, value] of Object.entries(this.rotationGroups)) {
+            this.rotationGroups[key] = []
+        }
+        this.buildMeshGroups()
     }
     
 }

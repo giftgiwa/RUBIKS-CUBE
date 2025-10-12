@@ -240,8 +240,8 @@ class RotationHelper {
                 x*Math.sin(angle) + y*Math.cos(angle) + y0*(1 - Math.cos(angle)) - x0*Math.sin(angle)
             ))
         }
-        rubiksPiece.mesh.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
-        rubiksPiece.mesh.userData.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`   
+        //rubiksPiece.mesh.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
+        //rubiksPiece.mesh.userData.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`   
     }
 
     /**

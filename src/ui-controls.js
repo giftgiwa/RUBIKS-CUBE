@@ -26,6 +26,7 @@ class UIControls {
 			document.getElementById("hide-cubemap")
 		]
 		this.shuffleButton = document.getElementById("shuffle-btn")
+		this.resetButton = document.getElementById("reset-btn")
 		
 		this.UI.style.display = 'none' // initially hide UI
 
@@ -61,6 +62,7 @@ class UIControls {
 		this.setupKeypressSpeed()
 		this.setupCubeMap()
 		this.setupShuffle()
+		this.setupReset()
 	}
 
 	setupKeybinds() {
@@ -103,15 +105,11 @@ class UIControls {
 					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 					this.showCubeMap[1].style.backgroundColor = 'rgba(0, 0, 0, 0)'
 					this.cubeMap.show()
-
-					//console.log(this.cubeMap.visible)
 				} else { // event.target.textContent == "Off"
 					this.cubeMapMode = "Off"
 					event.target.style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
 					this.showCubeMap[0].style.backgroundColor = 'rgba(0, 0, 0, 0)'
 					this.cubeMap.hide()
-
-					//console.log(this.cubeMap.visible)
 				}
 			})
 		})
@@ -138,6 +136,15 @@ class UIControls {
 			this.shuffleButton.style.cursor = "not-allowed"
 			
 			this.rubiksCube.shuffle(this.rubiksCube, this.keypressMode, this.shuffleButton)
+		})
+	}
+
+	setupReset() {
+		/**
+		 * On click, the Rubik's Cube resets to its original, solved state
+		 */
+		this.resetButton.addEventListener("click", (event) => {
+			this.rubiksCube.reset()
 		})
 	}
 }
