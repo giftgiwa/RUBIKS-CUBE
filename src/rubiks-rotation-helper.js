@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
 import RubiksCube from './rubiks-cube'
+import UIControls from './ui-controls'
 
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     let q = new THREE.Quaternion();
@@ -147,6 +148,10 @@ class RotationHelper {
         rubiksCube.updateCoordinateHashmap()
         rubiksCube.cubeMap.populateCubeMap()
         rubiksCube.isAnimated = false
+
+        if (rubiksCube.isShuffled && rubiksCube.isSolved()) {
+            UIControls.congratulations()
+        }
     }
 
     /**

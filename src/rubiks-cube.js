@@ -154,6 +154,8 @@ class RubiksCube {
         this.isAnimated = false
 
         this.cubeMap = null
+
+        this.isShuffled = false
     }
 
     /**
@@ -249,7 +251,7 @@ class RubiksCube {
         let moves = []
 
         let numMoves = 0
-        while (numMoves < 40) {
+        while (numMoves < 2) {
             let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)];
             if (previousMove != currentMove) {
                 let color = currentMove.substring(0, 1)
@@ -283,6 +285,7 @@ class RubiksCube {
                     shuffleButton.style.borderColor = "#000"
                     shuffleButton.style.color = "#000"
                     shuffleButton.style.cursor = "pointer"
+                    rubiksCube.isShuffled = true
                     return
                 }
 

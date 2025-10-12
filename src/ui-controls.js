@@ -147,6 +147,22 @@ class UIControls {
 			this.rubiksCube.reset()
 		})
 	}
+
+	static congratulations() {
+		let congrats = document.createElement('p')
+		congrats.style.textAlign = "left"
+		congrats.style.position = "absolute"
+		congrats.style.fontSize = "13px"
+		congrats.style.bottom = "10px"
+		congrats.style.left = "10px"
+		congrats.style.color = "#3e8a40ff"
+		congrats.innerHTML = `Congratulations!!!`
+
+		document.body.appendChild(congrats)
+		setTimeout(() => {
+			document.body.removeChild(congrats)
+		}, 1000)
+	}
 }
 
 export default UIControls
