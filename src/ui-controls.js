@@ -30,7 +30,7 @@ class UIControls {
 		
 		this.UI.style.display = 'none' // initially hide UI
 
-		if (isMobileDevice)
+		if (isMobileDevice || window.innerWidth <= 450)
 			document.getElementById("cube-map-settings").style.display = "none"
 
 		this.keybinds[1].style.backgroundColor = 'rgba(0, 0, 0, 0.15)'
