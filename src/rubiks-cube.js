@@ -251,7 +251,7 @@ class RubiksCube {
         let moves = []
 
         let numMoves = 0
-        while (numMoves < 2) {
+        while (numMoves < 40) {
             let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)];
             if (previousMove != currentMove) {
                 let color = currentMove.substring(0, 1)
