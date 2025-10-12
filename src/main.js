@@ -18,6 +18,10 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.x = -0.15
 camera.position.y = 0.15
 camera.position.z = 0.15
+//camera.position.x = -0.15
+//camera.position.y = -0.15
+//camera.position.z = -0.15
+//camera.up.y = -1
 camera.lookAt(new THREE.Vector3(0, 0, 0))
 
 const renderer = new THREE.WebGLRenderer({
@@ -49,7 +53,8 @@ if (!window.mobileCheck())
 
 document.body.appendChild(renderer.domElement)
 
-if (window.mobileCheck()) {
+console.log(window.innerWidth)
+if (window.mobileCheck() || window.innerWidth <= 450) {
     let div = document.createElement('div')
     div.style.backgroundColor = "rgba(255, 255, 255, 0.5)"
     div.style.backdropFilter = "blur(8px)"
@@ -98,7 +103,10 @@ trackballControls.enablePan = false
 trackballControls.enableZoom = false
 
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
-scene.add( ambientLight )
+scene.add(ambientLight)
+
+//const ambientLight = new THREE.AmbientLight(0xffffff, 3.5) // soft white light
+//scene.add(ambientLight)
 
 const lightPositions = [
     [0.5, 0.5, 0.5], 
@@ -172,7 +180,7 @@ axesHelper.name = "axes_helper";
 axesHelper.scale.x = 0.35
 axesHelper.scale.y = 0.35
 axesHelper.scale.z = 0.35
-scene.add(axesHelper)
+//scene.add(axesHelper)
 
 function onPointerMove(event) {
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1
@@ -226,7 +234,7 @@ let cylinderMaterial = new THREE.ShaderMaterial({
 
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
 cylinderMesh.position.y = 0.13
-scene.add(cylinderMesh)
+//scene.add(cylinderMesh)
 
 let intersects = []
 let originPoint = new THREE.Vector2(0, 0)
