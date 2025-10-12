@@ -330,6 +330,8 @@ class RubiksCube {
             }
         }
         this.resetMeshGroups()
+        this.updateCoordinateHashmap()
+        this.cubeMap.populateCubeMap()
     }
 
     resetMeshGroups() {
