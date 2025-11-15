@@ -79,6 +79,12 @@ class RotationHelper {
                 let currentRotationAngle = 0.0
                 let frameStep = 1 / 10
 
+                /**
+                 * step() increments the orientation of each of the pieces that
+                 * make up a face by a fraction of a face rotation (+/-90 degreees)
+                 * iff the cube has't already been rotated to +/-90 degrees,
+                 * as checked through currentRotationAngle
+                 */
                 function step() {
                     currentRotationAngle += ((Math.PI / 2) * frameStep)
                     for (let piece of rubiksCube.rotationGroups[color]) {

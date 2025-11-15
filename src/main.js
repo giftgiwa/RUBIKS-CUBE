@@ -18,10 +18,6 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.x = -0.15
 camera.position.y = 0.15
 camera.position.z = 0.15
-//camera.position.x = -0.15
-//camera.position.y = -0.15
-//camera.position.z = -0.15
-//camera.up.y = -1
 camera.lookAt(new THREE.Vector3(0, 0, 0))
 
 const renderer = new THREE.WebGLRenderer({
@@ -46,14 +42,16 @@ window.mobileCheck = function() {
 
 
 /**
- * Sharper resolution if user is not on a mobile device
+ * Sharpen resolution if user is not on a mobile device
  */
 if (!window.mobileCheck())
     renderer.setPixelRatio(window.devicePixelRatio * 2)
 
 document.body.appendChild(renderer.domElement)
 
-//console.log(window.innerWidth)
+/**
+ * Display message for mobile users only
+ */
 if (window.mobileCheck() || window.innerWidth <= 450) {
     let div = document.createElement('div')
     div.style.backgroundColor = "rgba(255, 255, 255, 0.5)"
@@ -105,9 +103,6 @@ trackballControls.enableZoom = false
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add(ambientLight)
 
-//const ambientLight = new THREE.AmbientLight(0xffffff, 3.5) // soft white light
-//scene.add(ambientLight)
-
 const lightPositions = [
     [0.5, 0.5, 0.5], 
     [-0.5, 0.5, 0.5], 
@@ -119,6 +114,7 @@ const lightPositions = [
     [0.5, -0.5, -0.5]
 ]
 
+// add point lights at 8 points around the cube
 for (let i = 0; i < lightPositions.length; i++) {
     const light = new THREE.PointLight(
         0xffffff, /* color */
@@ -133,6 +129,7 @@ for (let i = 0; i < lightPositions.length; i++) {
     scene.add(light)
 }
 
+// load Rubik's Cube mesh (in .gltf format)
 const loader = new GLTFLoader()
 let rubiksCubeMesh = new THREE.Mesh() // create Rubik's cube
 
@@ -151,6 +148,10 @@ rubiksCubeMesh.scale.y = 2
 rubiksCubeMesh.scale.z = 2
 scene.add(rubiksCubeMesh)
 
+/**
+ * Add invisble "collision cube", which is used for detecting click positions
+ * and swipe directions about the cube for rotating the individual faces.
+ */
 const collisionCubeGeometry = new THREE.BoxGeometry(0.120, 0.120, 0.120)
 const collisionCubeMaterial = new THREE.MeshBasicMaterial({
     color: 0x00ff00,
@@ -162,19 +163,19 @@ collisionCube.name = "collision_cube"
 collisionCube.updateMatrixWorld()
 scene.add(collisionCube)
 
-/* initialize rubiks cube "data structure" and helper classes */
+// initialize rubiks cube "data structure" and helper classes
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
 let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
-
 let ui = new UIControls(rubiksCube, window.mobileCheck())
-
 let keybindsObj = new Keybinds(ui, rubiksCube)
 let rotationHelper = new RotationHelper(ui, trackballControls)
 
+// initialize objects for detecting mouse click-and-drag interactions with scene
 const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
 const mouseMovement = new THREE.Vector2()
 
+// initialize axes helper (for visual assistance)
 const axesHelper = new THREE.AxesHelper();
 axesHelper.name = "axes_helper";
 axesHelper.scale.x = 0.35
@@ -182,6 +183,10 @@ axesHelper.scale.y = 0.35
 axesHelper.scale.z = 0.35
 //scene.add(axesHelper)
 
+/**
+ * Track mouse movement as pointer movees around the screen
+ * Source: https://stackoverflow.com/questions/30860773/how-to-get-the-mouse-position-using-three-js
+ */
 function onPointerMove(event) {
 	pointer.x = (event.clientX / window.innerWidth) * 2 - 1
 	pointer.y = -(event.clientY / window.innerHeight) * 2 + 1
@@ -200,16 +205,20 @@ renderer.domElement.addEventListener('pointerup', (e) => {
     mouseDown = false
 })
 
+/**
+ * Add beacon atop white center-piece, made with the help of GLSL shaders.
+ * Reference for GLSL code: https://thebookofshaders.com/edit.php#05/expstep.frag
+ */
 let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.2)
 let cylinderMaterial = new THREE.ShaderMaterial({
     uniforms: {
         power: { value: 0.5 }
     },
     vertexShader: `
-        varying vec2 vUv; // Pass UV coordinates to the fragment shader
+        varying vec2 vUv;
 
         void main() {
-            vUv = uv; // Assign default UVs
+            vUv = uv;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
     `,
@@ -218,7 +227,7 @@ let cylinderMaterial = new THREE.ShaderMaterial({
         uniform float power;
 
         float expStep(float x, float k, float n) {
-            return exp( -k*pow(x,n) );
+            return exp( -k * pow(x,n) );
         }
 
         void main() {
@@ -231,10 +240,10 @@ let cylinderMaterial = new THREE.ShaderMaterial({
     transparent: true, // Crucial: enable transparency for the material
     side: THREE.DoubleSide 
 })
-
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
 cylinderMesh.position.y = 0.13
 scene.add(cylinderMesh)
+
 
 let intersects = []
 let originPoint = new THREE.Vector2(0, 0)
@@ -254,11 +263,8 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
 })
 
 /**
- * Calculate the x and y components of the direction the user clicks and drags
- * on the screen.
+ * 
  */
-let previousMousePosition = { x: 0, y: 0 }
-//renderer.domElement.addEventListener('mousemove', (e) => {
 renderer.domElement.addEventListener('pointermove', (e) => {
     e.preventDefault()
     if (!mouseDown)
@@ -279,15 +285,12 @@ renderer.domElement.addEventListener('pointermove', (e) => {
             && !rubiksCube.isShuffling) {
         rah.handleDrag(intersects[0], mouseMovement)
     }
-
-    if (mouseDown) {
-        previousMousePosition = {
-            x: e.clientX,
-            y: e.clientY
-        }
-    }
 })
 
+/**
+ * Handle release of user click (locking face to a side after click+drag to
+ * rotate it)
+ */
 renderer.domElement.addEventListener('pointerup', (e) => {
     e.preventDefault()
     if (dragStartingOnCube) {
@@ -296,20 +299,22 @@ renderer.domElement.addEventListener('pointerup', (e) => {
     }
 })
 
-const filteredChildren = scene.children.filter(item => item.name == "collision_cube")
+const filteredChildren = scene.children.filter(item => item.name == "collision_cube") // only detect intersections with the collison cube
 function animate() {
     raycaster.setFromCamera(pointer, camera)
     intersects = raycaster.intersectObjects(filteredChildren, false)
     if (intersects.length > 0)
         intersectionPoint = intersects[0].point
 
+    /**
+     * Disable trackballControls if the user starts clicking and dragging on
+     * the cube itself.
+     */
     if (!mouseDown) {
-        if (intersects.length > 0) {
+        if (intersects.length > 0)
             trackballControls.enabled = false
-        }
-        else {
+        else
             trackballControls.enabled = true
-        }
     } 
 
     trackballControls.update();

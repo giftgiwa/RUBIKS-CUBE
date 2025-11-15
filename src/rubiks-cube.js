@@ -244,6 +244,12 @@ class RubiksCube {
 
     }
 
+    /**
+     * Shuffle the Rubik's cube
+     * @param {*} rubiksCube 
+     * @param {*} keypressMode Whether the rotation animation is instant or slow.
+     * @param {*} shuffleButton 
+     */
     shuffle(rubiksCube, keypressMode, shuffleButton) {
         this.isShuffling = true
         let previousMove = null
@@ -330,13 +336,16 @@ class RubiksCube {
         }
     }
 
+    /**
+     * Reset the Rubik's Cube's internal and external representation.
+     */
     reset() {
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
                     let piece = this.coordinateMap[i][j][k]
 
-                    if (piece != null) {
+                    if (piece != null) { // skipping the center piece
                         piece.coordinates = [i, j, k]
 
                         for (const [key, value] of Object.entries(piece.orientationMap)) {
@@ -359,6 +368,10 @@ class RubiksCube {
         this.cubeMap.populateCubeMap()
     }
 
+    /**
+     * Empty each of the arrays of RubiksPiece meshes, such that they can be
+     * rebuilt as part of resetting the cube.
+     */
     resetMeshGroups() {
         for (const [key, value] of Object.entries(this.rotationGroups)) {
             this.rotationGroups[key] = []

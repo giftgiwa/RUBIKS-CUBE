@@ -1,6 +1,11 @@
 import CubeMap from './cube-map'
 
 class UIControls {
+	/**
+	 * Creates an instance of the UIControls class.
+	 * @param {RubiksCube} rubiksCube The RubiksCube objects to be referenced. 
+	 * @param {boolean} isMobileDevice Whether the user is on a mobile device or not.
+	 */
 	constructor(rubiksCube, isMobileDevice) {
 		this.rubiksCube = rubiksCube
 		this.UI = document.getElementById("user-interface")
@@ -68,6 +73,9 @@ class UIControls {
 		this.setupReset()
 	}
 
+	/**
+	 * 
+	 */
 	setupKeybinds() {
 		this.keybinds.forEach((button) => {
 			button.addEventListener("click", (event) => {
@@ -84,6 +92,11 @@ class UIControls {
 		})
 	}
 
+	/**
+	 * Applies an event listener for switching between "Fast" animation mode
+	 * (instant rotation of faces on pressing keys) and "Slow" animation mode (gradual
+	 * rotation of faces on pressing keys).
+	 */
 	setupKeypressSpeed() {
 		this.keypressSpeed.forEach((button) => {
 			button.addEventListener("click", (event) => {
@@ -100,6 +113,10 @@ class UIControls {
 		})
 	}
 
+	/**
+	 * Applies an event listener that toggles the appearance of the cube map
+	 * on and off.
+	 */
 	setupCubeMap() {
 		this.showCubeMap.forEach((button) => {
 			button.addEventListener("click", (event) => {
@@ -118,6 +135,11 @@ class UIControls {
 		})
 	}
 
+	/**
+	 * Applies an event listener that shuffle the cube when clicking the shuffle
+	 * button. The shuffle button deactivates and changes color until the
+	 * shuffle completes.
+	 */
 	setupShuffle() {
 		/**
 		 * On click, the Rubik's cube shuffles on screen, either quickly or
@@ -151,6 +173,10 @@ class UIControls {
 		})
 	}
 
+	/**
+	 * Display congratulations message after cube is solved iff the cube
+	 * was previously shuffled.
+	 */
 	static congratulations() {
 		let congrats = document.createElement('p')
 		congrats.style.textAlign = "left"
