@@ -16,6 +16,11 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
 
 const FRAME_COUNT = 8
 
+/**
+ * Class for handling updates of orientations and positions of the individual
+ * cube pieces (the cube's external representation) for groups RubiksPiece
+ * objects (faces).
+ */
 class RubiksAnimationHelper {
     currentDirection = null
     currentColor = null
@@ -68,6 +73,11 @@ class RubiksAnimationHelper {
         return new THREE.Vector3(Number(x), Number(y), Number(z))
     }
 
+    /**
+     * Helper function to get the axis of the largest vector component by magnitude.
+     * @param {THREE.Vector3} v Vector to get largest component of
+     * @returns "x", "y", or "z" for the axis along which the largest vector component lies.
+     */
     getLargestVectorComponent(v) {
         let result = "x"
         let largestComponentMagnitude = Math.abs(v.x)
@@ -82,6 +92,17 @@ class RubiksAnimationHelper {
         return result
     }
 
+    /**
+     * Handles the user mouse down action.
+     * 
+     * handleMouseDown() detects and stores the normal of the face on which the
+     * user clicks on on the Rubik's Cube (or more specifically, the invisible
+     * collision cube). It also updates a state variable to indicate that the
+     * cube is currently rotating. It then store an array of "color candidates" –
+     * faces that the user could be trying to rotate, which would be based on
+     * the position in the scene that the user's mouse clicks on.
+     * @param {*} intersect 
+     */
     handleMouseDown(intersect) {
         this.currentIntersectionNormal = intersect.face.normal.clone()
         this.startingPosition = this.roundVector(intersect.point)
@@ -103,6 +124,19 @@ class RubiksAnimationHelper {
         }
     }
 
+
+    /**
+     * Handles the user mouse drag action (only triggers when the user is
+     * holding down with their mouse).
+     * 
+     * handleMouseDrag() gets the average of multiple frames of movement
+     * over which the user drags their mouse, determines the face and direction
+     * the the user is mose likely attempting to rotate, and incrementatlly
+     * rotates the face accordingly.
+     * 
+     * @param {*} intersect 
+     * @param {*} mouseMovement
+     */
 	handleDrag(intersect, mouseMovement) {
         if (this.currentColor == null && this.currentDirection == null) {
             if (this.frameCounter == FRAME_COUNT) {
@@ -198,6 +232,11 @@ class RubiksAnimationHelper {
         }
 	}
 
+    /**
+     * Handles the user mouse up (click release) action (only triggers when the user is
+     * holding down with their mouse).
+     * @returns 
+     */
     handleMouseUp() {
         if (
             !this.currentDirection ||

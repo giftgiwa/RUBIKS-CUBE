@@ -165,7 +165,7 @@ scene.add(collisionCube)
 
 // initialize rubiks cube "data structure" and helper classes
 let rubiksCube = new RubiksCube(rubiksCubeMesh)
-let rah = new RubiksAnimationHelper(rubiksCube, camera, renderer)
+let rubiksAnimationHelper = new RubiksAnimationHelper(rubiksCube, camera, renderer)
 let ui = new UIControls(rubiksCube, window.mobileCheck())
 let keybindsObj = new Keybinds(ui, rubiksCube)
 let rotationHelper = new RotationHelper(ui, trackballControls)
@@ -256,9 +256,13 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
     originPoint.x = e.clientX
     originPoint.y = e.clientY
 
+    /**
+     * handleMouseDown() only gets called if the click and drag starts on the
+     * Rubik's Cube in the scene.
+     */
     if (intersects.length > 0) {
         dragStartingOnCube = true
-        rah.handleMouseDown(intersects[0])
+        rubiksAnimationHelper.handleMouseDown(intersects[0])
     }
 })
 
@@ -283,7 +287,7 @@ renderer.domElement.addEventListener('pointermove', (e) => {
             && intersectionPoint.z.toPrecision(1) == 0)
             && !rubiksCube.isAnimated
             && !rubiksCube.isShuffling) {
-        rah.handleDrag(intersects[0], mouseMovement)
+        rubiksAnimationHelper.handleDrag(intersects[0], mouseMovement)
     }
 })
 
@@ -295,7 +299,7 @@ renderer.domElement.addEventListener('pointerup', (e) => {
     e.preventDefault()
     if (dragStartingOnCube) {
         dragStartingOnCube = false
-        rah.handleMouseUp()
+        rubiksAnimationHelper.handleMouseUp()
     }
 })
 

@@ -17,8 +17,8 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
 }()
 
 /**
- * Class for handling updates of coordinates and coordinate maps for individual
- * RubiksPiece objects.
+ * Class for handling updates of coordinates and coordinate maps (the cube's
+ * internal representation) for individual RubiksPiece objects.
  */
 class RotationHelper {
 
