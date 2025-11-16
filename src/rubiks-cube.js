@@ -2,8 +2,11 @@ import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
 import RotationHelper from './rubiks-rotation-helper'
 
+/**
+ * Class for storing a Rubik's Cube instantiated in the scene (for both internal
+ * and external representation
+ */
 class RubiksCube {
-    /* Member Variables */
 
     /**
      * lists complementary faces on rubiks cube (i.e. faces that exist on
@@ -122,6 +125,10 @@ class RubiksCube {
         'Y': new THREE.Vector3(0, -1, 0), /* -y */
     }
 
+	/**
+	 * Possible direction to rotate the cube (at the moment, only for rotating
+	 * the outer faces themselves and not the middle layers).
+	 */
     moves = [
         "W|cw", "W|ccw", "B|cw", "B|ccw", "O|cw", "O|ccw",
         "G|cw", "G|ccw", "R|cw", "R|ccw", "Y|cw", "Y|ccw"
@@ -129,7 +136,10 @@ class RubiksCube {
 
     /**
      * Constructor for RubiksCube class. The rotationGroups hash map and
-     * coordinateMap array get
+     * coordinateMap array get initially populated based on the initial
+	 * positions and orientations of the Rubik's cube pieces (which would be the
+	 * solved state of the cube).
+	 *
      * @param {*} gltf actual GLTF file imported into the THREE.js Scene
      */
     constructor(gltf) {
@@ -138,23 +148,15 @@ class RubiksCube {
         this.buildMeshGroups() // build the mesh groups
         this.updateCoordinateHashmap()
 
-        /**
-         * 
-         */
+		/**
+		 * Initialize member variables to indicating that the Rubik's cube isn't
+		 * rotating, isn't shuffling, isn't set to animate a rotation, doesn't
+		 * have its cube map initialized, and hasn't been shuffled yet.
+		 */
         this.isRotating = false
-
-        /**
-         * 
-         */
         this.isShuffling = false
-
-        /**
-         * 
-         */
         this.isAnimated = false
-
         this.cubeMap = null
-
         this.isShuffled = false
     }
 
@@ -301,6 +303,11 @@ class RubiksCube {
         animateMove()
     }
 
+	/**
+	 * Checks if the Rubik's cube is currently solved.
+	 * @returns true for if the cube is currently solved, false for if the cube
+	 * 			isn't
+	 */
     isSolved() {
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {

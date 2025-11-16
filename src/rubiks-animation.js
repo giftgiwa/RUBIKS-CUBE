@@ -1,6 +1,12 @@
 import * as THREE from 'three'
 import RotationHelper from './rubiks-rotation-helper'
 
+/**
+ * Prototype for rotating an Object3D around an axis in space by a specified
+ * angle.
+ *
+ * Source: https://stackoverflow.com/a/32038265/17799976
+ */
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     let q = new THREE.Quaternion();
     return function rotateAroundWorldAxis(point, axis, angle) {
@@ -14,6 +20,11 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     }
 }()
 
+/**
+ * FRAME_COUNT stores the number of frames of movement of the user's mouse over
+ * which the average is calculated to determine the direction the user is
+ * attempting to drag over the Rubik's Cube.
+ */
 const FRAME_COUNT = 8
 
 /**
@@ -131,8 +142,11 @@ class RubiksAnimationHelper {
      * 
      * handleMouseDrag() gets the average of multiple frames of movement
      * over which the user drags their mouse, determines the face and direction
-     * the the user is mose likely attempting to rotate, and incrementatlly
-     * rotates the face accordingly.
+     * the the user is mose likely attempting to rotate, and incrementally
+     * rotates the face accordingly if the most-likely current move hasn't
+     * already been determined.
+     * 
+     * If it has already been determined, 
      * 
      * @param {*} intersect 
      * @param {*} mouseMovement
@@ -235,7 +249,6 @@ class RubiksAnimationHelper {
     /**
      * Handles the user mouse up (click release) action (only triggers when the user is
      * holding down with their mouse).
-     * @returns 
      */
     handleMouseUp() {
         if (

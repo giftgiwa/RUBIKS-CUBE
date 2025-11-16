@@ -3,6 +3,12 @@ import RubiksPiece from './rubiks-piece'
 import RubiksCube from './rubiks-cube'
 import UIControls from './ui-controls'
 
+/**
+ * Prototype for rotating an Object3D around an axis in space by a specified
+ * angle.
+ * 
+ * Source: https://stackoverflow.com/a/32038265/17799976
+ */
 THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     let q = new THREE.Quaternion();
     return function rotateAroundWorldAxis(point, axis, angle) {
@@ -25,6 +31,11 @@ class RotationHelper {
     static currentRotationAnimationAngle = 0.0
     static doAnimate = false
 
+    /**
+     * Creates an instance of the RotationHelper class.
+     * @param {UIControls} uiControls 
+     * @param {THREE.TrackballControls} trackballControls trackball controls
+     */
     constructor(uiControls, trackballControls) {
         this.uiControls = uiControls
         RotationHelper.trackballControls = trackballControls
