@@ -1,6 +1,14 @@
 import CubeMapTile from './cube-tile'
 
+/**
+ * Class for representing the 2D representation of a Rubik's Cube (similarly to
+ * opening a box into a flat, cross-shaped layout)
+ */
 class CubeMap {
+	/**
+	 * Hexes of each of the colors on the Rubik's Cube (made to match the hexes
+	 * in the imported gltf model).
+	 */
 	colorHexes = {
 		"W": "#FFFFFF",
 		"R": "#E70005",
@@ -10,6 +18,13 @@ class CubeMap {
 		"B": "#0068DD"
 	}
 
+	/**
+	 * Creates an instance of the CubeMap class.
+	 * @param {RubiksCube} rubiksCube instance of RubiksCube object
+	 * @param {Boolean} isMobileDevice whether the user is currently on a mobile
+	 * device or not. The CubeMap is currently set not to appear on mobile
+	 * devices.
+	 */
 	constructor(rubiksCube, isMobileDevice) {
 		this.rubiksCube = rubiksCube
 		this.rubiksCube.cubeMap = this
@@ -26,16 +41,24 @@ class CubeMap {
 		
 	}
 
+	/**
+	 * Display the cube map on the screen.
+	 */
 	show() {
-		console.log("showing")
 		this.outerDiv.style.display = "block"
 	}
 
+	/**
+	 * Hides the cube map from the screen.
+	 */
 	hide() {
-		console.log("hidden")
 		this.outerDiv.style.display = "none"
 	}
 
+	/**
+	 * Creates cube map as a set of squares with rounded corners that form a
+	 * horizontal, cross-shaped configuration, similarly to a cube in 2D form.
+	 */
 	createCubeMap() {
 		// outer div
 		this.outerDiv = document.createElement("div")
@@ -66,6 +89,17 @@ class CubeMap {
 			tile.style.height = "20px"
 		}
 
+		/**
+		 * Places the squares that make up the cube map.
+		 *
+		 * Each set of 9 squares gets created by referencing 
+		 * entries in the cubeMap member variable in either row-major
+		 * or column major order in some combination of up-to-down,
+		 * left-to-right, down-to-up, or right-to-left based on the
+		 * orientation of the face in the open-box configuration of
+		 * the map.
+		 *
+		 */
 		let createMapFace = (offsetX, offsetY, faceColor) => {
 			let faceTiles = [
 				[null, null, null],
