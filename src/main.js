@@ -141,7 +141,7 @@ function modelLoader(url) {
     })
 }
 
-const gltfData = await modelLoader('/assets/models/rubiks.gltf')
+const gltfData = await modelLoader('/assets/models/rubiks3x3.gltf')
 rubiksCubeMesh = gltfData.scene
 rubiksCubeMesh.scale.x = 2
 rubiksCubeMesh.scale.y = 2
