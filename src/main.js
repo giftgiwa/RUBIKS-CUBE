@@ -130,9 +130,6 @@ for (let i = 0; i < lightPositions.length; i++) {
 }
 
 // load Rubik's Cube mesh (in .gltf format)
-const loader = new GLTFLoader()
-let rubiksCubeMesh = new THREE.Mesh() // create Rubik's cube
-
 function modelLoader(url) {
     return new Promise((resolve, reject) => {
         loader.load(url, (data) => resolve(data), null, undefined, function (error) {
@@ -141,12 +138,30 @@ function modelLoader(url) {
     })
 }
 
-const gltfData = await modelLoader('/assets/models/rubiks3x3.gltf')
-rubiksCubeMesh = gltfData.scene
-rubiksCubeMesh.scale.x = 2
-rubiksCubeMesh.scale.y = 2
-rubiksCubeMesh.scale.z = 2
-scene.add(rubiksCubeMesh)
+const loader = new GLTFLoader()
+let rubiksCube3x3Mesh = new THREE.Mesh() // create Rubik's cube
+let gltfData = await modelLoader('/assets/models/rubiks3x3.gltf')
+rubiksCube3x3Mesh = gltfData.scene
+rubiksCube3x3Mesh.scale.x = 2
+rubiksCube3x3Mesh.scale.y = 2
+rubiksCube3x3Mesh.scale.z = 2
+scene.add(rubiksCube3x3Mesh)
+
+let rubiksCube2x2Mesh = new THREE.Mesh() // create Rubik's cube
+gltfData = await modelLoader('/assets/models/rubiks2x2.gltf')
+rubiksCube2x2Mesh = gltfData.scene
+rubiksCube2x2Mesh.scale.x = 2
+rubiksCube2x2Mesh.scale.y = 2
+rubiksCube2x2Mesh.scale.z = 2
+//scene.add(rubiksCube2x2Mesh)
+
+let rubiksCube4x4Mesh = new THREE.Mesh() // create Rubik's cube
+gltfData = await modelLoader('/assets/models/rubiks4x4.gltf')
+rubiksCube4x4Mesh = gltfData.scene
+rubiksCube4x4Mesh.scale.x = 2
+rubiksCube4x4Mesh.scale.y = 2
+rubiksCube4x4Mesh.scale.z = 2
+//scene.add(rubiksCube4x4Mesh)
 
 /**
  * Add invisble "collision cube", which is used for detecting click positions
@@ -164,10 +179,10 @@ collisionCube.updateMatrixWorld()
 scene.add(collisionCube)
 
 // initialize rubiks cube "data structure" and helper classes
-let rubiksCube = new RubiksCube(rubiksCubeMesh)
-let rubiksAnimationHelper = new RubiksAnimationHelper(rubiksCube, camera, renderer)
-let ui = new UIControls(rubiksCube, window.mobileCheck())
-let keybindsObj = new Keybinds(ui, rubiksCube)
+let rubiksCube3x3 = new RubiksCube(rubiksCube3x3Mesh, 3)
+let rubiksAnimationHelper = new RubiksAnimationHelper(rubiksCube3x3, camera, renderer)
+let ui = new UIControls(rubiksCube3x3, window.mobileCheck())
+let keybindsObj = new Keybinds(ui, rubiksCube3x3)
 let rotationHelper = new RotationHelper(ui, trackballControls)
 
 // initialize objects for detecting mouse click-and-drag interactions with scene
@@ -285,8 +300,8 @@ renderer.domElement.addEventListener('pointermove', (e) => {
         !(intersectionPoint.x.toPrecision(1) == 0
             && intersectionPoint.y.toPrecision(1) == 0
             && intersectionPoint.z.toPrecision(1) == 0)
-            && !rubiksCube.isAnimated
-            && !rubiksCube.isShuffling) {
+            && !rubiksCube3x3.isAnimated
+            && !rubiksCube3x3.isShuffling) {
         rubiksAnimationHelper.handleDrag(intersects[0], mouseMovement)
     }
 })

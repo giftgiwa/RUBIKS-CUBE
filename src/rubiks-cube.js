@@ -109,6 +109,9 @@ class RubiksCube {
         'G': [],
         'R': [],
         'Y': [],
+        //'R#O': [], /* middle wedge */
+        //'B#G': [], /* middle wedge */
+        //'W#Y': [], /* middle wedge */
     }
 
     /**
@@ -129,10 +132,10 @@ class RubiksCube {
 	 * Possible direction to rotate the cube (at the moment, only for rotating
 	 * the outer faces themselves and not the middle layers).
 	 */
-    moves = [
-        "W|cw", "W|ccw", "B|cw", "B|ccw", "O|cw", "O|ccw",
-        "G|cw", "G|ccw", "R|cw", "R|ccw", "Y|cw", "Y|ccw"
-    ]
+    //moves = [
+    //    "W|cw", "W|ccw", "B|cw", "B|ccw", "O|cw", "O|ccw",
+    //    "G|cw", "G|ccw", "R|cw", "R|ccw", "Y|cw", "Y|ccw"
+    //]
 
     /**
      * Constructor for RubiksCube class. The rotationGroups hash map and
@@ -142,22 +145,55 @@ class RubiksCube {
 	 *
      * @param {*} gltf actual GLTF file imported into the THREE.js Scene
      */
-    constructor(gltf) {
+    constructor(gltf, dimension) {
         this.gltf = gltf // store the model file
-        this.initCoordinateMap() // build the coordinate map
-        this.buildMeshGroups() // build the mesh groups
-        this.updateCoordinateHashmap()
 
 		/**
-		 * Initialize member variables to indicating that the Rubik's cube isn't
-		 * rotating, isn't shuffling, isn't set to animate a rotation, doesn't
-		 * have its cube map initialized, and hasn't been shuffled yet.
+		 * Initialize member variables to indicating the cube's dimensions,
+         * that the Rubik's cube isn't rotating, isn't shuffling, isn't set to
+         * animate a rotation, doesn't have its cube map initialized, and hasn't
+         * been shuffled yet.
 		 */
+        this.dimension = dimension
         this.isRotating = false
         this.isShuffling = false
         this.isAnimated = false
         this.cubeMap = null
         this.isShuffled = false
+
+        this.initCoordinateMap() // build the coordinate map
+        this.buildMeshGroups() // build the mesh groups
+        this.updateCoordinateHashmap()
+        this.getMovesAndRotationGroups()
+    }
+
+    /**
+     * Creates a list of possible moves for the user to make depending on the
+     * dimensions of the cube
+     */
+    getMovesAndRotationGroups() {
+        /**
+         * Add additional rotation group keys (for middle wedge pieces
+         * in cubes bigger than 2x2)
+         */
+        let wedgeKeys = ["W#Y", "B#G", "R#O"]
+        for (let i = 1; i <= this.dimension - 2; i++) {
+            for (let j = 0; j < wedgeKeys.length; j++)
+                this.rotationGroups[`${wedgeKeys[j]}${i}`] = []
+        }
+
+        // add wedge piece moves (for cubes bigger than 2x2)
+        this.moves = []
+        for (const [key, _] of Object.entries(this.rotationGroups)) {
+            if (key.length == 1) { // outer faces
+                this.moves.push(`${key}***|cw`)
+                this.moves.push(`${key}***|ccw`)
+            } else { // middle wedges (for cubes largeer than 2x2)
+                this.moves.push(`${key}|cw`)
+                this.moves.push(`${key}|ccw`)
+            }
+        }
+        console.log(this.moves)
     }
 
     /**
@@ -261,7 +297,7 @@ class RubiksCube {
         let numMoves = 0
         while (numMoves < 40) {
             let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)];
-            if (previousMove != currentMove) {
+            if (previousMove != currentMove &&  currentMove.includes("*")) {
                 let color = currentMove.substring(0, 1)
                 let direction = currentMove.substring(2)
 
@@ -337,7 +373,7 @@ class RubiksCube {
     updateCoordinateHashmap() {
         this.coordinateHashmap = {}
         for (const [key, value] of Object.entries(this.rotationGroups)) {
-            for (let i = 0; i < 9; i++) {
+            for (let i = 0; i < value.length; i++) {
                 this.coordinateHashmap[`${value[i].coordinates[0]}${value[i].coordinates[1]}${value[i].coordinates[2]}`] = value[i]
             }
         }
