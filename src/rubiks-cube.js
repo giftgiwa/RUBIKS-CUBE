@@ -3,6 +3,14 @@ import RubiksPiece from './rubiks-piece'
 import RotationHelper from './rubiks-rotation-helper'
 
 /**
+ * Helper function for inserting elements into arrays at specified indices
+ * Source: https://stackoverflow.com/questions/586182/how-can-i-insert-an-item-into-an-array-at-a-specific-index
+ */
+Array.prototype.insert = function ( index, ...items ) {
+    this.splice( index, 0, ...items );
+};
+
+/**
  * Class for storing a Rubik's Cube instantiated in the scene (for both internal
  * and external representation
  */
@@ -53,49 +61,6 @@ class RubiksCube {
         'R': ['W', 'G', 'Y', 'B'],
         'Y': ['B', 'R', 'G', 'O']
     }
-
-    /**
-     *Initial state for Rubik's cube (used for initialization of coordinate map)
-     * keys: color(s) of face/edge/corner
-     * values: face that specific color(s) reside on
-     * 
-     * e.g. If a yellow/blue/red corner were to reside on the corner between
-     *      the white, red, and blue faces such that the yellow tile is on
-     *      the white face, the red tile
-     * 
-     * Since the coordinateMap has the indices of each of the
-     * RubiksPiece objects constant (while the actual position and orientation
-     * of each of the pieces change on rotations), the cube would be detected
-     * as solved when each of the orientationMaps for each of the RubiksPiece
-     * objects at each position matches those in the solvedStateOrientations
-     * array.
-     */
-    solvedStateOrientations = [
-        [
-            //   (0, 0, 0) , (0, 0, 1) , (0, 0, 2)
-            [{'W':'W','B':'B','R':'R'}, {'W':'W','B':'B'}, {'W':'W','B':'B','O':'O'}],
-            //   (0, 1, 0) , (0, 1, 1) , (0, 1, 2)
-            [{'W':'W','R':'R'}, {'W':'W'}, {'W':'W','O':'O'}],
-            //   (0, 1, 0) , (0, 1, 1) , (0, 1, 2)
-            [{'W':'W','G':'G','R':'R'}, {'W':'W','G':'G'}, {'W':'W','G':'G','O':'O'}]
-        ], 
-        [
-            //   (1, 0, 0) , (1, 0, 1) , (1, 0, 2)
-            [{'B':'B', 'R':'R'}, {'B':'B'}, {'B':'B', 'O':'O'}],
-            //   (1, 1, 0) , (1, 1, 1) , (1, 1, 2)
-            [{'R':'R'}, null, {'O':'O'}],
-            //   (1, 1, 0) , (1, 1, 1) , (1, 1, 2)
-            [{'R':'R', 'G':'G'}, {'G':'G'}, {'O':'O', 'G':'G'}]
-        ], 
-        [
-            //   (2, 0, 0) , (2, 0, 1) , (2, 0, 2)
-            [{'Y':'Y','R':'R','B':'B'}, {'Y':'Y','B':'B'}, {'Y':'Y','B':'B','O':'O'}],
-            //   (2, 1, 0) , (2, 1, 1) , (2, 1, 2)
-            [{'Y':'Y','R':'R'}, {'Y':'Y'}, {'Y':'Y','O':'O'}],
-            //   (2, 1, 0) , (2, 1, 1) , (2, 1, 2)
-            [{'Y':'Y','R':'R','G':'G'}, {'Y':'Y','G':'G'}, {'Y':'Y','G':'G','O':'O'}]
-        ]
-    ]
 
     /**
      * Stores the RubiksPiece objects associated with each face in the Rubik's
@@ -161,6 +126,7 @@ class RubiksCube {
         this.cubeMap = null
         this.isShuffled = false
 
+        this.generateSolvedState()
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
         this.updateCoordinateHashmap()
@@ -201,7 +167,10 @@ class RubiksCube {
      * its data structure representation.
      */
     initCoordinateMap() {
-        // each of the triple-nested arrays will store the colors of the piece
+        /**
+         * Each of the double/triple/quadruple/quintuple/whatever -nested arrays
+         * will store the colors of the given piece.
+         */
         this.coordinateMap = [
             [
                 [null, null, null],
@@ -279,7 +248,6 @@ class RubiksCube {
                 }
             }
         }
-
     }
 
     /**
@@ -297,9 +265,10 @@ class RubiksCube {
         let numMoves = 0
         while (numMoves < 40) {
             let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)];
-            if (previousMove != currentMove &&  currentMove.includes("*")) {
+            // TODO: handle logic for removing the "*" check in the if block
+            if (previousMove != currentMove && currentMove.includes("*")) {
                 let color = currentMove.substring(0, 1)
-                let direction = currentMove.substring(2)
+                let direction = currentMove.substring(5)
 
                 previousMove = currentMove
                 numMoves += 1
@@ -337,6 +306,67 @@ class RubiksCube {
             }, keypressMode == "Fast" ? 100 : 400)
         }
         animateMove()
+    }
+
+    /**
+     * Generates an intial state for Rubik's cube (used for initialization of
+     * coordinate map)
+     * 
+     * keys: color(s) of face/edge/corner
+     * values: face that specific color(s) reside on
+     * 
+     * e.g. If a yellow/blue/red corner were to reside on the corner between
+     *      the white, red, and blue faces such that the yellow tile is on
+     *      the white face, the red tile
+     * 
+     * Since the coordinateMap has the indices of each of the
+     * RubiksPiece objects constant (while the actual position and orientation
+     * of each of the pieces change on rotations), the cube would be detected
+     * as solved when each of the orientationMaps for each of the RubiksPiece
+     * objects at each position matches those in the solvedStateOrientations
+     * array.
+     */
+    generateSolvedState() {
+        this.solvedStateOrientations = [
+            [
+                [{'W':'W','B':'B','R':'R'}, {'W':'W','B':'B'}, {'W':'W','B':'B','O':'O'}],
+                [{'W':'W','R':'R'}, {'W':'W'}, {'W':'W','O':'O'}],
+                [{'W':'W','G':'G','R':'R'}, {'W':'W','G':'G'}, {'W':'W','G':'G','O':'O'}]
+            ], 
+            [
+                [{'B':'B', 'R':'R'}, {'B':'B'}, {'B':'B', 'O':'O'}],
+                [{'R':'R'}, null, {'O':'O'}],
+                [{'R':'R', 'G':'G'}, {'G':'G'}, {'O':'O', 'G':'G'}]
+            ], 
+            [
+                [{'Y':'Y','R':'R','B':'B'}, {'Y':'Y','B':'B'}, {'Y':'Y','B':'B','O':'O'}],
+                [{'Y':'Y','R':'R'}, {'Y':'Y'}, {'Y':'Y','O':'O'}],
+                [{'Y':'Y','R':'R','G':'G'}, {'Y':'Y','G':'G'}, {'Y':'Y','G':'G','O':'O'}]
+            ]
+        ]
+
+        if (this.dimension >= 3) {
+            for (let i = 0; i < this.solvedStateOrientations.length; i++) {
+                for (let j = 0; j < this.solvedStateOrientations[i].length; j++) {
+                    for (let c = 1; c <= this.dimension - 3; c++)
+                        this.solvedStateOrientations[i][j].insert(1, this.solvedStateOrientations[i][j][1])
+                }
+                for (let c = 1; c <= this.dimension - 3; c++)
+                    this.solvedStateOrientations[i].insert(1, this.solvedStateOrientations[i][1])
+            }
+            for (let c = 1; c <= this.dimension - 3; c++)
+                this.solvedStateOrientations.insert(1, this.solvedStateOrientations[1])
+        } else { // this.dimension == 2
+            for (let i = 0; i < this.solvedStateOrientations.length; i++) {
+                for (let j = 0; j < this.solvedStateOrientations[i].length; j++) {
+                    this.solvedStateOrientations[i][j].splice(1, 1)
+                }
+                this.solvedStateOrientations[i].splice(1, 1)
+            }
+            this.solvedStateOrientations.splice(1, 1)
+        }
+
+        console.log(this.solvedStateOrientations)
     }
 
 	/**
