@@ -163,6 +163,14 @@ rubiksCube4x4Mesh.scale.y = 2
 rubiksCube4x4Mesh.scale.z = 2
 //scene.add(rubiksCube4x4Mesh)
 
+let rubiksCube5x5Mesh = new THREE.Mesh() // create Rubik's cube
+gltfData = await modelLoader('/assets/models/rubiks5x5.gltf')
+rubiksCube5x5Mesh = gltfData.scene
+rubiksCube5x5Mesh.scale.x = 2
+rubiksCube5x5Mesh.scale.y = 2
+rubiksCube5x5Mesh.scale.z = 2
+//scene.add(rubiksCube5x5Mesh)
+
 /**
  * Add invisble "collision cube", which is used for detecting click positions
  * and swipe directions about the cube for rotating the individual faces.
