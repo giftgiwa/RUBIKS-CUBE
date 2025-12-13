@@ -3,11 +3,11 @@ import CubeMap from './cube-map'
 class UIControls {
 	/**
 	 * Creates an instance of the UIControls class.
-	 * @param {RubiksCube} rubiksCube The RubiksCube objects to be referenced. 
+	 * @param {RubiksCubes} rubiksCubes The RubiksCube objects to be referenced. 
 	 * @param {boolean} isMobileDevice Whether the user is on a mobile device or not.
 	 */
-	constructor(rubiksCube, isMobileDevice) {
-		this.rubiksCube = rubiksCube
+	constructor(rubiksCubes, isMobileDevice) {
+		this.rubiksCubes = rubiksCubes
 		this.UI = document.getElementById("user-interface")
 		this.menuIcon = document.getElementById("menu-icon")
 		this.keybinds = [
@@ -39,8 +39,14 @@ class UIControls {
 		this.keypressMode = "Fast"
 		this.cubeMapMode = "On"
 
-		if (!isMobileDevice && window.innerWidth > 450)
-			this.cubeMap = new CubeMap(rubiksCube, isMobileDevice)
+		if (!isMobileDevice && window.innerWidth > 450) {
+			this.rubiksCubes.forEach((rubiksCube) => {
+				if (rubiksCube.isRendered) {
+					//console.log("!")
+					this.cubeMap = new CubeMap(rubiksCube, isMobileDevice)
+				}
+			})
+		}
 		this.isMobileDevice = window.mobileCheck()
 
 		/**

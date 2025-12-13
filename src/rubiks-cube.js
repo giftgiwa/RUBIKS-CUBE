@@ -20,11 +20,11 @@ class RubiksCube {
      * lists complementary faces on rubiks cube (i.e. faces that exist on
      * opposite sides of the cube, such as the blue and green face).
      */
-    complements = {
-        'W': 'Y', 'Y': 'W',
-        'O': 'R', 'R': 'O',
-        'B': 'G', 'G': 'B'
-    }
+    //complements = {
+    //    'W': 'Y', 'Y': 'W',
+    //    'O': 'R', 'R': 'O',
+    //    'B': 'G', 'G': 'B'
+    //}
 
     /**
      * Lists the ordering of faces adjacent to each face in the clockwise 
@@ -123,6 +123,7 @@ class RubiksCube {
         this.cubeMap = null
         this.isShuffled = false
         this.collisionCube = collisionCube
+        this.isRendered = false
 
         this.getMovesAndRotationGroups()
         this.generateSolvedState()
@@ -146,7 +147,7 @@ class RubiksCube {
                 this.rotationGroups[`${wedgeKeys[j]}${i}`] = []
         }
 
-        console.log(this.rotationGroups)
+        //console.log(this.rotationGroups)
 
         // add wedge piece moves (for cubes bigger than 2x2)
         this.moves = []
@@ -159,7 +160,7 @@ class RubiksCube {
                 this.moves.push(`${key}|ccw`)
             }
         }
-        console.log(this.moves)
+        //console.log(this.moves)
     }
 
     /**
@@ -229,7 +230,6 @@ class RubiksCube {
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
-                    // skipping the null middle piece
                     if (this.coordinateMap[i][j][k]) {
                         if (i == 0) this.rotationGroups["W"].push(this.coordinateMap[i][j][k]) // white
                         if (i == this.dimension - 1) this.rotationGroups["Y"].push(this.coordinateMap[i][j][k]) // yellow
@@ -253,7 +253,7 @@ class RubiksCube {
             }
         }
 
-        console.log(this.rotationGroups)
+        //console.log(this.rotationGroups)
     }
 
     /**
@@ -371,7 +371,7 @@ class RubiksCube {
             this.solvedStateOrientations.splice(1, 1)
         }
 
-        console.log(this.solvedStateOrientations)
+        //console.log(this.solvedStateOrientations)
     }
 
 	/**
@@ -406,12 +406,14 @@ class RubiksCube {
     }
 
     updateCoordinateHashmap() {
+        //console.log(this.rotationGroups)
         this.coordinateHashmap = {}
         for (const [key, value] of Object.entries(this.rotationGroups)) {
             for (let i = 0; i < value.length; i++) {
                 this.coordinateHashmap[`${value[i].coordinates[0]}${value[i].coordinates[1]}${value[i].coordinates[2]}`] = value[i]
             }
         }
+        console.log(this.coordinateHashmap)
     }
 
     /**

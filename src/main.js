@@ -141,44 +141,37 @@ function modelLoader(url) {
 /**
  * The renderMap object tracks which cube is to be currently rendered
  */
+let currentCube = 2
 let renderMap = {
-    "2": false,
-    "3": true,
-    "4": false,
-    "5": false
+    2: false,
+    3: false,
+    4: false,
+    5: false
+}
+
+for (let i = 2; i <= 5; i++) {
+    renderMap[currentCube] = true
 }
 
 const loader = new GLTFLoader()
 let rubiksCube3x3Mesh = new THREE.Mesh() // create Rubik's cube
 let gltfData = await modelLoader('/assets/models/rubiks3x3.gltf')
 rubiksCube3x3Mesh = gltfData.scene
-rubiksCube3x3Mesh.scale.x = 2
-rubiksCube3x3Mesh.scale.y = 2
-rubiksCube3x3Mesh.scale.z = 2
 
 let rubiksCube2x2Mesh = new THREE.Mesh() // create Rubik's cube
 gltfData = await modelLoader('/assets/models/rubiks2x2.gltf')
 rubiksCube2x2Mesh = gltfData.scene
-rubiksCube2x2Mesh.scale.x = 2
-rubiksCube2x2Mesh.scale.y = 2
-rubiksCube2x2Mesh.scale.z = 2
 
 let rubiksCube4x4Mesh = new THREE.Mesh() // create Rubik's cube
 gltfData = await modelLoader('/assets/models/rubiks4x4.gltf')
 rubiksCube4x4Mesh = gltfData.scene
-rubiksCube4x4Mesh.scale.x = 2
-rubiksCube4x4Mesh.scale.y = 2
-rubiksCube4x4Mesh.scale.z = 2
 
 let rubiksCube5x5Mesh = new THREE.Mesh() // create Rubik's cube
 gltfData = await modelLoader('/assets/models/rubiks5x5.gltf')
 rubiksCube5x5Mesh = gltfData.scene
-rubiksCube5x5Mesh.scale.x = 1.5
-rubiksCube5x5Mesh.scale.y = 1.5
-rubiksCube5x5Mesh.scale.z = 1.5
 
-//scene.add(rubiksCube2x2Mesh)
-scene.add(rubiksCube3x3Mesh)
+scene.add(rubiksCube2x2Mesh)
+//scene.add(rubiksCube3x3Mesh)
 //scene.add(rubiksCube4x4Mesh)
 //scene.add(rubiksCube5x5Mesh)
 
@@ -197,15 +190,32 @@ collisionCubes.forEach((collisionCube) => {
 })
 
 // initialize rubiks cube "data structure" and helper classes
-//let rubiksCube2x2 = new RubiksCube(rubiksCube2x2Mesh, 2, collisionCubes[0])
+let rubiksCube2x2 = new RubiksCube(rubiksCube2x2Mesh, 2, collisionCubes[0])
 let rubiksCube3x3 = new RubiksCube(rubiksCube3x3Mesh, 3, collisionCubes[1])
-//let rubiksCube4x4 = new RubiksCube(rubiksCube4x4Mesh, 4, collisionCubes[2])
-//let rubiksCube5x5 = new RubiksCube(rubiksCube5x5Mesh, 5, collisionCubes[3])
+let rubiksCube4x4 = new RubiksCube(rubiksCube4x4Mesh, 4, collisionCubes[2])
+let rubiksCube5x5 = new RubiksCube(rubiksCube5x5Mesh, 5, collisionCubes[3])
 
-let rubiksAnimationHelper = new RubiksAnimationHelper(rubiksCube3x3, camera, renderer)
-let ui = new UIControls(rubiksCube3x3, window.mobileCheck())
-let keybindsObj = new Keybinds(ui, rubiksCube3x3)
-let rotationHelper = new RotationHelper(ui, trackballControls)
+//let rubiksAnimationHelper = new RubiksAnimationHelper(rubiksCube3x3, camera, renderer)
+//let keybindsObj = new Keybinds(ui, rubiksCube3x3)
+//let rotationHelper = new RotationHelper(ui, trackballControls)
+
+let rubiksCubes = [rubiksCube2x2, rubiksCube3x3, rubiksCube4x4, rubiksCube5x5]
+let rubiksAnimationHelpers = []
+for (let i = 0; i < rubiksCubes.length; i++) {
+    if (renderMap[i + 2] == true) {
+        rubiksCubes[i].isRendered = true
+    }
+    rubiksAnimationHelpers.push(new RubiksAnimationHelper(rubiksCubes[i], camera, renderer))
+}
+
+let ui = new UIControls(rubiksCubes, window.mobileCheck())
+
+let rotationHelpers = []
+for (let i = 0; i < rubiksCubes.length; i++) {
+    rotationHelpers.push(new RotationHelper(ui, trackballControls))
+}
+
+//let keybindsObj = new Keybinds(ui, rubiksCube3x3)
 
 // initialize objects for detecting mouse click-and-drag interactions with scene
 const raycaster = new THREE.Raycaster()
@@ -231,8 +241,8 @@ function onPointerMove(event) {
 window.addEventListener('pointermove', onPointerMove)
 
 let mouseDown = false
-renderer.domElement.addEventListener('pointerdown', (e) => {mouseDown = true})
-renderer.domElement.addEventListener('pointerup', (e) => {mouseDown = false})
+renderer.domElement.addEventListener('pointerdown', () => {mouseDown = true})
+renderer.domElement.addEventListener('pointerup', () => {mouseDown = false})
 
 /**
  * Add beacon atop white center-piece, made with the help of GLSL shaders.
@@ -262,13 +272,12 @@ let cylinderMaterial = new THREE.ShaderMaterial({
             gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0 - alpha); // White color (RGB) with calculated alpha
         }
     `,
-    transparent: true, // Crucial: enable transparency for the material
+    transparent: true, // enable transparency for the material
     side: THREE.DoubleSide 
 })
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
 cylinderMesh.position.y = 0.13
 scene.add(cylinderMesh)
-
 
 let intersects = []
 let originPoint = new THREE.Vector2(0, 0)
@@ -287,13 +296,10 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
      */
     if (intersects.length > 0) {
         dragStartingOnCube = true
-        rubiksAnimationHelper.handleMouseDown(intersects[0])
+        rubiksAnimationHelpers[currentCube - 2].handleMouseDown(intersects[0])
     }
 })
 
-/**
- * 
- */
 renderer.domElement.addEventListener('pointermove', (e) => {
     e.preventDefault()
     if (!mouseDown)
@@ -310,9 +316,9 @@ renderer.domElement.addEventListener('pointermove', (e) => {
         !(intersectionPoint.x.toPrecision(1) == 0
             && intersectionPoint.y.toPrecision(1) == 0
             && intersectionPoint.z.toPrecision(1) == 0)
-            && !rubiksCube3x3.isAnimated
-            && !rubiksCube3x3.isShuffling) {
-        rubiksAnimationHelper.handleDrag(intersects[0], mouseMovement)
+        && !rubiksCube3x3.isAnimated
+        && !rubiksCube3x3.isShuffling) {
+        rubiksAnimationHelpers[currentCube - 2].handleDrag(intersects[0], mouseMovement)
     }
 })
 
@@ -324,7 +330,7 @@ renderer.domElement.addEventListener('pointerup', (e) => {
     e.preventDefault()
     if (dragStartingOnCube) {
         dragStartingOnCube = false
-        rubiksAnimationHelper.handleMouseUp()
+        rubiksAnimationHelpers[currentCube - 2].handleMouseUp()
     }
 })
 
@@ -332,7 +338,7 @@ renderer.domElement.addEventListener('pointerup', (e) => {
  * Only detect intersections with the collison cube for the cube currently rendered.
  */
 const filteredChildren = scene.children.filter(
-    item => (item.name.startsWith("collision_cube") && renderMap[item.name[item.name.length - 1]] == true)
+    item => (item.name.startsWith("collision_cube") && renderMap[parseInt(item.name[item.name.length - 1])] == true)
 )
 
 function animate() {
@@ -352,7 +358,7 @@ function animate() {
             trackballControls.enabled = true
     } 
 
-    trackballControls.update();
+    trackballControls.update()
 	window.requestAnimationFrame(animate)
 	renderer.render(scene, camera)
 }

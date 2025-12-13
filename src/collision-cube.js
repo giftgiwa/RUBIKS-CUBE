@@ -14,7 +14,7 @@ class CollisionCube {
 	constructor(width, dimension) {
 		this.width = width
 		this.dimension = dimension
-		const geometry = new THREE.BoxGeometry(this.width, this.width, this.width)
+		const geometry = new THREE.BoxGeometry(this.width)
 		const material = new THREE.MeshBasicMaterial({
 			color: 0x00ff00,
 			transparent: true,

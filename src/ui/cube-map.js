@@ -30,14 +30,17 @@ class CubeMap {
 		this.rubiksCube.cubeMap = this
 		this.isMobileDevice = isMobileDevice
 
+		console.log(this.rubiksCube.dimension)
 		this.cubeMap = []
-		for (let i = 0; i < this.rubiksCube.dimension ** 2; i++) {
+		for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
 			this.cubeMap.push(
-				[null, null, null, null, null, null, null, null, null, null, null, null]
+				new Array(this.rubiksCube.dimension * 4)
 			)
 		}
 		this.createCubeMap()
 		this.populateCubeMap()
+
+		console.log(this.cubeMap)
 		
 	}
 
@@ -101,11 +104,11 @@ class CubeMap {
 		 *
 		 */
 		let createMapFace = (offsetX, offsetY, faceColor) => {
-			let faceTiles = [
-				[null, null, null],
-				[null, null, null],
-				[null, null, null]
-			]
+			let faceTiles = []
+			for (let i = 0; i < this.rubiksCube.dimension; i++) {
+				faceTiles.push(new Array(this.rubiksCube.dimension))
+			}
+
 			for (let i = 0; i < this.rubiksCube.dimension; i++) {
 				for (let j = 0; j < this.rubiksCube.dimension; j++) {
 					let tile = document.createElement("div")
@@ -117,13 +120,13 @@ class CubeMap {
 				}
 			}
 
-			let dimension = this.rubiksCube.dimension
+			let d = this.rubiksCube.dimension
 			if (faceColor == "G") {
-				for (let i = dimension - 1; i >= 0; i--) {
-					for (let j = 0; j <= dimension - 1; j++) {
+				for (let i = d - 1; i >= 0; i--) {
+					for (let j = 0; j <= d - 1; j++) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[dimension - 1 - i, dimension - 1, j],
+							[d - 1 - i, d - 1, j],
 							faceColor
 						)
 						// color center piece green
@@ -132,11 +135,11 @@ class CubeMap {
 					}
 				}
 			} else if (faceColor == "W") {
-				for (let i = dimension - 1; i >= 0; i--) {
-					for (let j = 0; j <= dimension - 1; j++) {
+				for (let i = d - 1; i >= 0; i--) {
+					for (let j = 0; j <= d - 1; j++) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[0, dimension - 1 - i, j],
+							[0, d - 1 - i, j],
 							faceColor
 						)
 						// color center piece white
@@ -145,11 +148,11 @@ class CubeMap {
 					}
 				}
 			} else if (faceColor == "R") {
-				for (let i = dimension - 1; i >= 0; i--) {
-					for (let j = dimension - 1; j >= 0; j--) {
+				for (let i = d - 1; i >= 0; i--) {
+					for (let j = d - 1; j >= 0; j--) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[dimension - 1 - j, dimension - 1 - i, 0],
+							[d - 1 - j, d - 1 - i, 0],
 							faceColor
 						)
 						// color center piece red
@@ -158,11 +161,11 @@ class CubeMap {
 					}
 				}
 			} else if (faceColor == "O") {
-				for (let i = dimension-1; i >= 0; i--) {
-					for (let j = 0; j <= dimension-1; j++) {
+				for (let i = d - 1; i >= 0; i--) {
+					for (let j = 0; j <= d - 1; j++) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[j, dimension-1-i, dimension - 1],
+							[j, d - 1 - i, d - 1],
 							faceColor
 						)
 						// color center piece orange
@@ -171,11 +174,11 @@ class CubeMap {
 					}
 				}
 			} else if (faceColor == "Y") {
-				for (let i = dimension-1; i >= 0; i--) {
-					for (let j = dimension-1; j >= 0; j--) {
+				for (let i = d-1; i >= 0; i--) {
+					for (let j = d - 1; j >= 0; j--) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[dimension-1, dimension-1 - i, dimension-1 - j],
+							[d - 1, d - 1 - i, d - 1 - j],
 							faceColor
 						)
 						// color center piece red
@@ -184,8 +187,8 @@ class CubeMap {
 					}
 				}
 			} else if (faceColor == "B") {
-				for (let i = 0; i <= dimension-1; i++) {
-					for (let j = 0; j <= dimension-1; j++) {
+				for (let i = 0; i <= d - 1; i++) {
+					for (let j = 0; j <= d - 1; j++) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
 							[i, 0, j],
@@ -198,22 +201,28 @@ class CubeMap {
 				}
 			}
 		}
-		
-		createMapFace(3, 0, "G") // green face
-		createMapFace(3, 3, "W") // white face
-		createMapFace(0, 3, "R") // red face
-		createMapFace(6, 3, "O") // orange face
-		createMapFace(3, 6, "B") // blue face
-		createMapFace(9, 3, "Y") // yellow face
+		let d = this.rubiksCube.dimension
+		createMapFace(d, 0, "G") // green face
+		createMapFace(d, d, "W") // white face
+		createMapFace(0, d, "R") // red face
+		createMapFace(2*d, d, "O") // orange face
+		createMapFace(d, 2*d, "B") // blue face
+		createMapFace(3*d, d, "Y") // yellow face
 
 		document.body.appendChild(this.outerDiv)
 	}
 
 	populateCubeMap() {
-		for (let i = 0; i < 9; i++) {
-			for (let j = 0; j < 12; j++) {
-				if (this.cubeMap[i][j] !== null) {
+		console.log("populateCubeMap()")
+		for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
+			for (let j = 0; j < this.rubiksCube.dimension * 4; j++) {
+				//console.log(this.cubeMap)
+				if (this.cubeMap[i][j]) {
 					let coordinateString = `${this.cubeMap[i][j].coordinates[0]}${this.cubeMap[i][j].coordinates[1]}${this.cubeMap[i][j].coordinates[2]}`
+					//console.log(coordinateString)
+					//console.log(this.rubiksCube.coordinateHashmap)
+					//console.log(this.rubiksCube.coordinateHashmap)
+
 					let faceColor = this.cubeMap[i][j].faceColor
 					let tileElement = this.cubeMap[i][j].tileElement
 					let orientationMap = this.rubiksCube.coordinateHashmap[coordinateString].orientationMap
