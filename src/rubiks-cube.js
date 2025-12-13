@@ -74,9 +74,6 @@ class RubiksCube {
         'G': [],
         'R': [],
         'Y': [],
-        //'R#O': [], /* middle wedge */
-        //'B#G': [], /* middle wedge */
-        //'W#Y': [], /* middle wedge */
     }
 
     /**
@@ -110,7 +107,7 @@ class RubiksCube {
 	 *
      * @param {*} gltf actual GLTF file imported into the THREE.js Scene
      */
-    constructor(gltf, dimension) {
+    constructor(gltf, dimension, collisionCube) {
         this.gltf = gltf // store the model file
 
 		/**
@@ -125,12 +122,13 @@ class RubiksCube {
         this.isAnimated = false
         this.cubeMap = null
         this.isShuffled = false
+        this.collisionCube = collisionCube
 
+        this.getMovesAndRotationGroups()
         this.generateSolvedState()
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
         this.updateCoordinateHashmap()
-        this.getMovesAndRotationGroups()
     }
 
     /**
@@ -147,6 +145,8 @@ class RubiksCube {
             for (let j = 0; j < wedgeKeys.length; j++)
                 this.rotationGroups[`${wedgeKeys[j]}${i}`] = []
         }
+
+        console.log(this.rotationGroups)
 
         // add wedge piece moves (for cubes bigger than 2x2)
         this.moves = []
@@ -171,23 +171,14 @@ class RubiksCube {
          * Each of the double/triple/quadruple/quintuple/whatever -nested arrays
          * will store the colors of the given piece.
          */
-        this.coordinateMap = [
-            [
-                [null, null, null],
-                [null, null, null],
-                [null, null, null]
-            ], 
-            [
-                [null, null, null],
-                [null, null, null],
-                [null, null, null]
-            ], 
-            [
-                [null, null, null],
-                [null, null, null],
-                [null, null, null]
-            ]
-        ]
+        this.coordinateMap = []
+        for (let i = 0; i < this.dimension; i++) {
+            let arr = []
+            for (let j = 0; j < this.dimension; j++) {
+                arr.push(new Array(this.dimension))
+            }
+            this.coordinateMap.push(arr)
+        }
 
         /**
          * NOTE:
@@ -207,15 +198,17 @@ class RubiksCube {
             /**
              * RubiksPiece(colors, coordinates, orientationMap, mesh)
              */
-            let colors = Object.keys(this.solvedStateOrientations[x][y][z])
-            let currentOrientationMap = this.solvedStateOrientations[x][y][z]
+            if (this.solvedStateOrientations[x][y][z] != null) {
+                let colors = Object.keys(this.solvedStateOrientations[x][y][z])
+                let currentOrientationMap = this.solvedStateOrientations[x][y][z]
 
-            this.coordinateMap[x][y][z] = new RubiksPiece(
-                colors, /* colors */
-                [x, y, z], /* coordinates */
-                currentOrientationMap, /* orientaton map */
-                currentPiece /* mesh (within GLTF file) */
-            )
+                this.coordinateMap[x][y][z] = new RubiksPiece(
+                    colors, /* colors */
+                    [x, y, z], /* coordinates */
+                    currentOrientationMap, /* orientaton map */
+                    currentPiece /* mesh (within GLTF file) */
+                )
+            }
         }
     }
 
@@ -239,15 +232,28 @@ class RubiksCube {
                     // skipping the null middle piece
                     if (this.coordinateMap[i][j][k]) {
                         if (i == 0) this.rotationGroups["W"].push(this.coordinateMap[i][j][k]) // white
-                        if (i == 2) this.rotationGroups["Y"].push(this.coordinateMap[i][j][k]) // yellow
+                        if (i == this.dimension - 1) this.rotationGroups["Y"].push(this.coordinateMap[i][j][k]) // yellow
                         if (j == 0) this.rotationGroups["B"].push(this.coordinateMap[i][j][k]) // blue
-                        if (j == 2) this.rotationGroups["G"].push(this.coordinateMap[i][j][k]) // green
+                        if (j == this.dimension - 1) this.rotationGroups["G"].push(this.coordinateMap[i][j][k]) // green
                         if (k == 0) this.rotationGroups["R"].push(this.coordinateMap[i][j][k]) // red
-                        if (k == 2) this.rotationGroups["O"].push(this.coordinateMap[i][j][k]) // orange
-                    }             
+                        if (k == this.dimension - 1) this.rotationGroups["O"].push(this.coordinateMap[i][j][k]) // orange
+                        //console.log(`${i} ${j} ${k}`)
+
+                        if (i > 0 && i < this.dimension - 1) {
+                            this.rotationGroups[`W#Y${i}`].push(this.coordinateMap[i][j][k]) // white/yellow
+                        }
+                        if (j > 0 && j < this.dimension - 1) {
+                            this.rotationGroups[`B#G${j}`].push(this.coordinateMap[i][j][k]) // blue/green
+                        }
+                        if (k > 0 && k < this.dimension - 1) {
+                            this.rotationGroups[`R#O${k}`].push(this.coordinateMap[i][j][k]) // blue/green
+                        }
+                    }
                 }
             }
         }
+
+        console.log(this.rotationGroups)
     }
 
     /**
@@ -259,13 +265,12 @@ class RubiksCube {
     shuffle(rubiksCube, keypressMode, shuffleButton) {
         this.isShuffling = true
         let previousMove = null
-
         let moves = []
 
         let numMoves = 0
         while (numMoves < 40) {
             let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)];
-            // TODO: handle logic for removing the "*" check in the if block
+            // TODO: handle logic for removing the "*" check in the if block (accounting for cubes with >3x3 dimensions)
             if (previousMove != currentMove && currentMove.includes("*")) {
                 let color = currentMove.substring(0, 1)
                 let direction = currentMove.substring(5)

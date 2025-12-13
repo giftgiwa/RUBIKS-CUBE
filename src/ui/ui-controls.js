@@ -14,22 +14,15 @@ class UIControls {
 			document.getElementById("keybinds-on"),
 			document.getElementById("keybinds-off")
 		]
-		//this.mode = [
-		//	document.getElementById("button-mode"),
-		//	document.getElementById("swipe-mode"),
-		//	document.getElementById("mix-mode")
-		//]
 		this.keypressSpeed = [
 			document.getElementById("keypress-fast"),
 			document.getElementById("keypress-slow")
 		]
-		//this.quickDrag = [
-		//	document.getElementById("quick-drag-on"),
-		//	document.getElementById("quick-drag-off")]
 		this.showCubeMap = [
 			document.getElementById("show-cubemap"),
 			document.getElementById("hide-cubemap")
 		]
+		//this.dimensionSlider
 		this.shuffleButton = document.getElementById("shuffle-btn")
 		this.resetButton = document.getElementById("reset-btn")
 		

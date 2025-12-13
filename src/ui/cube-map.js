@@ -31,7 +31,7 @@ class CubeMap {
 		this.isMobileDevice = isMobileDevice
 
 		this.cubeMap = []
-		for (let i = 0; i < 9; i++) {
+		for (let i = 0; i < this.rubiksCube.dimension ** 2; i++) {
 			this.cubeMap.push(
 				[null, null, null, null, null, null, null, null, null, null, null, null]
 			)
@@ -62,8 +62,8 @@ class CubeMap {
 	createCubeMap() {
 		// outer div
 		this.outerDiv = document.createElement("div")
-		this.outerDiv.style.width = "260px"
-		this.outerDiv.style.height = "200px"
+		this.outerDiv.style.width = `${this.rubiksCube.dimension * 4 * 20 + 20}px`
+		this.outerDiv.style.height = `${this.rubiksCube.dimension * 3 * 20 + 20}px`
 		this.outerDiv.style.backgroundColor = "rgba(255, 255, 255, 0.5)"
 		this.outerDiv.style.position = "absolute"
 		this.outerDiv.style.right = "10px"
@@ -106,8 +106,8 @@ class CubeMap {
 				[null, null, null],
 				[null, null, null]
 			]
-			for (let i = 0; i < 3; i++) {
-				for (let j = 0; j < 3; j++) {
+			for (let i = 0; i < this.rubiksCube.dimension; i++) {
+				for (let j = 0; j < this.rubiksCube.dimension; j++) {
 					let tile = document.createElement("div")
 					applyTileStyle(tile)
 					tile.style.top = `${10 + (offsetY * 20) + (20 * i)}px`
@@ -117,82 +117,83 @@ class CubeMap {
 				}
 			}
 
+			let dimension = this.rubiksCube.dimension
 			if (faceColor == "G") {
-				for (let i = 2; i >= 0; i--) {
-					for (let j = 0; j <= 2; j++) {
+				for (let i = dimension - 1; i >= 0; i--) {
+					for (let j = 0; j <= dimension - 1; j++) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[2 - i, 2, j],
+							[dimension - 1 - i, dimension - 1, j],
 							faceColor
 						)
 						// color center piece green
-						if (2 - i == 1 && j == 1)
-							faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
+						//if (dimension - 1 - i == 1 && j == 1)
+						//	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
 					}
 				}
 			} else if (faceColor == "W") {
-				for (let i = 2; i >= 0; i--) {
-					for (let j = 0; j <= 2; j++) {
+				for (let i = dimension - 1; i >= 0; i--) {
+					for (let j = 0; j <= dimension - 1; j++) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[0, 2 - i, j],
+							[0, dimension - 1 - i, j],
 							faceColor
 						)
 						// color center piece white
-						if (2 - i == 1 && j == 1)
-							faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
+						//if (dimension-1-i == 1 && j == 1)
+						//	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
 					}
 				}
 			} else if (faceColor == "R") {
-				for (let i = 2; i >= 0; i--) {
-					for (let j = 2; j >= 0; j--) {
+				for (let i = dimension - 1; i >= 0; i--) {
+					for (let j = dimension - 1; j >= 0; j--) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[2 - j, 2 - i, 0],
+							[dimension - 1 - j, dimension - 1 - i, 0],
 							faceColor
 						)
 						// color center piece red
-						if (2 - j == 1 && 2 - i == 1)
-							faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
+						//if (dimension - 1 - j == 1 && dimension - 1 - i == 1)
+						//	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
 					}
 				}
 			} else if (faceColor == "O") {
-				for (let i = 2; i >= 0; i--) {
-					for (let j = 0; j <= 2; j++) {
+				for (let i = dimension-1; i >= 0; i--) {
+					for (let j = 0; j <= dimension-1; j++) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[j, 2 - i, 2],
+							[j, dimension-1-i, dimension - 1],
 							faceColor
 						)
 						// color center piece orange
-						if (j == 1 && 2 - i == 1)
-							faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
+						//if (j == 1 && dimension-1-i == 1)
+						//	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
 					}
 				}
 			} else if (faceColor == "Y") {
-				for (let i = 2; i >= 0; i--) {
-					for (let j = 2; j >= 0; j--) {
+				for (let i = dimension-1; i >= 0; i--) {
+					for (let j = dimension-1; j >= 0; j--) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
-							[2, 2 - i, 2 - j],
+							[dimension-1, dimension-1 - i, dimension-1 - j],
 							faceColor
 						)
 						// color center piece red
-						if (2 - i == 1 && 2 - j == 1)
-							faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
+						//if (dimension-1 - i == 1 && dimension-1 - j == 1)
+						//	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
 					}
 				}
 			} else if (faceColor == "B") {
-				for (let i = 0; i <= 2; i++) {
-					for (let j = 0; j <= 2; j++) {
+				for (let i = 0; i <= dimension-1; i++) {
+					for (let j = 0; j <= dimension-1; j++) {
 						this.cubeMap[i + offsetY][j + offsetX] = new CubeMapTile(
 							faceTiles[i][j],
 							[i, 0, j],
 							faceColor
 						)
 						// color center piece red
-						if (i == 1 && j == 1)
-							faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
+						//if (i == 1 && j == 1)
+						//	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
 					}
 				}
 			}

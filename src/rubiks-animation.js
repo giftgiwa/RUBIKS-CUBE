@@ -46,6 +46,10 @@ class RubiksAnimationHelper {
     avgDeltaMove = new THREE.Vector3(0, 0, 0)
     deltaMove = null
 
+    /**
+     * TODO: calculate face bounds for collision cube dynamically instead of
+     * setting static values.
+     */
     faceBoounds = {
         'W': [[-Infinity, Infinity], [0.02, 0.06], [-Infinity, Infinity]],
         'B': [[-Infinity, Infinity], [-Infinity, Infinity], [0.02, 0.06]],
@@ -238,8 +242,7 @@ class RubiksAnimationHelper {
                                 rotationAmount
                             )
                         })
-                        this.currentRotationAngle += rotationAmount
-                        
+                        this.currentRotationAngle += rotationAmount 
                     }
                 }
             }

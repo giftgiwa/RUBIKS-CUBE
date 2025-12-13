@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
 import RubiksCube from './rubiks-cube'
-import UIControls from './ui-controls'
+import UIControls from './ui/ui-controls'
 
 /**
  * Prototype for rotating an Object3D around an axis in space by a specified
