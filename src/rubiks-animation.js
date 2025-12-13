@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import RotationHelper from './rubiks-rotation-helper'
 
 /**
- * Prototype for rotating an Object3D around an axis in space by a specified
+ * Prototype for rotating an Object3D around an axis in world space by a specified
  * angle.
  *
  * Source: https://stackoverflow.com/a/32038265/17799976
@@ -12,7 +12,6 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     return function rotateAroundWorldAxis(point, axis, angle) {
         q.setFromAxisAngle(axis, angle)
         this.applyQuaternion(q)
-
         this.position.sub(point)
         this.position.applyQuaternion(q)
         this.position.add(point)

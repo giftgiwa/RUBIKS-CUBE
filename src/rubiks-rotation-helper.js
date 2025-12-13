@@ -4,7 +4,7 @@ import RubiksCube from './rubiks-cube'
 import UIControls from './ui/ui-controls'
 
 /**
- * Prototype for rotating an Object3D around an axis in space by a specified
+ * Prototype for rotating an Object3D around an axis in world space by a specified
  * angle.
  * 
  * Source: https://stackoverflow.com/a/32038265/17799976
@@ -14,7 +14,6 @@ THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
     return function rotateAroundWorldAxis(point, axis, angle) {
         q.setFromAxisAngle(axis, angle)
         this.applyQuaternion(q)
-
         this.position.sub(point)
         this.position.applyQuaternion(q)
         this.position.add(point)
@@ -213,14 +212,19 @@ class RotationHelper {
      *                       "O" (orange), "Y" (yellow),
      *                       "G" (green), "B" (blue), or "W" (white)
      */
+    /**
+     * TODO: update updateCoordinates() to account for multiple rotation translations
+     * for each cube dimension
+     */
     static updateCoordinates(rubiksPiece, direction, color) {
+        let d = rubiksPiece.rubiksCube.dimension
         let rotationOrigins = {
-            "W": [0, 1, 1],
-            "B": [1, 0, 1],
-            "O": [1, 1, 2],
-            "G": [1, 2, 1],
-            "R": [1, 1, 0],
-            "Y": [2, 1, 1]
+            "W": [0, (d-1)/2, (d-1)/2],
+            "B": [(d-1)/2, 0, (d-1)/2],
+            "O": [(d-1)/2, (d-1)/2, d-1],
+            "G": [(d-1)/2, d-1, (d-1)/2],
+            "R": [(d-1)/2, (d-1)/2, 0],
+            "Y": [(d-1), (d-1)/2, (d-1)/2]
         }
 
         let negativeAxisFaces = new Set(["R", "W", "B"])

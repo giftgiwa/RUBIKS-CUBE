@@ -28,11 +28,12 @@ class RubiksPiece {
      *   on the white face, the orientationMap would be `{'W':'R', 'B':'B', 'O':'W'}`
      * @param {*} mesh gltf mesh of individual piece on physical Rubik's Cube
      */
-    constructor(colors, coordinates, orientationMap, mesh) {
+    constructor(colors, coordinates, orientationMap, mesh, rubiksCube) {
         this.colors = colors
         this.coordinates = coordinates // coordinates dictates position
         this.orientationMap = orientationMap // the orientationMap dictates orientation
         this.mesh = mesh // mesh of individual piece on actual cube
+        this.rubiksCube = rubiksCube // pointer to the Rubik's cube the piece is part of
     }
 }
 

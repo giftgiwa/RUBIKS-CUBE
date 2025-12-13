@@ -213,7 +213,6 @@ class CubeMap {
 	}
 
 	populateCubeMap() {
-		console.log("populateCubeMap()")
 		for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
 			for (let j = 0; j < this.rubiksCube.dimension * 4; j++) {
 				//console.log(this.cubeMap)

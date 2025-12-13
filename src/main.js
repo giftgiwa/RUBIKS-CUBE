@@ -141,7 +141,7 @@ function modelLoader(url) {
 /**
  * The renderMap object tracks which cube is to be currently rendered
  */
-let currentCube = 2
+let currentCube = 3
 let renderMap = {
     2: false,
     3: false,
@@ -170,7 +170,7 @@ let rubiksCube5x5Mesh = new THREE.Mesh() // create Rubik's cube
 gltfData = await modelLoader('/assets/models/rubiks5x5.gltf')
 rubiksCube5x5Mesh = gltfData.scene
 
-scene.add(rubiksCube2x2Mesh)
+//scene.add(rubiksCube2x2Mesh)
 //scene.add(rubiksCube3x3Mesh)
 //scene.add(rubiksCube4x4Mesh)
 //scene.add(rubiksCube5x5Mesh)
@@ -185,9 +185,6 @@ const collisionCubes = [
     new CollisionCube(0.144, 4),
     new CollisionCube(0.168, 5),
 ]
-collisionCubes.forEach((collisionCube) => {
-    scene.add(collisionCube.cube)
-})
 
 // initialize rubiks cube "data structure" and helper classes
 let rubiksCube2x2 = new RubiksCube(rubiksCube2x2Mesh, 2, collisionCubes[0])
@@ -199,11 +196,14 @@ let rubiksCube5x5 = new RubiksCube(rubiksCube5x5Mesh, 5, collisionCubes[3])
 //let keybindsObj = new Keybinds(ui, rubiksCube3x3)
 //let rotationHelper = new RotationHelper(ui, trackballControls)
 
+let rubiksMeshes = [rubiksCube2x2Mesh, rubiksCube3x3Mesh, rubiksCube4x4Mesh, rubiksCube5x5Mesh]
 let rubiksCubes = [rubiksCube2x2, rubiksCube3x3, rubiksCube4x4, rubiksCube5x5]
 let rubiksAnimationHelpers = []
 for (let i = 0; i < rubiksCubes.length; i++) {
     if (renderMap[i + 2] == true) {
         rubiksCubes[i].isRendered = true
+        scene.add(collisionCubes[i].cube)
+        scene.add(rubiksMeshes[i])
     }
     rubiksAnimationHelpers.push(new RubiksAnimationHelper(rubiksCubes[i], camera, renderer))
 }
@@ -344,8 +344,10 @@ const filteredChildren = scene.children.filter(
 function animate() {
     raycaster.setFromCamera(pointer, camera)
     intersects = raycaster.intersectObjects(filteredChildren, false)
-    if (intersects.length > 0)
+    if (intersects.length > 0) {
+        //console.log("!!!")
         intersectionPoint = intersects[0].point
+    }
 
     /**
      * Disable trackballControls if the user starts clicking and dragging on

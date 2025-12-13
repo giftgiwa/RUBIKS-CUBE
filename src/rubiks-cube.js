@@ -90,15 +90,6 @@ class RubiksCube {
         'Y': new THREE.Vector3(0, -1, 0), /* -y */
     }
 
-	/**
-	 * Possible direction to rotate the cube (at the moment, only for rotating
-	 * the outer faces themselves and not the middle layers).
-	 */
-    //moves = [
-    //    "W|cw", "W|ccw", "B|cw", "B|ccw", "O|cw", "O|ccw",
-    //    "G|cw", "G|ccw", "R|cw", "R|ccw", "Y|cw", "Y|ccw"
-    //]
-
     /**
      * Constructor for RubiksCube class. The rotationGroups hash map and
      * coordinateMap array get initially populated based on the initial
@@ -207,7 +198,8 @@ class RubiksCube {
                     colors, /* colors */
                     [x, y, z], /* coordinates */
                     currentOrientationMap, /* orientaton map */
-                    currentPiece /* mesh (within GLTF file) */
+                    currentPiece, /* mesh (within GLTF file) */
+                    this /* backpointer to current instance of cube */
                 )
             }
         }
@@ -269,8 +261,9 @@ class RubiksCube {
 
         let numMoves = 0
         while (numMoves < 40) {
-            let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)];
-            // TODO: handle logic for removing the "*" check in the if block (accounting for cubes with >3x3 dimensions)
+            let currentMove = this.moves[Math.floor(Math.random() * this.moves.length)]
+
+            // TODO: handle logic for removing the "*" check in the if block (by accounting for cubes with >3x3 dimensions)
             if (previousMove != currentMove && currentMove.includes("*")) {
                 let color = currentMove.substring(0, 1)
                 let direction = currentMove.substring(5)
@@ -413,7 +406,7 @@ class RubiksCube {
                 this.coordinateHashmap[`${value[i].coordinates[0]}${value[i].coordinates[1]}${value[i].coordinates[2]}`] = value[i]
             }
         }
-        console.log(this.coordinateHashmap)
+        //console.log(this.coordinateHashmap)
     }
 
     /**
