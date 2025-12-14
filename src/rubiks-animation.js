@@ -49,13 +49,14 @@ class RubiksAnimationHelper {
      * TODO: calculate face bounds for collision cube dynamically instead of
      * setting static values.
      */
-    faceBoounds = {
-        'W': [[-Infinity, Infinity], [0.02, 0.06], [-Infinity, Infinity]],
-        'B': [[-Infinity, Infinity], [-Infinity, Infinity], [0.02, 0.06]],
-        'O': [[0.02, 0.06], [-Infinity, Infinity], [-Infinity, Infinity]],
-        'G': [[-Infinity, Infinity], [-Infinity, Infinity], [-0.06, -0.02]],
-        'R': [[-0.06, -0.02], [-Infinity, Infinity], [-Infinity, Infinity]],
-        'Y': [[-Infinity, Infinity], [-0.06, -0.02], [-Infinity, Infinity]]
+
+    faceBounds = {
+        'W': [],
+        'B': [],
+        'O': [],
+        'G': [],
+        'R': [],
+        'Y': []
     }
 
     faceComponentMap = {
@@ -71,7 +72,38 @@ class RubiksAnimationHelper {
 		this.rubiksCube = rubiksCube
 		this.camera = camera
 		this.renderer = renderer
+
+        if (this.rubiksCube.isRendered)
+            this.calculateFaceBounds()
 	}
+
+    calculateFaceBounds() {
+        let w = this.rubiksCube.collisionCube.width
+        let d = this.rubiksCube.dimension
+        this.faceBounds["W"] = [[-Infinity, Infinity], [w/2 - (w/d), w/2], [-Infinity, Infinity]]
+        this.faceBounds["Y"] = [[-Infinity, Infinity], [-w/2, -(w/2 - (w/d))], [-Infinity, Infinity]]
+        this.faceBounds["B"] = [[-Infinity, Infinity], [-Infinity, Infinity], [w/2 - (w/d), w/2]]
+        this.faceBounds["G"] = [[-Infinity, Infinity], [-Infinity, Infinity], [-w/2, -(w/2 - (w/d))]]
+        this.faceBounds["O"] = [[w/2 - (w/d), w/2], [-Infinity, Infinity], [-Infinity, Infinity]]
+        this.faceBounds["R"] = [[-w/2, -(w/2 - (w/d))], [-Infinity, Infinity], [-Infinity, Infinity]]
+
+        for (const rotationGroup of Object.keys(this.rubiksCube.rotationGroups)) {
+            if (rotationGroup.indexOf("#") > -1) {
+                if (rotationGroup.startsWith("W")) {
+                    let offset = parseInt(rotationGroup.substring(rotationGroup.length - 1))
+                    this.faceBounds[rotationGroup] = [[-Infinity, Infinity], [w/2 - (1 + offset) * (w/d), w/2 - (offset) * (w/d)], [-Infinity, Infinity]]
+                }
+                if (rotationGroup.startsWith("B")) {
+                    let offset = parseInt(rotationGroup.substring(rotationGroup.length - 1))
+                    this.faceBounds[rotationGroup] = [[-Infinity, Infinity], [-Infinity, Infinity], [w/2 - (1 + offset) * (w/d), w/2 - (offset) * (w/d)]]
+                }
+                if (rotationGroup.startsWith("R")) {
+                    let offset = parseInt(rotationGroup.substring(rotationGroup.length - 1))
+                    this.faceBounds[rotationGroup] = [[w/2 - (1 + offset) * (w/d), w/2 - (offset) * (w/d)], [-Infinity, Infinity], [-Infinity, Infinity]]
+                }
+            }
+        }
+    }
 
     /**
      * Helper function to round THREE.Vector3() components to 3 significant figures
@@ -81,9 +113,9 @@ class RubiksAnimationHelper {
      * @returns Rounded version of vector
      */
     roundVector(v) {
-        let x = Math.abs(v.x) < 0.0000001 ? 0 : v.x.toPrecision(3)
-        let y = Math.abs(v.y) < 0.0000001 ? 0 : v.y.toPrecision(3)
-        let z = Math.abs(v.z) < 0.0000001 ? 0 : v.z.toPrecision(3)
+        let x = Math.abs(v.x) < 0.0000001 ? 0 : v.x.toPrecision(4)
+        let y = Math.abs(v.y) < 0.0000001 ? 0 : v.y.toPrecision(4)
+        let z = Math.abs(v.z) < 0.0000001 ? 0 : v.z.toPrecision(4)
         return new THREE.Vector3(Number(x), Number(y), Number(z))
     }
 
@@ -121,12 +153,11 @@ class RubiksAnimationHelper {
         this.currentIntersectionNormal = intersect.face.normal.clone()
         this.startingPosition = this.roundVector(intersect.point)
         this.rubiksCube.isRotating = true
-
         /**
          * Check which of the faces on the Rubik's Cube the user could be
          * clicking on (before dragging).
          */
-        for (const [key, value] of Object.entries(this.faceBoounds)) {
+        for (const [key, value] of Object.entries(this.faceBounds)) {
             let x = this.startingPosition.x, y = this.startingPosition.y, z = this.startingPosition.z
 
             if ((x >= value[0][0] && x <= value[0][1]) &&
@@ -137,7 +168,6 @@ class RubiksAnimationHelper {
             }
         }
     }
-
 
     /**
      * Handles the user mouse drag action (only triggers when the user is
@@ -170,13 +200,11 @@ class RubiksAnimationHelper {
                     crossProduct.cross(this.rubiksCube.rotationAxes[this.currentColor].clone())
                     
                     let normalizedCrossProduct = this.roundVector(crossProduct.normalize())
-
                     if (normalizedCrossProduct.dot(this.currentIntersectionNormal) < 0) 
                         this.currentDirection = "cw"
                     else
                         this.currentDirection = "ccw"
                 }
-
             }
             else {
                 if (this.previousRaycasterPosition && this.frameCounter != FRAME_COUNT) {
@@ -219,7 +247,6 @@ class RubiksAnimationHelper {
             this.deltaMove = deltaMove
 
             let rotationAmount = mouseMovement.length() * 1.15 * Math.PI / 90
-
             if (this.currentColor != null && this.currentDirection != null) {
                 if (this.currentDirection == "cw") {
                     if (this.currentRotationAngle - rotationAmount > -Math.PI / 2) {
@@ -269,7 +296,6 @@ class RubiksAnimationHelper {
             this.colorCandidates = []
             this.previousRaycasterPosition = null
             this.frameCounter = 0
-
             this.rubiksCube.isRotating = false
             return
         }
@@ -278,7 +304,6 @@ class RubiksAnimationHelper {
             let difference = Math.abs(Math.abs(this.currentRotationAngle) - (Math.PI / 2))
 
             this.rubiksCube.rotationGroups[this.currentColor].forEach((rubiksPiece) => {
-				
 				if (this.currentDirection == "cw")
 					rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), this.rubiksCube.rotationAxes[this.currentColor], -difference)
 				else

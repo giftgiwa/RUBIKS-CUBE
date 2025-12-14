@@ -103,6 +103,7 @@ trackballControls.enableZoom = false
 const ambientLight = new THREE.AmbientLight(0x404040) // soft white light
 scene.add(ambientLight)
 
+// add point lights at 8 points around the cube
 const lightPositions = [
     [0.5, 0.5, 0.5], 
     [-0.5, 0.5, 0.5], 
@@ -113,8 +114,6 @@ const lightPositions = [
     [-0.5, -0.5, -0.5], 
     [0.5, -0.5, -0.5]
 ]
-
-// add point lights at 8 points around the cube
 for (let i = 0; i < lightPositions.length; i++) {
     const light = new THREE.PointLight(
         0xffffff, /* color */
@@ -141,14 +140,13 @@ function modelLoader(url) {
 /**
  * The renderMap object tracks which cube is to be currently rendered
  */
-let currentCube = 3
+let currentCube = 2
 let renderMap = {
     2: false,
     3: false,
     4: false,
     5: false
 }
-
 for (let i = 2; i <= 5; i++) {
     renderMap[currentCube] = true
 }
@@ -170,10 +168,6 @@ let rubiksCube5x5Mesh = new THREE.Mesh() // create Rubik's cube
 gltfData = await modelLoader('/assets/models/rubiks5x5.gltf')
 rubiksCube5x5Mesh = gltfData.scene
 
-//scene.add(rubiksCube2x2Mesh)
-//scene.add(rubiksCube3x3Mesh)
-//scene.add(rubiksCube4x4Mesh)
-//scene.add(rubiksCube5x5Mesh)
 
 /**
  * Add invisble "collision cube", which is used for detecting click positions
@@ -228,7 +222,7 @@ axesHelper.name = "axes_helper";
 axesHelper.scale.x = 0.35
 axesHelper.scale.y = 0.35
 axesHelper.scale.z = 0.35
-//scene.add(axesHelper)
+scene.add(axesHelper)
 
 /**
  * Track mouse movement as pointer movees around the screen
@@ -345,7 +339,6 @@ function animate() {
     raycaster.setFromCamera(pointer, camera)
     intersects = raycaster.intersectObjects(filteredChildren, false)
     if (intersects.length > 0) {
-        //console.log("!!!")
         intersectionPoint = intersects[0].point
     }
 

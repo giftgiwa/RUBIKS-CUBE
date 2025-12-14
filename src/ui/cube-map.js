@@ -30,7 +30,6 @@ class CubeMap {
 		this.rubiksCube.cubeMap = this
 		this.isMobileDevice = isMobileDevice
 
-		console.log(this.rubiksCube.dimension)
 		this.cubeMap = []
 		for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
 			this.cubeMap.push(
@@ -39,9 +38,6 @@ class CubeMap {
 		}
 		this.createCubeMap()
 		this.populateCubeMap()
-
-		console.log(this.cubeMap)
-		
 	}
 
 	/**
@@ -215,12 +211,8 @@ class CubeMap {
 	populateCubeMap() {
 		for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
 			for (let j = 0; j < this.rubiksCube.dimension * 4; j++) {
-				//console.log(this.cubeMap)
 				if (this.cubeMap[i][j]) {
 					let coordinateString = `${this.cubeMap[i][j].coordinates[0]}${this.cubeMap[i][j].coordinates[1]}${this.cubeMap[i][j].coordinates[2]}`
-					//console.log(coordinateString)
-					//console.log(this.rubiksCube.coordinateHashmap)
-					//console.log(this.rubiksCube.coordinateHashmap)
 
 					let faceColor = this.cubeMap[i][j].faceColor
 					let tileElement = this.cubeMap[i][j].tileElement

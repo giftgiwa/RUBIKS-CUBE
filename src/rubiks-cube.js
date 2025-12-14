@@ -88,6 +88,15 @@ class RubiksCube {
         'G': new THREE.Vector3(0, 0, -1), /* -z */
         'R': new THREE.Vector3(-1, 0, 0), /* -x */
         'Y': new THREE.Vector3(0, -1, 0), /* -y */
+        'W#Y1': new THREE.Vector3(0, 1, 0), /* y */
+        'W#Y2': new THREE.Vector3(0, 1, 0), /* y */
+        'W#Y3': new THREE.Vector3(0, 1, 0), /* y */
+        'B#G1': new THREE.Vector3(0, 0, 1), /* z */
+        'B#G2': new THREE.Vector3(0, 0, 1), /* z */
+        'B#G3': new THREE.Vector3(0, 0, 1), /* z */
+        'O#R1': new THREE.Vector3(-1, 0, 0), /* -x */
+        'O#R2': new THREE.Vector3(-1, 0, 0), /* -x */
+        'O#R3': new THREE.Vector3(-1, 0, 0), /* -x */
     }
 
     /**
@@ -138,8 +147,6 @@ class RubiksCube {
                 this.rotationGroups[`${wedgeKeys[j]}${i}`] = []
         }
 
-        //console.log(this.rotationGroups)
-
         // add wedge piece moves (for cubes bigger than 2x2)
         this.moves = []
         for (const [key, _] of Object.entries(this.rotationGroups)) {
@@ -151,7 +158,6 @@ class RubiksCube {
                 this.moves.push(`${key}|ccw`)
             }
         }
-        //console.log(this.moves)
     }
 
     /**
@@ -229,7 +235,6 @@ class RubiksCube {
                         if (j == this.dimension - 1) this.rotationGroups["G"].push(this.coordinateMap[i][j][k]) // green
                         if (k == 0) this.rotationGroups["R"].push(this.coordinateMap[i][j][k]) // red
                         if (k == this.dimension - 1) this.rotationGroups["O"].push(this.coordinateMap[i][j][k]) // orange
-                        //console.log(`${i} ${j} ${k}`)
 
                         if (i > 0 && i < this.dimension - 1) {
                             this.rotationGroups[`W#Y${i}`].push(this.coordinateMap[i][j][k]) // white/yellow
@@ -245,7 +250,6 @@ class RubiksCube {
             }
         }
 
-        //console.log(this.rotationGroups)
     }
 
     /**
@@ -343,18 +347,25 @@ class RubiksCube {
             ]
         ]
 
-        if (this.dimension >= 3) {
+        // TODO: make each of the orientationMap objects separate instances.
+        if (this.dimension > 3) {
             for (let i = 0; i < this.solvedStateOrientations.length; i++) {
                 for (let j = 0; j < this.solvedStateOrientations[i].length; j++) {
-                    for (let c = 1; c <= this.dimension - 3; c++)
-                        this.solvedStateOrientations[i][j].insert(1, this.solvedStateOrientations[i][j][1])
+                    for (let c = 1; c <= this.dimension - 3; c++) {
+                        let orientationCopy = {}
+                        Object.assign(orientationCopy, this.solvedStateOrientations[i][j][1])
+                        this.solvedStateOrientations[i][j].insert(1, orientationCopy)
+                    }
                 }
-                for (let c = 1; c <= this.dimension - 3; c++)
-                    this.solvedStateOrientations[i].insert(1, this.solvedStateOrientations[i][1])
+                for (let c = 1; c <= this.dimension - 3; c++) {
+                    //this.solvedStateOrientations[i].insert(1, this.solvedStateOrientations[i][1])
+                    this.solvedStateOrientations[i].insert(1, JSON.parse(JSON.stringify(this.solvedStateOrientations[i][1])))
+                }
             }
             for (let c = 1; c <= this.dimension - 3; c++)
-                this.solvedStateOrientations.insert(1, this.solvedStateOrientations[1])
-        } else { // this.dimension == 2
+                //this.solvedStateOrientations.insert(1, this.solvedStateOrientations[1])
+                this.solvedStateOrientations.insert(1, JSON.parse(JSON.stringify(this.solvedStateOrientations[1])))
+        } else if (this.dimension < 3) { // this.dimension == 2
             for (let i = 0; i < this.solvedStateOrientations.length; i++) {
                 for (let j = 0; j < this.solvedStateOrientations[i].length; j++) {
                     this.solvedStateOrientations[i][j].splice(1, 1)
@@ -364,7 +375,6 @@ class RubiksCube {
             this.solvedStateOrientations.splice(1, 1)
         }
 
-        //console.log(this.solvedStateOrientations)
     }
 
 	/**
@@ -399,19 +409,19 @@ class RubiksCube {
     }
 
     updateCoordinateHashmap() {
-        //console.log(this.rotationGroups)
         this.coordinateHashmap = {}
         for (const [key, value] of Object.entries(this.rotationGroups)) {
             for (let i = 0; i < value.length; i++) {
                 this.coordinateHashmap[`${value[i].coordinates[0]}${value[i].coordinates[1]}${value[i].coordinates[2]}`] = value[i]
             }
         }
-        //console.log(this.coordinateHashmap)
     }
 
     /**
      * Reset the Rubik's Cube's internal and external representation.
      */
+
+    // TODO: update position setting for reset() to account for multiple different dimensions of cubes.
     reset() {
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {

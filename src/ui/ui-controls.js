@@ -42,7 +42,6 @@ class UIControls {
 		if (!isMobileDevice && window.innerWidth > 450) {
 			this.rubiksCubes.forEach((rubiksCube) => {
 				if (rubiksCube.isRendered) {
-					//console.log("!")
 					this.cubeMap = new CubeMap(rubiksCube, isMobileDevice)
 				}
 			})

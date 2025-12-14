@@ -120,7 +120,6 @@ class RotationHelper {
             if (piece.colors.length == 3) { // handling corner
                 for (let i = 0; i < rotationMap[color].length; i++) {    
                     let sourceFace = rotationMap[color][i]
-
                     let destinationFace = null
                     if (i + 2 <= 3)
                         destinationFace = rotationMap[color][i + 2]
@@ -135,16 +134,16 @@ class RotationHelper {
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece) 
                         && rubiksCube.rotationGroups[adjacentFace].includes(piece)) {
-                        this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
                         this.updateCoordinates(piece, direction, color)
                         this.updateOrientationMap(rubiksCube, piece, direction, color)
+                        this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+
                         break
                     }
                 }
             } else if (piece.colors.length == 2) { // handling edge
                 for (let i = 0; i < rotationMap[color].length; i++) {
                     let sourceFace = rotationMap[color][i]
-
                     let destinationFace = null
                     if (i + 1 <= 3)
                         destinationFace = rotationMap[color][i + 1]
@@ -152,13 +151,15 @@ class RotationHelper {
                         destinationFace = rotationMap[color][0]
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
-                        this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
                         this.updateCoordinates(piece, direction, color)
                         this.updateOrientationMap(rubiksCube, piece, direction, color)
+                        this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+
                         break
                     }
                 }
             } else // handling center piece of face – do nothing
+                // TODO: do something
                 continue
         }
         rubiksCube.updateCoordinateHashmap()
@@ -190,6 +191,7 @@ class RotationHelper {
         for (let i = rubiksCube.rotationGroups[sourceFace].length - 1; i > -1; i--) {
             let currentPiece = rubiksCube.rotationGroups[sourceFace][i]
             if (currentPiece == piece) {
+
                 rubiksCube.rotationGroups[sourceFace].splice(i, 1)
                 break
             }
@@ -267,7 +269,7 @@ class RotationHelper {
             ))
         }
         //rubiksPiece.mesh.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
-        //rubiksPiece.mesh.userData.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`   
+        //rubiksPiece.mesh.userData.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
     }
 
     /**
@@ -292,19 +294,17 @@ class RotationHelper {
 
         Object.entries(rubiksPiece.orientationMap).forEach((face) => {
             let currentPieceColor = face[0]
-            let currentFace = face[1]
+            let currentFaceLocation = face[1]
 
-            if (currentFace != color) {
-
+            if (currentFaceLocation != color) {
                 for (let i = 0; i < rotationMap.length; i++) {
-                    if (rotationMap[i] == currentFace) {
-                        if (i + 1 <= 3)
+                    if (rotationMap[i] == currentFaceLocation) {
+                        if (i + 1 <= rotationMap.length - 1)
                             rubiksPiece.orientationMap[currentPieceColor] = rotationMap[i + 1]
                         else
                             rubiksPiece.orientationMap[currentPieceColor] = rotationMap[0]
                     }
                 }
-
             }
         })
     }
