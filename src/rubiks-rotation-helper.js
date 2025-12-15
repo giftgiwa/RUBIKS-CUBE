@@ -151,6 +151,7 @@ class RotationHelper {
                         destinationFace = rotationMap[color][0]
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
+                        console.log(piece)
                         this.updateCoordinates(piece, direction, color)
                         this.updateOrientationMap(rubiksCube, piece, direction, color)
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
@@ -158,9 +159,30 @@ class RotationHelper {
                         break
                     }
                 }
-            } else // handling center piece of face – do nothing
+            } else // handling center piece of face (piece.colors.length == 1)
                 // TODO: do something
-                continue
+
+                // maybe treat as two separate face rotations
+                //console.log(piece)
+
+                for (let i = 0; i < rotationMap[color].length; i++) {
+                    let sourceFace = rotationMap[color][i]
+                    let destinationFace = null
+                    if (i + 1 <= 3)
+                        destinationFace = rotationMap[color][i + 1]
+                    else
+                        destinationFace = rotationMap[color][0]
+
+                    if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
+                        console.log(piece)
+                        this.updateCoordinates(piece, direction, color)
+                        this.updateOrientationMap(rubiksCube, piece, direction, color)
+                        //this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+
+                        break
+                    }
+                }
+
         }
         rubiksCube.updateCoordinateHashmap()
         rubiksCube.cubeMap.populateCubeMap()
@@ -226,10 +248,32 @@ class RotationHelper {
             "O": [(d-1)/2, (d-1)/2, d-1],
             "G": [(d-1)/2, d-1, (d-1)/2],
             "R": [(d-1)/2, (d-1)/2, 0],
-            "Y": [(d-1), (d-1)/2, (d-1)/2]
+            "Y": [(d-1), (d-1)/2, (d-1)/2],
+            "W#Y1": [1, (d-1)/2, (d-1)/2],
+            "W#Y2": [2, (d-1)/2, (d-1)/2],
+            "W#Y3": [3, (d-1)/2, (d-1)/2],
+            "B#G1": [(d-1)/2, 1, (d-1)/2],
+            "B#G2": [(d-1)/2, 2, (d-1)/2],
+            "B#G3": [(d-1)/2, 3, (d-1)/2],
+            "R#O1": [(d-1)/2, (d-1)/2, 1],
+            "R#O2": [(d-1)/2, (d-1)/2, 2],
+            "R#O3": [(d-1)/2, (d-1)/2, 3],
         }
 
-        let negativeAxisFaces = new Set(["R", "W", "B"])
+        let negativeAxisFaces = new Set([
+            "R",
+            "W",
+            "B",
+            "B#G1",
+            "B#G2",
+            "B#G3",
+            "W#Y1",
+            "W#Y2",
+            "W#Y3",
+            "R#O1",
+            "R#O2",
+            "R#O3"
+        ])
 
         let x = rubiksPiece.coordinates[0]
         let y = rubiksPiece.coordinates[1]
@@ -246,21 +290,21 @@ class RotationHelper {
             angle = -Math.PI / 2
         }
 
-        if (color == "W" || color == "Y") { // "x"
+        if (color == "W" || color == "Y" || color.startsWith("W#Y")) { // "x"
             rubiksPiece.coordinates[1] = Math.round(Math.abs(
                 y*Math.cos(angle) - z*Math.sin(angle) + y0*(1 - Math.cos(angle)) + z0*Math.sin(angle)
             ))
             rubiksPiece.coordinates[2] = Math.round(Math.abs(
                 y*Math.sin(angle) + z*Math.cos(angle) + z0*(1 - Math.cos(angle)) - y0*Math.sin(angle)
             ))
-        } else if (color == "G" || color == "B") { // "y"
+        } else if (color == "G" || color == "B" || color.startsWith("B#G")) { // "y"
             rubiksPiece.coordinates[0] = Math.round(Math.abs(
                 x*Math.cos(angle) + z*Math.sin(angle) + z0*(1 - Math.cos(angle)) - x0*Math.sin(angle)
             ))
             rubiksPiece.coordinates[2] = Math.round(Math.abs(
                 -x*Math.sin(angle) + z*Math.cos(angle) + x0*(1 - Math.cos(angle)) + z0*Math.sin(angle)
             ))
-        } else { // "z"; color == "R" || color == "O"
+        } else { // "z"; color == "R" || color == "O" || color.startsWith("R#O")
             rubiksPiece.coordinates[0] = Math.round(Math.abs(
                 x*Math.cos(angle) - y*Math.sin(angle) + x0*(1 - Math.cos(angle)) + y0*Math.sin(angle)
             ))

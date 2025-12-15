@@ -128,8 +128,8 @@ for (let i = 0; i < lightPositions.length; i++) {
     scene.add(light)
 }
 
-// load Rubik's Cube mesh (in .gltf format)
-function modelLoader(url) {
+// load model in .gltf format
+function loadModel(url) {
     return new Promise((resolve, reject) => {
         loader.load(url, (data) => resolve(data), null, undefined, function (error) {
             console.error(error)
@@ -140,7 +140,7 @@ function modelLoader(url) {
 /**
  * The renderMap object tracks which cube is to be currently rendered
  */
-let currentCube = 2
+let currentCube = 3
 let renderMap = {
     2: false,
     3: false,
@@ -153,19 +153,19 @@ for (let i = 2; i <= 5; i++) {
 
 const loader = new GLTFLoader()
 let rubiksCube3x3Mesh = new THREE.Mesh() // create Rubik's cube
-let gltfData = await modelLoader('/assets/models/rubiks3x3.gltf')
+let gltfData = await loadModel('/assets/models/rubiks3x3.gltf')
 rubiksCube3x3Mesh = gltfData.scene
 
 let rubiksCube2x2Mesh = new THREE.Mesh() // create Rubik's cube
-gltfData = await modelLoader('/assets/models/rubiks2x2.gltf')
+gltfData = await loadModel('/assets/models/rubiks2x2.gltf')
 rubiksCube2x2Mesh = gltfData.scene
 
 let rubiksCube4x4Mesh = new THREE.Mesh() // create Rubik's cube
-gltfData = await modelLoader('/assets/models/rubiks4x4.gltf')
+gltfData = await loadModel('/assets/models/rubiks4x4.gltf')
 rubiksCube4x4Mesh = gltfData.scene
 
 let rubiksCube5x5Mesh = new THREE.Mesh() // create Rubik's cube
-gltfData = await modelLoader('/assets/models/rubiks5x5.gltf')
+gltfData = await loadModel('/assets/models/rubiks5x5.gltf')
 rubiksCube5x5Mesh = gltfData.scene
 
 

@@ -65,7 +65,16 @@ class RubiksAnimationHelper {
         'O': new Set(["y", "z"]),
         'G': new Set(["x", "y"]),
         'R': new Set(["y", "z"]),
-        'Y': new Set(["z", "x"])
+        'Y': new Set(["z", "x"]),
+        'W#Y1': new Set(["z", "x"]),
+        'W#Y2': new Set(["z", "x"]),
+        'W#Y3': new Set(["z", "x"]),
+        'B#G1': new Set(["x", "y"]),
+        'B#G2': new Set(["x", "y"]),
+        'B#G3': new Set(["x", "y"]),
+        'R#O1': new Set(["y", "z"]),
+        'R#O2': new Set(["y", "z"]),
+        'R#O3': new Set(["y", "z"]),
     }
 
     constructor(rubiksCube, camera, renderer) {
@@ -103,6 +112,7 @@ class RubiksAnimationHelper {
                 }
             }
         }
+        //console.log(this.faceBounds)
     }
 
     /**
@@ -167,6 +177,7 @@ class RubiksAnimationHelper {
                 this.colorCandidates.push(key)
             }
         }
+
     }
 
     /**
@@ -188,17 +199,23 @@ class RubiksAnimationHelper {
         if (this.currentColor == null && this.currentDirection == null) {
             if (this.frameCounter == FRAME_COUNT) {
 
+                console.log(this.colorCandidates)
                 let largestVectorComponent = this.getLargestVectorComponent(this.avgDeltaMove)
                 this.colorCandidates.forEach((colorCandidate) => {
-                    if (this.faceComponentMap[colorCandidate].has(largestVectorComponent)) {
-                        this.currentColor = colorCandidate
+                    if (colorCandidate.indexOf("#") == -1) { // non-wedge pieces
+                        if (this.faceComponentMap[colorCandidate].has(largestVectorComponent)) {
+                            this.currentColor = colorCandidate
+                        }
+                    } else { // wedge pieces
+                        if (this.faceComponentMap[colorCandidate].has(largestVectorComponent)) {
+                            this.currentColor = colorCandidate
+                        }
                     }
                 })
 
                 let crossProduct = this.avgDeltaMove.clone()
                 if (this.currentColor) {
                     crossProduct.cross(this.rubiksCube.rotationAxes[this.currentColor].clone())
-                    
                     let normalizedCrossProduct = this.roundVector(crossProduct.normalize())
                     if (normalizedCrossProduct.dot(this.currentIntersectionNormal) < 0) 
                         this.currentDirection = "cw"
@@ -245,6 +262,7 @@ class RubiksAnimationHelper {
             deltaMove.sub(this.previousRaycasterPosition)
             deltaMove = this.roundVector(deltaMove)
             this.deltaMove = deltaMove
+
 
             let rotationAmount = mouseMovement.length() * 1.15 * Math.PI / 90
             if (this.currentColor != null && this.currentDirection != null) {
@@ -300,6 +318,8 @@ class RubiksAnimationHelper {
             return
         }
 
+        console.log(`color/direction: ${this.currentColor} ${this.currentDirection}`)
+
         if (Math.abs(Math.abs(this.currentRotationAngle) - (Math.PI / 2)) <= Math.PI / 4) {
             let difference = Math.abs(Math.abs(this.currentRotationAngle) - (Math.PI / 2))
 
@@ -340,7 +360,6 @@ class RubiksAnimationHelper {
 
         this.rubiksCube.isRotating = false
     }
-
 }
 
 export default RubiksAnimationHelper

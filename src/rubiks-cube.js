@@ -12,7 +12,7 @@ Array.prototype.insert = function ( index, ...items ) {
 
 /**
  * Class for storing a Rubik's Cube instantiated in the scene (for both internal
- * and external representation
+ * and external representation).
  */
 class RubiksCube {
 
@@ -41,7 +41,16 @@ class RubiksCube {
         'O': ['W', 'G', 'Y', 'B'],
         'G': ['W', 'R', 'Y', 'O'],
         'R': ['W', 'B', 'Y', 'G'],
-        'Y': ['B', 'O', 'G', 'R']
+        'Y': ['B', 'O', 'G', 'R'],
+        'W#Y1': ['B', 'R', 'G', 'O'],
+        'W#Y2': ['B', 'R', 'G', 'O'],
+        'W#Y3': ['B', 'R', 'G', 'O'],
+        'B#G1': ['W', 'O', 'Y', 'R'],
+        'B#G2': ['W', 'O', 'Y', 'R'],
+        'B#G3': ['W', 'O', 'Y', 'R'],
+        'R#O1': ['W', 'B', 'Y', 'G'],
+        'R#O2': ['W', 'B', 'Y', 'G'],
+        'R#O3': ['W', 'B', 'Y', 'G']
     }
 
     /**
@@ -59,7 +68,16 @@ class RubiksCube {
         'O': ['W', 'B', 'Y', 'G'],
         'G': ['W', 'O', 'Y', 'R'],
         'R': ['W', 'G', 'Y', 'B'],
-        'Y': ['B', 'R', 'G', 'O']
+        'Y': ['B', 'R', 'G', 'O'],
+        'W#Y1': ['B', 'O', 'G', 'R'],
+        'W#Y2': ['B', 'O', 'G', 'R'],
+        'W#Y3': ['B', 'O', 'G', 'R'],
+        'B#G1': ['W', 'R', 'Y', 'O'],
+        'B#G2': ['W', 'R', 'Y', 'O'],
+        'B#G3': ['W', 'R', 'Y', 'O'],
+        'R#O1': ['W', 'G', 'Y', 'B'],
+        'R#O2': ['W', 'G', 'Y', 'B'],
+        'R#O3': ['W', 'G', 'Y', 'B']
     }
 
     /**
@@ -94,9 +112,9 @@ class RubiksCube {
         'B#G1': new THREE.Vector3(0, 0, 1), /* z */
         'B#G2': new THREE.Vector3(0, 0, 1), /* z */
         'B#G3': new THREE.Vector3(0, 0, 1), /* z */
-        'O#R1': new THREE.Vector3(-1, 0, 0), /* -x */
-        'O#R2': new THREE.Vector3(-1, 0, 0), /* -x */
-        'O#R3': new THREE.Vector3(-1, 0, 0), /* -x */
+        'R#O1': new THREE.Vector3(-1, 0, 0), /* -x */
+        'R#O2': new THREE.Vector3(-1, 0, 0), /* -x */
+        'R#O3': new THREE.Vector3(-1, 0, 0), /* -x */
     }
 
     /**
@@ -374,7 +392,6 @@ class RubiksCube {
             }
             this.solvedStateOrientations.splice(1, 1)
         }
-
     }
 
 	/**
@@ -415,6 +432,8 @@ class RubiksCube {
                 this.coordinateHashmap[`${value[i].coordinates[0]}${value[i].coordinates[1]}${value[i].coordinates[2]}`] = value[i]
             }
         }
+
+        //console.log(this.coordinateHashmap)
     }
 
     /**

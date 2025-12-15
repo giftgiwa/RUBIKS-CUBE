@@ -209,10 +209,14 @@ class CubeMap {
 	}
 
 	populateCubeMap() {
+
+		console.log(this.rubiksCube.rotationGroups)
 		for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
 			for (let j = 0; j < this.rubiksCube.dimension * 4; j++) {
 				if (this.cubeMap[i][j]) {
 					let coordinateString = `${this.cubeMap[i][j].coordinates[0]}${this.cubeMap[i][j].coordinates[1]}${this.cubeMap[i][j].coordinates[2]}`
+
+					//console.log(`coordinate string: ${coordinateString}`)
 
 					let faceColor = this.cubeMap[i][j].faceColor
 					let tileElement = this.cubeMap[i][j].tileElement
