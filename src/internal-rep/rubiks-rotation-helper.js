@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import RubiksPiece from './rubiks-piece'
-import RubiksCube from './rubiks-cube'
-import UIControls from './ui/ui-controls'
+import RubiksCube from '../rubiks-cube'
+import UIControls from '../ui/ui-controls'
 
 /**
  * Prototype for rotating an Object3D around an axis in world space by a specified
@@ -52,22 +52,15 @@ class RotationHelper {
      */
     static rotateFace(rubiksCube, direction, color, swiping, keypressMode) {
         let origin = new THREE.Vector3(0, 0, 0)
-        let rotationMap = null
-        if (direction == "ccw")
-            rotationMap = rubiksCube.counterclockwiseRotationMap
-        else // direction == "cw"
-            rotationMap = rubiksCube.clockwiseRotationMap
-
         rubiksCube.isAnimated = true
 
         /**
-         * Fast animation – rotation is instant
+         * Fast animation – rotation of pieces is instant
          */
         if (!swiping && (keypressMode == "Fast")) {
             for (let piece of rubiksCube.rotationGroups[color]) {
-                if (direction == "ccw") {
+                if (direction == "ccw")
                     piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], Math.PI / 2)
-                }
                 else
                     piece.mesh.rotateAroundWorldAxis(origin, rubiksCube.rotationAxes[color], -Math.PI / 2)
             }
@@ -115,83 +108,200 @@ class RotationHelper {
                 this.doAnimate = false
             }
         }
-        
+
+        this.rotateFaceInternal(rubiksCube, direction, color)
+        rubiksCube.updateCoordinateHashmap()
+        rubiksCube.cubeMap.populateCubeMap()
+        rubiksCube.isAnimated = false
+
+        if (rubiksCube.isShuffled && rubiksCube.isSolved())
+            UIControls.congratulations()
+    }
+
+    /**
+     * Corners belong to three outer layers at a time.
+     * Edges belong to two outer layers and one inner layer at a time.
+     * Centers belong to one outer layer and two inner layers at a time.
+     */
+    static rotateFaceInternal(rubiksCube, direction, color) {
+        let rotationMap = null
+        if (direction == "ccw")
+            rotationMap = rubiksCube.counterclockwiseRotationMap
+        else // direction == "cw"
+            rotationMap = rubiksCube.clockwiseRotationMap
+
         for (let piece of rubiksCube.rotationGroups[color]) {
+
             if (piece.colors.length == 3) { // handling corner
                 for (let i = 0; i < rotationMap[color].length; i++) {    
-                    let sourceFace = rotationMap[color][i]
-                    let destinationFace = null
-                    if (i + 2 <= 3)
-                        destinationFace = rotationMap[color][i + 2]
-                    else
-                        destinationFace = rotationMap[color][i - 2]
-
-                    let adjacentFace = null
-                    if (i + 1 <= 3)
-                        adjacentFace = rotationMap[color][i + 1]
-                    else
-                        adjacentFace = rotationMap[color][0]
+                    let [sourceFace, adjacentFace, destinationFace] = this.getSourceAdjacentAndDestinationFaces(rotationMap, color, piece, i)
 
                     if (rubiksCube.rotationGroups[sourceFace].includes(piece) 
                         && rubiksCube.rotationGroups[adjacentFace].includes(piece)) {
                         this.updateCoordinates(piece, direction, color)
                         this.updateOrientationMap(rubiksCube, piece, direction, color)
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
-
                         break
                     }
                 }
-            } else if (piece.colors.length == 2) { // handling edge
+            }
+            
+            else if (piece.colors.length == 2) { // handling edge
                 for (let i = 0; i < rotationMap[color].length; i++) {
-                    let sourceFace = rotationMap[color][i]
-                    let destinationFace = null
-                    if (i + 1 <= 3)
-                        destinationFace = rotationMap[color][i + 1]
-                    else
-                        destinationFace = rotationMap[color][0]
+                    
+                    let [sourceFace, adjacentFace, destinationFace] = this.getSourceAdjacentAndDestinationFaces(rotationMap, color, piece, i)
 
-                    if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
-                        console.log(piece)
+                    if (rubiksCube.rotationGroups[sourceFace].includes(piece)
+                        && (adjacentFace == null || rubiksCube.rotationGroups[adjacentFace].includes(piece))) {
                         this.updateCoordinates(piece, direction, color)
                         this.updateOrientationMap(rubiksCube, piece, direction, color)
                         this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
 
+                        // Reassigning edge pieces to middle-layer rotation groups after outer-layer moves
+                        if (color.charAt(1) != "#") {
+                            let additionalRotationMap = null
+                            if (direction == "cw")
+                                additionalRotationMap = rubiksCube.clockwiseOuterToInnerRotationMap
+                            else
+                                additionalRotationMap = rubiksCube.counterclockwiseOuterToInnerRotationMap
+
+                            let suffix = null
+                            for (let color of piece.rotationGroups) {
+                                if (color.charAt(1) == "#")
+                                    suffix = color.charAt(color.length - 1)
+                            }
+
+                            for (let j = 0; j < additionalRotationMap[`${color}${suffix}`].length; j++) {
+                                let [sourceFace, adjacentFace, destinationFace] = this.getSourceAdjacentAndDestinationFaces(additionalRotationMap, `${color}${suffix}`, piece, j)
+                                if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
+                                    this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+                                    break
+                                }
+                            }
+                        }
                         break
                     }
                 }
-            } else // handling center piece of face (piece.colors.length == 1)
-                // TODO: do something
 
-                // maybe treat as two separate face rotations
-                //console.log(piece)
+            }
+            
+            else { // handling center piece of face (piece.colors.length == 1)
+                if (color.charAt(1) == "#") {
+                    // reassigning center pieces to outer-layer rotation groups after middle-layer moves
+                    for (let i = 0; i < rotationMap[color].length; i++) {
+                        let [sourceFace, adjacentFace, destinationFace] = this.getSourceAdjacentAndDestinationFaces(rotationMap, color, piece, i)
+                        if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
+                            this.updateCoordinates(piece, direction, color)
+                            this.updateOrientationMap(rubiksCube, piece, direction, color)
+                            this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+                            
+                            // additionally reassigning center pieces to middle-layer rotation groups after middle-layer moves
+                            let additionalRotationMap = null
+                            if (direction == "cw")
+                                additionalRotationMap = rubiksCube.clockwiseInnerToInnerRotationMap
+                            else
+                                additionalRotationMap = rubiksCube.counterclockwiseInnerToInnerRotationMap
 
-                for (let i = 0; i < rotationMap[color].length; i++) {
-                    let sourceFace = rotationMap[color][i]
-                    let destinationFace = null
-                    if (i + 1 <= 3)
-                        destinationFace = rotationMap[color][i + 1]
+                            for (let j = 0; j < additionalRotationMap[color].length; j++) {
+                                let [sourceFace, adjacentFace, destinationFace] = this.getSourceAdjacentAndDestinationFaces(additionalRotationMap, color, piece, j)
+
+                                if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
+                                    this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+                                    break
+                                }
+                            }
+                            break
+                        }
+                    }
+
+                }
+
+                // additionally reassigning center pieces to middle-layer rotation groups after outer-layer moves
+                else {
+                    let additionalRotationMap = null
+                    if (direction == "cw")
+                        additionalRotationMap = rubiksCube.clockwiseCenterRotationMap
                     else
-                        destinationFace = rotationMap[color][0]
+                        additionalRotationMap = rubiksCube.counterclockwiseCenterRotationMap
 
-                    if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
-                        console.log(piece)
-                        this.updateCoordinates(piece, direction, color)
-                        this.updateOrientationMap(rubiksCube, piece, direction, color)
-                        //this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
-
-                        break
+                    let suffix = null
+                    for (let currentColor of piece.rotationGroups) {
+                        if (currentColor.charAt(1) == "#" && currentColor != color)
+                            suffix = currentColor.charAt(currentColor.length - 1)
                     }
+
+                    /**
+                     * Iterate through all of the pairs of middle-layer groups and find the one the piece belongs to
+                     */
+                    for (let j = 0; j < additionalRotationMap[`${color}${suffix}`].length; j++) {
+                        let numMatches = 0
+                        for (let l = 0; l < piece.rotationGroups.length; l++) {
+                            if (piece.rotationGroups[l] == additionalRotationMap[`${color}${suffix}`][j][0] || piece.rotationGroups[l] == additionalRotationMap[`${color}${suffix}`][j][1] )
+                                numMatches++
+                        }
+                        if (numMatches == 2) {
+                            let [sourceFace, adjacentFace, destinationFace] = this.getSourceAdjacentAndDestinationFaces(additionalRotationMap, `${color}${suffix}`, piece, j)
+                            
+                            if (rubiksCube.rotationGroups[sourceFace].includes(piece)) {
+                                this.updateCoordinates(piece, direction, color)
+                                this.updateOrientationMap(rubiksCube, piece, direction, color)
+                                this.transferPiece(rubiksCube, piece, sourceFace, destinationFace)
+                                break
+                            }
+                        }
+                    }
+                    
                 }
 
-        }
-        rubiksCube.updateCoordinateHashmap()
-        rubiksCube.cubeMap.populateCubeMap()
-        rubiksCube.isAnimated = false
-
-        if (rubiksCube.isShuffled && rubiksCube.isSolved()) {
-            UIControls.congratulations()
+            }
         }
     }
+
+    
+    static getSourceAdjacentAndDestinationFaces(rotationMap, color, piece, i) {
+        let sourceFace = null, adjacentFace = null, destinationFace = null
+
+        /* Corner - only involved in outer-layer rotation. */
+        if (piece.colors.length == 3) {
+            sourceFace = rotationMap[color][i]
+            destinationFace = rotationMap[color][(i + 2) % 4]
+            adjacentFace = rotationMap[color][(i + 1) % 4]
+        }
+        
+        /* Edge - can be involved in outer-layer rotation or inner-layer */
+        else if (piece.colors.length == 2) {
+            if (color.charAt(1) == "#") { // middle layer
+                sourceFace = rotationMap[color][i]
+                destinationFace = rotationMap[color][(i + 2) % 4]
+                adjacentFace = rotationMap[color][(i + 1) % 4]
+            } else { // outer layer
+                sourceFace = rotationMap[color][i]
+                destinationFace = rotationMap[color][(i + 1) % 4]
+            }
+        } 
+        
+        /* Center - can be involved in outer-layer rotation or inner-layer */
+        else {
+            //console.log(rotationMap[color][i])
+            //console.log(rotationMap[color][(i + 1) % 4])
+            if (color.charAt(1) == "#") { // middle layer
+                sourceFace = rotationMap[color][i]
+                destinationFace = rotationMap[color][(i + 1) % 4]
+            } else { // outer layer
+                let firstState = rotationMap[color][i], secondState = rotationMap[color][(i + 1) % 4]
+
+                if (firstState[0] == secondState[0]) {
+                    sourceFace = firstState[1]
+                    destinationFace = secondState[1]
+                } else { // firstState[1] == secondState[1]
+                    sourceFace = firstState[0]
+                    destinationFace = secondState[0]
+                }
+            }
+        }
+        return [sourceFace, adjacentFace, destinationFace]
+    }
+
 
     /**
      * Helper function that transfers a given RubikePiece object from one
@@ -209,18 +319,25 @@ class RotationHelper {
      *                                 "B" (blue), "W" (white)
      */
     static transferPiece(rubiksCube, piece, sourceFace, destinationFace) {
-        // remove the piece that already exists in the source face array
         for (let i = rubiksCube.rotationGroups[sourceFace].length - 1; i > -1; i--) {
             let currentPiece = rubiksCube.rotationGroups[sourceFace][i]
-            if (currentPiece == piece) {
+            if (currentPiece == piece) { // piece found
+
+                // remove source face from rotationGroups array for piece
+                for (let j = 0; j < piece.rotationGroups.length; j++) {
+                    if (piece.rotationGroups[j] == sourceFace)
+                        piece.rotationGroups.splice(j, 1)
+                }
 
                 rubiksCube.rotationGroups[sourceFace].splice(i, 1)
                 break
             }
         }
-
         // add the piece from to the destination face array
         rubiksCube.rotationGroups[destinationFace].push(piece)
+
+        // add destination face to rotationGroups array for piece
+        piece.rotationGroups.push(destinationFace)
     }
 
     /**
@@ -235,10 +352,6 @@ class RotationHelper {
      * @param {string} color color of face piece that rotates, either "R" (red),
      *                       "O" (orange), "Y" (yellow),
      *                       "G" (green), "B" (blue), or "W" (white)
-     */
-    /**
-     * TODO: update updateCoordinates() to account for multiple rotation translations
-     * for each cube dimension
      */
     static updateCoordinates(rubiksPiece, direction, color) {
         let d = rubiksPiece.rubiksCube.dimension
@@ -312,8 +425,6 @@ class RotationHelper {
                 x*Math.sin(angle) + y*Math.cos(angle) + y0*(1 - Math.cos(angle)) - x0*Math.sin(angle)
             ))
         }
-        //rubiksPiece.mesh.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
-        //rubiksPiece.mesh.userData.name = `${rubiksPiece.coordinates[0]}${rubiksPiece.coordinates[1]}${rubiksPiece.coordinates[2]}`
     }
 
     /**

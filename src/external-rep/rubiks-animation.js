@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import RotationHelper from './rubiks-rotation-helper'
+import RotationHelper from '../internal-rep/rubiks-rotation-helper'
 
 /**
  * Prototype for rotating an Object3D around an axis in world space by a specified
@@ -45,11 +45,6 @@ class RubiksAnimationHelper {
     avgDeltaMove = new THREE.Vector3(0, 0, 0)
     deltaMove = null
 
-    /**
-     * TODO: calculate face bounds for collision cube dynamically instead of
-     * setting static values.
-     */
-
     faceBounds = {
         'W': [],
         'B': [],
@@ -59,6 +54,10 @@ class RubiksAnimationHelper {
         'Y': []
     }
 
+    /**
+     * TODO: dynamically create sets for middle-layer movements based on
+     * dimensions of cubes.
+     */
     faceComponentMap = {
         'W': new Set(["z", "x"]),
         'B': new Set(["x", "y"]),
@@ -108,11 +107,10 @@ class RubiksAnimationHelper {
                 }
                 if (rotationGroup.startsWith("R")) {
                     let offset = parseInt(rotationGroup.substring(rotationGroup.length - 1))
-                    this.faceBounds[rotationGroup] = [[w/2 - (1 + offset) * (w/d), w/2 - (offset) * (w/d)], [-Infinity, Infinity], [-Infinity, Infinity]]
+                    this.faceBounds[rotationGroup] = [[-(w/2 - (offset) * (w/d)), -(w/2 - (1 + offset) * (w/d))], [-Infinity, Infinity], [-Infinity, Infinity]]
                 }
             }
         }
-        //console.log(this.faceBounds)
     }
 
     /**
@@ -329,7 +327,7 @@ class RubiksAnimationHelper {
 				else
 					rubiksPiece.mesh.rotateAroundWorldAxis(new THREE.Vector3(0, 0, 0), this.rubiksCube.rotationAxes[this.currentColor], difference)
 			})
-
+            
 			RotationHelper.rotateFace(
 				this.rubiksCube,
 				this.currentDirection,

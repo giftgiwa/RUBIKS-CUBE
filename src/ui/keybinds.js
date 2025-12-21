@@ -1,4 +1,4 @@
-import RotationHelper from './rubiks-rotation-helper'
+import RotationHelper from '../internal-rep/rubiks-rotation-helper'
 
 /**
  * Class for creating keybinds for interacting with the Rubik's Cube.

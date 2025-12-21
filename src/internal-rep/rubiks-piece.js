@@ -34,6 +34,7 @@ class RubiksPiece {
         this.orientationMap = orientationMap // the orientationMap dictates orientation
         this.mesh = mesh // mesh of individual piece on actual cube
         this.rubiksCube = rubiksCube // pointer to the Rubik's cube the piece is part of
+        this.rotationGroups = [] // list of rotation groups the piece belongs to
     }
 }
 

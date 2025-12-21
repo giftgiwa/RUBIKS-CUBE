@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import RubiksPiece from './rubiks-piece'
-import RotationHelper from './rubiks-rotation-helper'
+import RubiksPiece from './internal-rep/rubiks-piece'
+import RotationHelper from './internal-rep/rubiks-rotation-helper'
 
 /**
  * Helper function for inserting elements into arrays at specified indices
@@ -15,17 +15,6 @@ Array.prototype.insert = function ( index, ...items ) {
  * and external representation).
  */
 class RubiksCube {
-
-    /**
-     * lists complementary faces on rubiks cube (i.e. faces that exist on
-     * opposite sides of the cube, such as the blue and green face).
-     */
-    //complements = {
-    //    'W': 'Y', 'Y': 'W',
-    //    'O': 'R', 'R': 'O',
-    //    'B': 'G', 'G': 'B'
-    //}
-
     /**
      * Lists the ordering of faces adjacent to each face in the clockwise 
      * direction (for handling rotations).
@@ -34,6 +23,11 @@ class RubiksCube {
      * red, green, and orange faces. If the white side of the cube were rotated 
      * clockwise, the pieces would move from the blue face to the red face, the
      * red face to the green face, and so on.
+     */
+
+    /**
+     * TODO: dynamically create rotation maps for middle layers based on
+     * dimensions of cube.
      */
     clockwiseRotationMap = {
         'W': ['B', 'R', 'G', 'O'],
@@ -79,6 +73,13 @@ class RubiksCube {
         'R#O2': ['W', 'G', 'Y', 'B'],
         'R#O3': ['W', 'G', 'Y', 'B']
     }
+
+    clockwiseInnerToInnerRotationMap = {}
+    counterclockwiseInnerToInnerRotationMap = {}
+    clockwiseOuterToInnerRotationMap = {}
+    counterclockwiseOuterToInnerRotationMap = {}
+    clockwiseCenterRotationMap = {}
+    counterclockwiseCenterRotationMap = {}
 
     /**
      * Stores the RubiksPiece objects associated with each face in the Rubik's
@@ -148,6 +149,9 @@ class RubiksCube {
         this.initCoordinateMap() // build the coordinate map
         this.buildMeshGroups() // build the mesh groups
         this.updateCoordinateHashmap()
+        this.createMiddleLayerRotationMaps()
+
+        console.log(this)
     }
 
     /**
@@ -184,7 +188,7 @@ class RubiksCube {
      */
     initCoordinateMap() {
         /**
-         * Each of the double/triple/quadruple/quintuple/whatever -nested arrays
+         * Each of the double/triple/quadruple/quintuple/whatever - nested arrays
          * will store the colors of the given piece.
          */
         this.coordinateMap = []
@@ -247,27 +251,177 @@ class RubiksCube {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
                     if (this.coordinateMap[i][j][k]) {
-                        if (i == 0) this.rotationGroups["W"].push(this.coordinateMap[i][j][k]) // white
-                        if (i == this.dimension - 1) this.rotationGroups["Y"].push(this.coordinateMap[i][j][k]) // yellow
-                        if (j == 0) this.rotationGroups["B"].push(this.coordinateMap[i][j][k]) // blue
-                        if (j == this.dimension - 1) this.rotationGroups["G"].push(this.coordinateMap[i][j][k]) // green
-                        if (k == 0) this.rotationGroups["R"].push(this.coordinateMap[i][j][k]) // red
-                        if (k == this.dimension - 1) this.rotationGroups["O"].push(this.coordinateMap[i][j][k]) // orange
+                        if (i == 0) {
+                            this.rotationGroups["W"].push(this.coordinateMap[i][j][k]) // white
+                            this.coordinateMap[i][j][k].rotationGroups.push("W")
+                        }
+                        if (i == this.dimension - 1) {
+                            this.rotationGroups["Y"].push(this.coordinateMap[i][j][k]) // yellow
+                            this.coordinateMap[i][j][k].rotationGroups.push("Y")
+                        }
+                        if (j == 0) {
+                            this.rotationGroups["B"].push(this.coordinateMap[i][j][k]) // blue
+                            this.coordinateMap[i][j][k].rotationGroups.push("B")
+                        }
+                        if (j == this.dimension - 1) {
+                            this.rotationGroups["G"].push(this.coordinateMap[i][j][k]) // green
+                            this.coordinateMap[i][j][k].rotationGroups.push("G")
+                        }
+                        if (k == 0) {
+                            this.rotationGroups["R"].push(this.coordinateMap[i][j][k]) // red
+                            this.coordinateMap[i][j][k].rotationGroups.push("R")
+                        }
+                        if (k == this.dimension - 1) {
+                            this.rotationGroups["O"].push(this.coordinateMap[i][j][k]) // orange
+                            this.coordinateMap[i][j][k].rotationGroups.push("O")
+                        }
 
                         if (i > 0 && i < this.dimension - 1) {
                             this.rotationGroups[`W#Y${i}`].push(this.coordinateMap[i][j][k]) // white/yellow
+                            this.coordinateMap[i][j][k].rotationGroups.push(`W#Y${i}`)
                         }
                         if (j > 0 && j < this.dimension - 1) {
                             this.rotationGroups[`B#G${j}`].push(this.coordinateMap[i][j][k]) // blue/green
+                            this.coordinateMap[i][j][k].rotationGroups.push(`B#G${j}`)
                         }
                         if (k > 0 && k < this.dimension - 1) {
                             this.rotationGroups[`R#O${k}`].push(this.coordinateMap[i][j][k]) // blue/green
+                            this.coordinateMap[i][j][k].rotationGroups.push(`R#O${k}`)
+
                         }
                     }
                 }
             }
         }
 
+    }
+
+    /**
+     * Didn't really know of a better way to implement this function...
+     */
+    createMiddleLayerRotationMaps() {
+        for (let i = 1; i <= this.dimension - 2; i++) {
+            // inner to inner
+            this.counterclockwiseInnerToInnerRotationMap[`B#G${i}`] = [`R#O${i}`, `W#Y${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`, `W#Y${i}`]
+            this.clockwiseInnerToInnerRotationMap[`B#G${i}`] = [`R#O${i}`, `W#Y${i}`, `R#O${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`]
+            this.clockwiseInnerToInnerRotationMap[`R#O${i}`] = [`B#G${i}`, `W#Y${this.dimension - i - 1}`, `B#G${this.dimension - i - 1}`, `W#Y${i}`]
+            this.counterclockwiseInnerToInnerRotationMap[`R#O${i}`] = [`B#G${i}`, `W#Y${i}`, `B#G${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`]
+            this.counterclockwiseInnerToInnerRotationMap[`W#Y${i}`] = [`B#G${i}`, `R#O${this.dimension - i - 1}`, `B#G${this.dimension - i - 1}`, `R#O${i}`]
+            this.clockwiseInnerToInnerRotationMap[`W#Y${i}`] = [`B#G${i}`, `R#O${i}`, `B#G${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`]
+
+            // outer to inner
+            this.counterclockwiseOuterToInnerRotationMap[`B${i}`] = [`R#O${i}`, `W#Y${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`, `W#Y${i}`]
+            this.clockwiseOuterToInnerRotationMap[`B${i}`] = [`R#O${i}`, `W#Y${i}`, `R#O${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`]
+            this.clockwiseOuterToInnerRotationMap[`G${i}`] = [`R#O${i}`, `W#Y${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`, `W#Y${i}`]
+            this.counterclockwiseOuterToInnerRotationMap[`G${i}`] = [`R#O${i}`, `W#Y${i}`, `R#O${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`]
+            this.clockwiseOuterToInnerRotationMap[`R${i}`] = [`B#G${i}`, `W#Y${this.dimension - i - 1}`, `B#G${this.dimension - i - 1}`, `W#Y${i}`]
+            this.counterclockwiseOuterToInnerRotationMap[`R${i}`] = [`B#G${i}`, `W#Y${i}`, `B#G${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`]
+            this.counterclockwiseOuterToInnerRotationMap[`O${i}`] = [`B#G${i}`, `W#Y${this.dimension - i - 1}`, `B#G${this.dimension - i - 1}`, `W#Y${i}`]
+            this.clockwiseOuterToInnerRotationMap[`O${i}`] = [`B#G${i}`, `W#Y${i}`, `B#G${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`]
+            this.counterclockwiseOuterToInnerRotationMap[`W${i}`] = [`B#G${i}`, `R#O${this.dimension - i - 1}`, `B#G${this.dimension - i - 1}`, `R#O${i}`]
+            this.clockwiseOuterToInnerRotationMap[`W${i}`] = [`B#G${i}`, `R#O${i}`, `B#G${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`]
+            this.clockwiseOuterToInnerRotationMap[`Y${i}`] = [`B#G${i}`, `R#O${this.dimension - i - 1}`, `B#G${this.dimension - i - 1}`, `R#O${i}`]
+            this.counterclockwiseOuterToInnerRotationMap[`Y${i}`] = [`B#G${i}`, `R#O${i}`, `B#G${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`]
+
+            // center
+            this.counterclockwiseCenterRotationMap[`R${i}`] = [
+                [`B#G${i}`, `W#Y${i}`],
+                [`B#G${this.dimension - i - 1}`, `W#Y${i}`],
+                [`B#G${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`],
+                [`B#G${i}`, `W#Y${this.dimension - i - 1}`]
+            ]
+
+            this.clockwiseCenterRotationMap[`R${i}`] = [
+                [`B#G${i}`, `W#Y${i}`],
+                [`B#G${i}`, `W#Y${this.dimension - i - 1}`],
+                [`B#G${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`],
+                [`B#G${this.dimension - i - 1}`, `W#Y${i}`]
+            ]
+
+            this.counterclockwiseCenterRotationMap[`O${i}`] = [
+                [`B#G${i}`, `W#Y${i}`],
+                [`B#G${i}`, `W#Y${this.dimension - i - 1}`],
+                [`B#G${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`],
+                [`B#G${this.dimension - i - 1}`, `W#Y${i}`]
+            ]
+
+            this.clockwiseCenterRotationMap[`O${i}`] = [
+                [`B#G${i}`, `W#Y${i}`],
+                [`B#G${this.dimension - i - 1}`, `W#Y${i}`],
+                [`B#G${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`],
+                [`B#G${i}`, `W#Y${this.dimension - i - 1}`]
+            ]
+
+            this.clockwiseCenterRotationMap[`B${i}`] = [
+                [`R#O${i}`, `W#Y${i}`],
+                [`R#O${this.dimension - i - 1}`, `W#Y${i}`],
+                [`R#O${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`],
+                [`R#O${i}`, `W#Y${this.dimension - i - 1}`]
+            ]
+
+            this.counterclockwiseCenterRotationMap[`B${i}`] = [
+                [`R#O${i}`, `W#Y${i}`],
+                [`R#O${i}`, `W#Y${this.dimension - i - 1}`],
+                [`R#O${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`],
+                [`R#O${this.dimension - i - 1}`, `W#Y${i}`]
+            ]
+
+            this.counterclockwiseCenterRotationMap[`G${i}`] = [
+                [`R#O${i}`, `W#Y${i}`],
+                [`R#O${this.dimension - i - 1}`, `W#Y${i}`],
+                [`R#O${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`],
+                [`R#O${i}`, `W#Y${this.dimension - i - 1}`]
+            ]
+
+            this.clockwiseCenterRotationMap[`G${i}`] = [
+                [`R#O${i}`, `W#Y${i}`],
+                [`R#O${i}`, `W#Y${this.dimension - i - 1}`],
+                [`R#O${this.dimension - i - 1}`, `W#Y${this.dimension - i - 1}`],
+                [`R#O${this.dimension - i - 1}`, `W#Y${i}`]
+            ]
+
+            this.clockwiseCenterRotationMap[`W${i}`] = [
+                [`B#G${i}`, `R#O${i}`],
+                [`B#G${this.dimension - i - 1}`, `R#O${i}`],
+                [`B#G${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`],
+                [`B#G${i}`, `R#O${this.dimension - i - 1}`]
+            ]
+
+            this.counterclockwiseCenterRotationMap[`W${i}`] = [
+                [`B#G${i}`, `R#O${i}`],
+                [`B#G${i}`, `R#O${this.dimension - i - 1}`],
+                [`B#G${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`],
+                [`B#G${this.dimension - i - 1}`, `R#O${i}`]
+            ]
+
+            this.counterclockwiseCenterRotationMap[`Y${i}`] = [
+                [`B#G${i}`, `R#O${i}`],
+                [`B#G${this.dimension - i - 1}`, `R#O${i}`],
+                [`B#G${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`],
+                [`B#G${i}`, `R#O${this.dimension - i - 1}`]
+            ]
+
+            this.clockwiseCenterRotationMap[`Y${i}`] = [
+                [`B#G${i}`, `R#O${i}`],
+                [`B#G${i}`, `R#O${this.dimension - i - 1}`],
+                [`B#G${this.dimension - i - 1}`, `R#O${this.dimension - i - 1}`],
+                [`B#G${this.dimension - i - 1}`, `R#O${i}`]
+            ]
+        }
+        //if (this.dimension == 4) {
+        //    console.log("CW Inner to Inner Rotation Map: ")
+        //    console.log(this.clockwiseInnerToInnerRotationMap)
+        //    console.log("CCW Inner to Inner Rotation Map: ")
+        //    console.log(this.counterclockwiseInnerToInnerRotationMap)
+        //    console.log("CW Outer to Inner Rotation Map: ")
+        //    console.log(this.clockwiseOuterToInnerRotationMap)
+        //    console.log("CCW Outer to Inner Rotation Map: ")
+        //    console.log(this.counterclockwiseOuterToInnerRotationMap)
+        //    console.log("CW Center Rotation Map: ")
+        //    console.log(this.clockwiseCenterRotationMap)
+        //    console.log("CCW Center Rotation Map: ")
+        //    console.log(this.counterclockwiseCenterRotationMap)
+        //}
     }
 
     /**
@@ -365,7 +519,6 @@ class RubiksCube {
             ]
         ]
 
-        // TODO: make each of the orientationMap objects separate instances.
         if (this.dimension > 3) {
             for (let i = 0; i < this.solvedStateOrientations.length; i++) {
                 for (let j = 0; j < this.solvedStateOrientations[i].length; j++) {
@@ -376,12 +529,10 @@ class RubiksCube {
                     }
                 }
                 for (let c = 1; c <= this.dimension - 3; c++) {
-                    //this.solvedStateOrientations[i].insert(1, this.solvedStateOrientations[i][1])
                     this.solvedStateOrientations[i].insert(1, JSON.parse(JSON.stringify(this.solvedStateOrientations[i][1])))
                 }
             }
             for (let c = 1; c <= this.dimension - 3; c++)
-                //this.solvedStateOrientations.insert(1, this.solvedStateOrientations[1])
                 this.solvedStateOrientations.insert(1, JSON.parse(JSON.stringify(this.solvedStateOrientations[1])))
         } else if (this.dimension < 3) { // this.dimension == 2
             for (let i = 0; i < this.solvedStateOrientations.length; i++) {

@@ -1,12 +1,12 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import Keybinds from './keybinds'
-import RotationHelper from './rubiks-rotation-helper'
+import Keybinds from './ui/keybinds'
+import RotationHelper from './internal-rep/rubiks-rotation-helper'
 import RubiksCube from './rubiks-cube'
-import RubiksAnimationHelper from './rubiks-animation'
+import RubiksAnimationHelper from './external-rep/rubiks-animation'
 import { TrackballControls } from 'three/examples/jsm/Addons.js'
 import UIControls from './ui/ui-controls'
-import CollisionCube from './collision-cube'
+import CollisionCube from './internal-rep/collision-cube'
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -137,10 +137,11 @@ function loadModel(url) {
     })
 }
 
+// TODO: move this logic to another file as part of the dimension slider logic.
 /**
  * The renderMap object tracks which cube is to be currently rendered
  */
-let currentCube = 3
+let currentCube = 5
 let renderMap = {
     2: false,
     3: false,
