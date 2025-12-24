@@ -1,4 +1,5 @@
 import CubeMap from "./cube-map";
+import DimensionSlider from "../ui/dimension-slider"
 
 class UIControls {
     /**
@@ -22,7 +23,6 @@ class UIControls {
             document.getElementById("show-cubemap"),
             document.getElementById("hide-cubemap"),
         ];
-        //this.dimensionSlider
         this.shuffleButton = document.getElementById("shuffle-btn");
         this.resetButton = document.getElementById("reset-btn");
 
@@ -38,6 +38,8 @@ class UIControls {
         this.keybindsEnabled = false;
         this.keypressMode = "Fast";
         this.cubeMapMode = "On";
+
+        this.dimensionSlider = new DimensionSlider(this.rubiksCubes);
 
         if (!isMobileDevice && window.innerWidth > 450) {
             this.rubiksCubes.forEach((rubiksCube) => {

@@ -101,6 +101,27 @@
     color: white !important;
 }
 
+#dimension-settings {
+    text-align: center;
+    display: block !important;
+    width: 100%;
+    margin: 5px;
+    color: black;
+}
+
+#slider-bar {
+    height: 45px;
+    width: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+}
+
+img {
+    pointer-events: none;
+}
+
 body {
     margin: 0;
     font-family: "Roboto Mono", monospace;
