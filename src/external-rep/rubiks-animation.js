@@ -406,10 +406,6 @@ class RubiksAnimationHelper {
             return;
         }
 
-        console.log(
-            `color/direction: ${this.currentColor} ${this.currentDirection}`,
-        );
-
         if (
             Math.abs(Math.abs(this.currentRotationAngle) - Math.PI / 2) <=
             Math.PI / 4
