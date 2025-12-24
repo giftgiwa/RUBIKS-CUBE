@@ -247,7 +247,10 @@ class RotationHelper {
                         destinationFace,
                     );
 
-                    // reassigning edge pieces to inner-layer rotation groups after outer-layer moves
+                    /**
+                     * Reassigning edge pieces to inner-layer rotation groups
+                     * after outer-layer moves.
+                     */
                     if (color.charAt(1) != "#") {
                         let additionalRotationMap = null;
                         if (direction == "cw")
@@ -335,10 +338,6 @@ class RotationHelper {
                             destinationFace,
                         );
 
-                        /**
-                         * TODO: generate rotation map for middle-layer
-                         * group reassignments after middle-layer movements.
-                         */
                         let additionalRotationMap =
                             this.getCenterRotationMapInner(
                                 rubiksCube,
@@ -380,10 +379,12 @@ class RotationHelper {
                         break;
                     }
                 }
-            }
+            } else {
 
-            // reassigning center pieces to middle-layer rotation groups after outer-layer moves
-            else {
+            /**
+             * Reassigning center pieces to middle-layer rotation groups after
+             * outer-layer moves.
+             */
                 let additionalRotationMap = this.getCenterRotationMapOuter(
                     rubiksCube,
                     piece,
@@ -392,7 +393,8 @@ class RotationHelper {
                 );
 
                 /**
-                 * Iterate through all of the pairs of middle-layer groups and find the one the piece belongs to
+                 * Iterate through all of the pairs of middle-layer groups and
+                 * find the one the piece belongs to.
                  */
                 for (let j = 0; j < additionalRotationMap.length; j++) {
                     let numMatches = 0;
@@ -418,9 +420,6 @@ class RotationHelper {
                             piece,
                             j,
                         );
-
-                        // must be multiple source and destination faces to
-                        // account for another edge case with the center pieces
 
                         if (
                             rubiksCube.rotationGroups[sourceFace].includes(
@@ -639,8 +638,7 @@ class RotationHelper {
             destinationFace1 = rotationMap[color][(i + 2) % 4];
             adjacentFace = rotationMap[color][(i + 1) % 4];
         } else if (piece.colors.length == 2) {
-
-        /* Edge - can be involved in outer-layer rotation or inner-layer */
+            /* Edge - can be involved in outer-layer rotation or inner-layer */
             if (color.charAt(1) == "#") {
                 // middle layer
                 sourceFace1 = rotationMap[color][i];
@@ -652,8 +650,7 @@ class RotationHelper {
                 destinationFace1 = rotationMap[color][(i + 1) % 4];
             }
         } else {
-
-        /* Center - can be involved in outer-layer rotation or inner-layer */
+            /* Center - can be involved in outer-layer rotation or inner-layer */
             if (color.charAt(1) == "#") {
                 // middle layer
                 if (rotationMap.constructor == Object) {
@@ -706,7 +703,6 @@ class RotationHelper {
                 // outer layer
                 let firstState = rotationMap[i],
                     secondState = rotationMap[(i + 1) % 4];
-
                 if (firstState[0] == secondState[0]) {
                     sourceFace1 = firstState[1];
                     destinationFace1 = secondState[1];
@@ -753,15 +749,14 @@ class RotationHelper {
             i--
         ) {
             let currentPiece = rubiksCube.rotationGroups[sourceFace][i];
-            if (currentPiece == piece) {
-                // piece found
 
+            // piece found
+            if (currentPiece == piece) {
                 // remove source face from rotationGroups array for piece
                 for (let j = 0; j < piece.rotationGroups.length; j++) {
                     if (piece.rotationGroups[j] == sourceFace)
                         piece.rotationGroups.splice(j, 1);
                 }
-
                 rubiksCube.rotationGroups[sourceFace].splice(i, 1);
                 break;
             }
@@ -909,7 +904,6 @@ class RotationHelper {
      *                       "G" (green), "B" (blue), or "W" (white)
      */
     static updateOrientationMap(rubiksCube, rubiksPiece, direction, color) {
-        // TODO: update this?
         let rotationMap = null;
         if (direction == "cw")
             rotationMap = rubiksCube.clockwiseOuterRotationMap[color];
