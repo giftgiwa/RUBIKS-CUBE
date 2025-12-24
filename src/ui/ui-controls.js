@@ -121,14 +121,14 @@ class UIControls {
     setupCubeMap() {
         this.showCubeMap.forEach((button) => {
             button.addEventListener("click", (event) => {
-                if (event.target.textContent == "On") {
+                if (event.target.textContent.includes("On")) {
                     this.cubeMapMode = "On";
                     event.target.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
                     this.showCubeMap[1].style.backgroundColor =
                         "rgba(0, 0, 0, 0)";
                     this.cubeMap.show();
                 } else {
-                    // event.target.textContent == "Off"
+                    //event.target.textContent == "Off"
                     this.cubeMapMode = "Off";
                     event.target.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
                     this.showCubeMap[0].style.backgroundColor =
