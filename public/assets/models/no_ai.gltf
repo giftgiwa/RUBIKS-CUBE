@@ -1,0 +1,166 @@
+{
+    "asset": {
+        "generator": "Khronos glTF Blender I/O v5.0.21",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Scene",
+            "nodes": [0, 1]
+        }
+    ],
+    "nodes": [
+        {
+            "mesh": 0,
+            "name": "Cylinder",
+            "scale": [1.185174584388733, 1.185174584388733, 1.185174584388733]
+        },
+        {
+            "mesh": 1,
+            "name": "AI",
+            "scale": [0.8412962555885315, 0.75, 0.9271427989006042],
+            "translation": [-0.3499999940395355, 0, 0.25]
+        }
+    ],
+    "meshes": [
+        {
+            "name": "Cylinder",
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 0,
+                        "NORMAL": 1,
+                        "TEXCOORD_0": 2
+                    },
+                    "indices": 3
+                }
+            ]
+        },
+        {
+            "name": "AI",
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 4,
+                        "NORMAL": 5,
+                        "TEXCOORD_0": 6
+                    },
+                    "indices": 7
+                }
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "componentType": 5126,
+            "count": 165,
+            "max": [0.5, 0.125, 0.5],
+            "min": [-0.5, -0.125, -0.5],
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 1,
+            "componentType": 5126,
+            "count": 165,
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 2,
+            "componentType": 5126,
+            "count": 165,
+            "type": "VEC2"
+        },
+        {
+            "bufferView": 3,
+            "componentType": 5123,
+            "count": 780,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 4,
+            "componentType": 5126,
+            "count": 70,
+            "max": [0.8258860111236572, 0.10000000149011612, 0],
+            "min": [
+                -0.006163328420370817, -0.10000000149011612, -0.539291262626648
+            ],
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 5,
+            "componentType": 5126,
+            "count": 70,
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 6,
+            "componentType": 5126,
+            "count": 70,
+            "type": "VEC2"
+        },
+        {
+            "bufferView": 7,
+            "componentType": 5123,
+            "count": 180,
+            "type": "SCALAR"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteLength": 1980,
+            "byteOffset": 0,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 1980,
+            "byteOffset": 1980,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 1320,
+            "byteOffset": 3960,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 1560,
+            "byteOffset": 5280,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 840,
+            "byteOffset": 6840,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 840,
+            "byteOffset": 7680,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 560,
+            "byteOffset": 8520,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 360,
+            "byteOffset": 9080,
+            "target": 34963
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 9440,
+            "uri": "no_ai.bin"
+        }
+    ]
+}
