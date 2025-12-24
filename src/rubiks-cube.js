@@ -479,13 +479,22 @@ class RubiksCube {
                 this.moves[Math.floor(Math.random() * this.moves.length)];
 
             // TODO: handle logic for removing the "*" check in the if block (by accounting for cubes with >3x3 dimensions)
-            if (previousMove != currentMove && currentMove.includes("*")) {
-                let color = currentMove.substring(0, 1);
-                let direction = currentMove.substring(5);
+            if (previousMove != currentMove) {
+                if (currentMove.includes("*")) {
+                    let color = currentMove.substring(0, 1);
+                    let direction = currentMove.substring(5);
 
-                previousMove = currentMove;
-                numMoves += 1;
-                moves.push([color, direction]);
+                    previousMove = currentMove;
+                    numMoves += 1;
+                    moves.push([color, direction]);
+                } else {
+                    let color = currentMove.substring(0, 4);
+                    let direction = currentMove.substring(5);
+
+                    previousMove = currentMove;
+                    numMoves += 1;
+                    moves.push([color, direction]);
+                }
             }
         }
 

@@ -164,11 +164,15 @@ class UIControls {
             this.shuffleButton.style.color = "#b3b3b3";
             this.shuffleButton.style.cursor = "not-allowed";
 
-            this.rubiksCube.shuffle(
-                this.rubiksCube,
-                this.keypressMode,
-                this.shuffleButton,
-            );
+            for (let rubiksCube of this.rubiksCubes) {
+                if (rubiksCube.isRendered) {
+                    rubiksCube.shuffle(
+                        rubiksCube,
+                        this.keypressMode,
+                        this.shuffleButton,
+                    );
+                }
+            }
         });
     }
 
