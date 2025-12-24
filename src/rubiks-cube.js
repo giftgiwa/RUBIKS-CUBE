@@ -531,7 +531,7 @@ class RubiksCube {
 
                     animateMove();
                 },
-                keypressMode == "Fast" ? 100 : 400,
+                keypressMode == "Fast" ? 50 : 200,
             );
         }
         animateMove();

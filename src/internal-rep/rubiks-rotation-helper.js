@@ -87,7 +87,7 @@ class RotationHelper {
             this.doAnimate = true;
 
             let currentRotationAngle = 0.0;
-            let frameStep = 1 / 10;
+            let frameStep = 2 / 10;
 
             /**
              * step() increments the orientation of each of the pieces that
