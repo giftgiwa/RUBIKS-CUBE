@@ -8,7 +8,7 @@ class RubiksPiece {
      *                   (corner piece), two (edge piece), or one (face piece)
      *                   unique ones from the following: "R" (red), "O"
      *                   (orange), "Y" (yellow), "G" (green), "B" (blue), or
-     *                   "W" (white) 
+     *                   "W" (white)
      * @param {Array<Number>} coordinates Three-number array that indicates position of
      *                        piece on cube.
      * **About position:**
@@ -16,7 +16,7 @@ class RubiksPiece {
      * * for second element, viewing with blue as front face and white as top
      *   face, 0 = front row, 1 = middle row, 2 = rear row
      * * for third element, viewing with blue as front face and white as top
-     *   face, 0 = 
+     *   face, 0 =
      * @param {{ string: string }} orientationMap Hash-map that represents orientation
      * **About orientation:**
      * * each key indicates a color that the RubiksPiece contains (either 1, 2,
@@ -29,13 +29,13 @@ class RubiksPiece {
      * @param {*} mesh gltf mesh of individual piece on physical Rubik's Cube
      */
     constructor(colors, coordinates, orientationMap, mesh, rubiksCube) {
-        this.colors = colors
-        this.coordinates = coordinates // coordinates dictates position
-        this.orientationMap = orientationMap // the orientationMap dictates orientation
-        this.mesh = mesh // mesh of individual piece on actual cube
-        this.rubiksCube = rubiksCube // pointer to the Rubik's cube the piece is part of
-        this.rotationGroups = [] // list of rotation groups the piece belongs to
+        this.colors = colors;
+        this.coordinates = coordinates; // coordinates dictates position
+        this.orientationMap = orientationMap; // the orientationMap dictates orientation
+        this.mesh = mesh; // mesh of individual piece on actual cube
+        this.rubiksCube = rubiksCube; // pointer to the Rubik's cube the piece is part of
+        this.rotationGroups = []; // list of rotation groups the piece belongs to
     }
 }
 
-export default RubiksPiece
+export default RubiksPiece;

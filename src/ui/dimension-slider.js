@@ -1,7 +1,3 @@
+class DimensionSlider {}
 
-
-class DimensionSlider {
-	
-}
-
-export default DimensionSlider
+export default DimensionSlider;
