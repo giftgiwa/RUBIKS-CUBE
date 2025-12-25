@@ -48,11 +48,22 @@
 }
 
 .settings-btn {
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
     padding-left: 10px;
     padding-right: 10px;
     width: 75px;
+}
+
+/* Source - https://stackoverflow.com/a/4407335*/
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 #user-interface {
@@ -78,6 +89,7 @@
     border-color: black;
     border-width: 1.5px;
     border-style: solid;
+    display: block;
 }
 
 #shuffle-btn:hover {
@@ -94,11 +106,38 @@
     border-color: black;
     border-width: 1.5px;
     border-style: solid;
+    display: block;
 }
 
 #reset-btn:hover {
     background-color: black !important;
     color: white !important;
+}
+
+#dimension-settings {
+    text-align: center;
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 5px;
+    color: black;
+}
+
+#slider-bar {
+    height: auto;
+    width: 275px;
+    margin-left: auto;
+    margin-right: auto;
+    display:block;
+    margin-top: 15px;
+}
+
+#slider:hover {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+img {
+    pointer-events: none;
 }
 
 body {

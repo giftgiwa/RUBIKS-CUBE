@@ -81,7 +81,7 @@ class RubiksAnimationHelper {
         this.camera = camera;
         this.renderer = renderer;
 
-        if (this.rubiksCube.isRendered) this.calculateFaceBounds();
+        this.calculateFaceBounds();
     }
 
     calculateFaceBounds() {

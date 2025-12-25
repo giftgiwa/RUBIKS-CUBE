@@ -87,7 +87,7 @@ class RotationHelper {
             this.doAnimate = true;
 
             let currentRotationAngle = 0.0;
-            let frameStep = 1 / 10;
+            let frameStep = 2 / 10;
 
             /**
              * step() increments the orientation of each of the pieces that
@@ -98,18 +98,20 @@ class RotationHelper {
             function step() {
                 currentRotationAngle += (Math.PI / 2) * frameStep;
                 for (let piece of rubiksCube.rotationGroups[color]) {
-                    if (direction == "ccw")
+                    if (direction == "ccw") {
                         piece.mesh.rotateAroundWorldAxis(
                             origin,
                             rubiksCube.rotationAxes[color],
                             (Math.PI / 2) * frameStep,
                         );
-                    else
+                    }
+                    else {
                         piece.mesh.rotateAroundWorldAxis(
                             origin,
                             rubiksCube.rotationAxes[color],
                             -((Math.PI / 2) * frameStep),
                         );
+                    }
                 }
 
                 if (currentRotationAngle < Math.PI / 2) {
@@ -124,6 +126,7 @@ class RotationHelper {
         }
         this.rotateFaceInternal(rubiksCube, direction, color);
         rubiksCube.updateCoordinateHashmap();
+        /* TODO: uncomment after updating populateCubeMap() implementation */
         rubiksCube.cubeMap.populateCubeMap();
         rubiksCube.isAnimated = false;
 

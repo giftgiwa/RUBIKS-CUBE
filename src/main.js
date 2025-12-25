@@ -152,21 +152,6 @@ function loadModel(url) {
     });
 }
 
-// TODO: move this logic to another file as part of the dimension slider logic.
-/**
- * The renderMap object tracks which cube is to be currently rendered
- */
-let currentCube = 3;
-let renderMap = {
-    2: false,
-    3: false,
-    4: false,
-    5: false,
-};
-for (let i = 2; i <= 5; i++) {
-    renderMap[currentCube] = true;
-}
-
 const loader = new GLTFLoader();
 let rubiksCube3x3Mesh = new THREE.Mesh(); // create Rubik's cube
 let gltfData = await loadModel("/assets/models/rubiks3x3.gltf");
@@ -201,10 +186,6 @@ let rubiksCube3x3 = new RubiksCube(rubiksCube3x3Mesh, 3, collisionCubes[1]);
 let rubiksCube4x4 = new RubiksCube(rubiksCube4x4Mesh, 4, collisionCubes[2]);
 let rubiksCube5x5 = new RubiksCube(rubiksCube5x5Mesh, 5, collisionCubes[3]);
 
-//let rubiksAnimationHelper = new RubiksAnimationHelper(rubiksCube3x3, camera, renderer)
-//let keybindsObj = new Keybinds(ui, rubiksCube3x3)
-//let rotationHelper = new RotationHelper(ui, trackballControls)
-
 let rubiksMeshes = [
     rubiksCube2x2Mesh,
     rubiksCube3x3Mesh,
@@ -214,17 +195,14 @@ let rubiksMeshes = [
 let rubiksCubes = [rubiksCube2x2, rubiksCube3x3, rubiksCube4x4, rubiksCube5x5];
 let rubiksAnimationHelpers = [];
 for (let i = 0; i < rubiksCubes.length; i++) {
-    if (renderMap[i + 2] == true) {
-        rubiksCubes[i].isRendered = true;
-        scene.add(collisionCubes[i].cube);
-        scene.add(rubiksMeshes[i]);
-    }
     rubiksAnimationHelpers.push(
         new RubiksAnimationHelper(rubiksCubes[i], camera, renderer),
     );
+    scene.add(rubiksCubes[i].mesh);
+    scene.add(collisionCubes[i].cube);
 }
 
-let ui = new UIControls(rubiksCubes, window.mobileCheck());
+let ui = new UIControls(rubiksCubes, window.mobileCheck(), scene);
 
 let rotationHelpers = [];
 for (let i = 0; i < rubiksCubes.length; i++) {
@@ -297,12 +275,11 @@ let cylinderMaterial = new THREE.ShaderMaterial({
 });
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
 cylinderMesh.position.y = 0.13;
-scene.add(cylinderMesh);
+//scene.add(cylinderMesh);
 
 let intersects = [];
 let originPoint = new THREE.Vector2(0, 0);
 let dragStartingOnCube = false;
-
 let intersectionPoint;
 
 renderer.domElement.addEventListener("pointerdown", (e) => {
@@ -316,7 +293,7 @@ renderer.domElement.addEventListener("pointerdown", (e) => {
      */
     if (intersects.length > 0) {
         dragStartingOnCube = true;
-        rubiksAnimationHelpers[currentCube - 2].handleMouseDown(intersects[0]);
+        rubiksAnimationHelpers[ui.dimensionSlider.currentDimension - 2].handleMouseDown(intersects[0]);
     }
 });
 
@@ -338,10 +315,10 @@ renderer.domElement.addEventListener("pointermove", (e) => {
             intersectionPoint.y.toPrecision(1) == 0 &&
             intersectionPoint.z.toPrecision(1) == 0
         ) &&
-        !rubiksCube3x3.isAnimated &&
-        !rubiksCube3x3.isShuffling
+        !rubiksCubes[ui.dimensionSlider.currentDimension - 2].isAnimated &&
+        !rubiksCubes[ui.dimensionSlider.currentDimension - 2].isShuffling
     ) {
-        rubiksAnimationHelpers[currentCube - 2].handleDrag(
+        rubiksAnimationHelpers[ui.dimensionSlider.currentDimension - 2].handleDrag(
             intersects[0],
             mouseMovement,
         );
@@ -356,17 +333,17 @@ renderer.domElement.addEventListener("pointerup", (e) => {
     e.preventDefault();
     if (dragStartingOnCube) {
         dragStartingOnCube = false;
-        rubiksAnimationHelpers[currentCube - 2].handleMouseUp();
+        rubiksAnimationHelpers[ui.dimensionSlider.currentDimension - 2].handleMouseUp();
     }
 });
 
 /**
  * Only detect intersections with the collison cube for the cube currently rendered.
  */
-const filteredChildren = scene.children.filter(
+let filteredChildren = scene.children.filter(
     (item) =>
         item.name.startsWith("collision_cube") &&
-        renderMap[parseInt(item.name[item.name.length - 1])] == true,
+        parseInt(item.name.substring(item.name.length - 1)) == ui.dimensionSlider.currentDimension
 );
 
 function animate() {
@@ -388,6 +365,12 @@ function animate() {
     trackballControls.update();
     window.requestAnimationFrame(animate);
     renderer.render(scene, camera);
+
+    filteredChildren = scene.children.filter(
+    (item) =>
+        item.name.startsWith("collision_cube") &&
+        parseInt(item.name.substring(item.name.length - 1)) == ui.dimensionSlider.currentDimension
+    );
 }
 
 animate();
