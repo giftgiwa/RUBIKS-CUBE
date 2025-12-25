@@ -136,10 +136,10 @@ class RubiksCube {
      * positions and orientations of the Rubik's cube pieces (which would be the
      * solved state of the cube).
      *
-     * @param {*} gltf actual GLTF file imported into the THREE.js Scene
+     * @param {*} mesh actual mesh file imported in the THREE.js Scene
      */
-    constructor(gltf, dimension, collisionCube) {
-        this.gltf = gltf; // store the model file
+    constructor(mesh, dimension, collisionCube) {
+        this.mesh = mesh; // store the model file
 
         /**
          * Initialize member variables to indicating the cube's dimensions,
@@ -219,8 +219,8 @@ class RubiksCube {
          * * There should be (and are) 8 corner pieces, 12 edge pieces, and 6
          *   face pieces.
          */
-        for (let i = 0; i < this.gltf.children.length; i++) {
-            let currentPiece = this.gltf.children[i];
+        for (let i = 0; i < this.mesh.children.length; i++) {
+            let currentPiece = this.mesh.children[i];
             //currentPiece.updateMatrixWorld(true);
 
             let x = Number(currentPiece.name[0]);

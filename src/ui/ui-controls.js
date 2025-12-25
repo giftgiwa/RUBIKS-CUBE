@@ -7,8 +7,10 @@ class UIControls {
      * @param {RubiksCubes} rubiksCubes The RubiksCube objects to be referenced.
      * @param {boolean} isMobileDevice Whether the user is on a mobile device or not.
      */
-    constructor(rubiksCubes, isMobileDevice) {
+    constructor(rubiksCubes, isMobileDevice, scene) {
         this.rubiksCubes = rubiksCubes;
+        this.scene = scene;
+
         this.UI = document.getElementById("user-interface");
         this.menuIcon = document.getElementById("menu-icon");
         this.keybinds = [
@@ -39,13 +41,15 @@ class UIControls {
         this.keypressMode = "Fast";
         this.cubeMapMode = "On";
 
-        this.dimensionSlider = new DimensionSlider(this.rubiksCubes);
+        this.dimensionSlider = new DimensionSlider(this.rubiksCubes, scene);
 
+        this.cubeMaps = []
         if (!isMobileDevice && window.innerWidth > 450) {
             this.rubiksCubes.forEach((rubiksCube) => {
-                if (rubiksCube.isRendered) {
-                    this.cubeMap = new CubeMap(rubiksCube, isMobileDevice);
-                }
+                this.cubeMaps.push(new CubeMap(rubiksCube, isMobileDevice));
+                if (!rubiksCube.isRendered)
+                    rubiksCube.cubeMap.hide()
+
             });
         }
         this.isMobileDevice = window.mobileCheck();
@@ -78,12 +82,12 @@ class UIControls {
     setupKeybinds() {
         this.keybinds.forEach((button) => {
             button.addEventListener("click", (event) => {
-                if (event.target.textContent == "On") {
+                if (event.target.textContent.includes("On")) {
                     this.keybindsEnabled = true;
                     event.target.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
                     this.keybinds[1].style.backgroundColor = "rgba(0, 0, 0, 0)";
                 } else {
-                    // event.target.textContent == "Off"
+                    // event.target.textContent.includes("Off")
                     this.keybindsEnabled = false;
                     event.target.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
                     this.keybinds[0].style.backgroundColor = "rgba(0, 0, 0, 0)";
@@ -100,13 +104,13 @@ class UIControls {
     setupKeypressSpeed() {
         this.keypressSpeed.forEach((button) => {
             button.addEventListener("click", (event) => {
-                if (event.target.textContent == "Fast") {
+                if (event.target.textContent.includes("Fast")) {
                     this.keypressMode = "Fast";
                     event.target.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
                     this.keypressSpeed[1].style.backgroundColor =
                         "rgba(0, 0, 0, 0)";
                 } else {
-                    // event.target.textContent == "Slow"
+                    // event.target.textContent.includes("Slow")
                     this.keypressMode = "Slow";
                     event.target.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
                     this.keypressSpeed[0].style.backgroundColor =
@@ -128,14 +132,16 @@ class UIControls {
                     event.target.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
                     this.showCubeMap[1].style.backgroundColor =
                         "rgba(0, 0, 0, 0)";
-                    this.cubeMap.show();
+
+                    //this.cubeMap.show();
                 } else {
-                    //event.target.textContent == "Off"
+                    //event.target.textContent.includes("Off")
                     this.cubeMapMode = "Off";
                     event.target.style.backgroundColor = "rgba(0, 0, 0, 0.15)";
                     this.showCubeMap[0].style.backgroundColor =
                         "rgba(0, 0, 0, 0)";
-                    this.cubeMap.hide();
+                    
+                    //this.cubeMap.hide();
                 }
             });
         });
