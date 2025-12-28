@@ -30,6 +30,10 @@ class CubeMap {
         this.rubiksCube.cubeMap = this;
         this.isMobileDevice = isMobileDevice;
 
+        this.CUBE_MAP_WIDTH = 3 * 4 * 20 + 20
+        this.CUBE_MAP_HEIGHT = 3 * 3 * 20 + 20
+        this.TILE_WIDTH = (this.CUBE_MAP_WIDTH - 20) / (this.rubiksCube.dimension * 4)
+
         this.cubeMap = [];
         for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
             this.cubeMap.push(new Array(this.rubiksCube.dimension * 4));
@@ -52,6 +56,7 @@ class CubeMap {
         this.outerDiv.style.display = "none";
     }
 
+
     /**
      * Creates cube map as a set of squares with rounded corners that form a
      * horizontal, cross-shaped configuration, similarly to a cube in 2D form.
@@ -59,8 +64,8 @@ class CubeMap {
     createCubeMap() {
         // outer div
         this.outerDiv = document.createElement("div");
-        this.outerDiv.style.width = `${this.rubiksCube.dimension * 4 * 20 + 20}px`;
-        this.outerDiv.style.height = `${this.rubiksCube.dimension * 3 * 20 + 20}px`;
+        this.outerDiv.style.width = `${this.CUBE_MAP_WIDTH}px`;
+        this.outerDiv.style.height = `${this.CUBE_MAP_HEIGHT}px`;
         this.outerDiv.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
         this.outerDiv.style.position = "absolute";
         this.outerDiv.style.right = "10px";
@@ -72,6 +77,7 @@ class CubeMap {
             this.outerDiv.style.display = "none";
         }
 
+        console.log((this.CUBE_MAP_HEIGHT-20) / 9)
         let applyTileStyle = (tile) => {
             tile.style.borderWidth = "1.5px";
             tile.style.borderRadius = "2px";
@@ -82,8 +88,8 @@ class CubeMap {
             tile.style.display = "flex";
             tile.style.margin = "0";
             tile.style.backgroundColor = "#fff";
-            tile.style.width = "20px";
-            tile.style.height = "20px";
+            tile.style.width = `${(this.CUBE_MAP_WIDTH - 20) / (this.rubiksCube.dimension * 4)}px`;
+            tile.style.height = `${(this.CUBE_MAP_HEIGHT - 20) / (this.rubiksCube.dimension * 3)}px`;
         };
 
         /**
@@ -107,8 +113,8 @@ class CubeMap {
                 for (let j = 0; j < this.rubiksCube.dimension; j++) {
                     let tile = document.createElement("div");
                     applyTileStyle(tile);
-                    tile.style.top = `${10 + offsetY * 20 + 20 * i}px`;
-                    tile.style.left = `${10 + offsetX * 20 + 20 * j}px`;
+                    tile.style.top = `${10 + offsetY * this.TILE_WIDTH + this.TILE_WIDTH * i}px`;
+                    tile.style.left = `${10 + offsetX * this.TILE_WIDTH + this.TILE_WIDTH * j}px`;
                     faceTiles[i][j] = tile;
                     this.outerDiv.appendChild(tile);
                 }
@@ -124,9 +130,6 @@ class CubeMap {
                                 [d - 1 - i, d - 1, j],
                                 faceColor,
                             );
-                        // color center piece green
-                        //if (dimension - 1 - i == 1 && j == 1)
-                        //	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
                     }
                 }
             } else if (faceColor == "W") {
@@ -138,9 +141,6 @@ class CubeMap {
                                 [0, d - 1 - i, j],
                                 faceColor,
                             );
-                        // color center piece white
-                        //if (dimension-1-i == 1 && j == 1)
-                        //	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
                     }
                 }
             } else if (faceColor == "R") {
@@ -152,9 +152,6 @@ class CubeMap {
                                 [d - 1 - j, d - 1 - i, 0],
                                 faceColor,
                             );
-                        // color center piece red
-                        //if (dimension - 1 - j == 1 && dimension - 1 - i == 1)
-                        //	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
                     }
                 }
             } else if (faceColor == "O") {
@@ -166,9 +163,6 @@ class CubeMap {
                                 [j, d - 1 - i, d - 1],
                                 faceColor,
                             );
-                        // color center piece orange
-                        //if (j == 1 && dimension-1-i == 1)
-                        //	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
                     }
                 }
             } else if (faceColor == "Y") {
@@ -180,9 +174,6 @@ class CubeMap {
                                 [d - 1, d - 1 - i, d - 1 - j],
                                 faceColor,
                             );
-                        // color center piece red
-                        //if (dimension-1 - i == 1 && dimension-1 - j == 1)
-                        //	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
                     }
                 }
             } else if (faceColor == "B") {
@@ -194,9 +185,6 @@ class CubeMap {
                                 [i, 0, j],
                                 faceColor,
                             );
-                        // color center piece red
-                        //if (i == 1 && j == 1)
-                        //	faceTiles[i][j].style.backgroundColor = this.colorHexes[faceColor]
                     }
                 }
             }
