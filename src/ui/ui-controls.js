@@ -189,7 +189,11 @@ class UIControls {
          * On click, the Rubik's Cube resets to its original, solved state
          */
         this.resetButton.addEventListener("click", (event) => {
-            this.rubiksCube.reset();
+            for (let rubiksCube of this.rubiksCubes) {
+                if (rubiksCube.isRendered) {
+                    rubiksCube.reset();
+                }
+            }
         });
     }
 

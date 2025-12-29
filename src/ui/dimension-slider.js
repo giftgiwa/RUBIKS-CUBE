@@ -37,12 +37,10 @@ class DimensionSlider {
 		this.button.classList.add("btn");
 
 		this.sliderBounds = [11.6, 248];
-		document.getElementById("user-interface").appendChild(this.button);
+		document.getElementById("dimensions-settings").appendChild(this.button);
 
 		let drag = false;
 		let dimensionsRow = document.getElementById("dimensions-settings");
-		let previousPosition = { x: 0, y: 0 };
-		let tickCount = 0;
 
 		this.button.addEventListener('mousedown', () => {
 			drag = true;
@@ -50,60 +48,47 @@ class DimensionSlider {
 
 		let positionDimensionHashmap = {
 			11: 2,
-			90.6: 3,
 			90: 3,
 			169: 4,
 			248: 5,
 		};
 
+		let buttonPositions = [11.6, 90.6, 169.6, 248.6];
+		let currentPosition = 90.6;
+		let offset = document.querySelector('#dimensions-settings').getBoundingClientRect();
+		let dimensionsXBounds = [[25, 65], [100, 140], [185, 225], [260, 300]];
+		let dimensionsYBounds = [215, 260];
+
 		document.addEventListener('mousemove', (event) => {
 			if (!(event.target.isEqualNode(dimensionsRow) || event.target.isEqualNode(this.button))) {
-				tickCount = 0;
 				drag = false;
 				return;
 			}
-		})
+		});
 
-		let currentPosition = 90.6;
-		let idx = this.button.style.left.indexOf('p');
 		dimensionsRow.addEventListener('mousemove', (event) => {
-			currentPosition = parseInt(this.button.style.left.substring(0, idx));
+			/**
+			 * Source: https://stackoverflow.com/a/14651424
+			 */
+			let posX = event.pageX - offset.left, posY = event.pageY - offset.top;
 			if (drag) {
-				if (tickCount == -this.TICK_COUNT) {
-					tickCount = 0;
-					if (currentPosition > 11) {
-						this.button.style.left = `${currentPosition - 79}px`;
-						currentPosition = parseInt(this.button.style.left.substring(0, idx));
-					}
-					else {
-						drag = false;
-						tickCount = 0;
-					}
-				} else if (tickCount == this.TICK_COUNT) {
-					tickCount = 0;
-					if (currentPosition < 248) {
-						this.button.style.left = `${currentPosition + 79}px`;
-						currentPosition = parseInt(this.button.style.left.substring(0, idx));
-					}
-					else {
-						drag = false;
-						tickCount = 0;
+				for (let i = 0; i < dimensionsXBounds.length; i++) {
+					if (
+						dimensionsXBounds[i][0] <= posX &&
+						posX <= dimensionsXBounds[i][1] &&
+						dimensionsYBounds[0] <= posY &&
+						posY <= dimensionsYBounds[1]
+					) {
+						currentPosition = buttonPositions[i]
+						this.button.style.left = `${buttonPositions[i]}px`;
+						break
 					}
 				}
-				if (event.clientX - previousPosition.x > 0)
-					tickCount++;
-				else if (event.clientX - previousPosition.x < 0)
-					tickCount--;
-
-				previousPosition.x = event.clientX;
-				previousPosition.y = event.clientY;
 			}
 		});
 		document.addEventListener('mouseup', () => {
 			drag = false;
-			tickCount = 0;
-			this.currentDimension = positionDimensionHashmap[currentPosition];
-
+			this.currentDimension = positionDimensionHashmap[Math.floor(currentPosition)];
 			this.renderCube();
 		});
 	}

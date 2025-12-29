@@ -274,8 +274,8 @@ let cylinderMaterial = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
 });
 let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-cylinderMesh.position.y = 0.13;
-//scene.add(cylinderMesh);
+cylinderMesh.position.y = 0.12;
+scene.add(cylinderMesh);
 
 let intersects = [];
 let originPoint = new THREE.Vector2(0, 0);
