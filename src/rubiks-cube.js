@@ -162,6 +162,8 @@ class RubiksCube {
         this.buildMeshGroups(); // build the mesh groups
         this.updateCoordinateHashmap();
         this.createMiddleLayerRotationMaps();
+
+        console.log(this)
     }
 
     /**
@@ -690,8 +692,6 @@ class RubiksCube {
     /**
      * Reset the Rubik's Cube's internal and external representation.
      */
-
-    // TODO: update position setting for reset() to account for multiple different dimensions of cubes.
     reset() {
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
@@ -699,6 +699,8 @@ class RubiksCube {
                     let piece = this.coordinateMap[i][j][k];
 
                     if (piece != null) {
+                        piece.rotationGroups = [];
+
                         // skipping the center piece
                         piece.coordinates = [i, j, k];
 
@@ -708,10 +710,13 @@ class RubiksCube {
                             piece.orientationMap[key] = key;
                         }
 
-                        piece.mesh.position.x = -0.02 + k * 0.02;
-                        piece.mesh.position.y = 0.02 - i * 0.02;
-                        piece.mesh.position.z = 0.02 - j * 0.02;
+                        let startingPosition = (this.collisionCube.width / 2) * ((this.dimension - 1) / (this.dimension));
+                        let increment = this.collisionCube.width / this.dimension;
 
+                        piece.mesh.position.x = -startingPosition + k * increment;
+                        piece.mesh.position.y = startingPosition - i * increment;
+                        piece.mesh.position.z = startingPosition - j * increment;
+                        
                         piece.mesh.rotation.x = 0;
                         piece.mesh.rotation.y = 0;
                         piece.mesh.rotation.z = 0;

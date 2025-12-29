@@ -77,7 +77,6 @@ class CubeMap {
             this.outerDiv.style.display = "none";
         }
 
-        console.log((this.CUBE_MAP_HEIGHT-20) / 9)
         let applyTileStyle = (tile) => {
             tile.style.borderWidth = "1.5px";
             tile.style.borderRadius = "2px";
