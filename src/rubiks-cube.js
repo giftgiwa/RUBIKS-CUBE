@@ -162,8 +162,6 @@ class RubiksCube {
         this.buildMeshGroups(); // build the mesh groups
         this.updateCoordinateHashmap();
         this.createMiddleLayerRotationMaps();
-
-        console.log(this)
     }
 
     /**
@@ -223,6 +221,7 @@ class RubiksCube {
          */
         for (let i = 0; i < this.mesh.children.length; i++) {
             let currentPiece = this.mesh.children[i];
+            this.addBeacon(currentPiece);
             //currentPiece.updateMatrixWorld(true);
 
             let x = Number(currentPiece.name[0]);
@@ -342,6 +341,45 @@ class RubiksCube {
                     }
                 }
             }
+        }
+    }
+
+    addBeacon(piece) {
+        if (piece.name == "011") {
+            /**
+             * Add beacon atop white center-piece, made with the help of GLSL shaders.
+             * Reference for GLSL code: https://thebookofshaders.com/edit.php#05/expstep.frag
+             */
+            let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.2);
+            let cylinderMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    power: { value: 0.5 },
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec2 vUv;
+                    uniform float power;
+                    float expStep(float x, float k, float n) {
+                        return exp( -k * pow(x,n) );
+                    }
+                    void main() {
+                        float gradientFactor = vUv.y;
+                        float alpha = pow(gradientFactor, power);
+                        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0 - alpha); // White color (RGB) with calculated alpha
+                    }
+                `,
+                transparent: true, // enable transparency for the material
+                side: THREE.DoubleSide,
+            });
+            let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+            cylinderMesh.position.y = 0.12;
+            piece.add(cylinderMesh);
         }
     }
 
@@ -476,7 +514,7 @@ class RubiksCube {
         let moves = [];
 
         let numMoves = 0;
-        while (numMoves < 40) {
+        while (numMoves < 1) {
             let currentMove =
                 this.moves[Math.floor(Math.random() * this.moves.length)];
 
@@ -650,31 +688,28 @@ class RubiksCube {
      * TODO: Update implementation of isSolved.
      */
     isSolved() {
+        /**
+         * Compare the colors of all the squares on the cube map
+         * Check the face locations of the center pieces and make sure they’re
+         * equal, then compare the face locations of the center pieces to the
+         * corners and edges and make sure that for each piece color, the face
+         * location is equal for each side. This accounts for relocation of the
+         * center pieces that results from middle layer movements.
+         */
         for (let i = 0; i < this.coordinateMap.length; i++) {
             for (let j = 0; j < this.coordinateMap[0].length; j++) {
                 for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
                     let piece = this.coordinateMap[i][j][k];
+                    if (piece && piece.colors.length == 1) {
+                        console.log(piece.orientationMap)
 
-                    if (piece != null) {
-                        let hasCorrectPositions =
-                            piece.coordinates[0] == i &&
-                            piece.coordinates[1] == j &&
-                            piece.coordinates[2] == k;
-                        let hasCorrectOrientations = true;
-
-                        for (const [key, value] of Object.entries(
-                            piece.orientationMap,
-                        )) {
-                            hasCorrectOrientations &= key == value;
-                        }
-
-                        if (!(hasCorrectPositions && hasCorrectOrientations)) {
-                            return false;
-                        }
                     }
+
+
                 }
             }
-        }
+        } 
+        console.log(this.coordinateMap)
         return true;
     }
 

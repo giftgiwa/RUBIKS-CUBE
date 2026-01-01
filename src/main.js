@@ -242,41 +242,6 @@ renderer.domElement.addEventListener("pointerup", () => {
     mouseDown = false;
 });
 
-/**
- * Add beacon atop white center-piece, made with the help of GLSL shaders.
- * Reference for GLSL code: https://thebookofshaders.com/edit.php#05/expstep.frag
- */
-let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.2);
-let cylinderMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        power: { value: 0.5 },
-    },
-    vertexShader: `
-        varying vec2 vUv;
-        void main() {
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-    `,
-    fragmentShader: `
-        varying vec2 vUv;
-        uniform float power;
-        float expStep(float x, float k, float n) {
-            return exp( -k * pow(x,n) );
-        }
-        void main() {
-            float gradientFactor = vUv.y;
-            float alpha = pow(gradientFactor, power);
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0 - alpha); // White color (RGB) with calculated alpha
-        }
-    `,
-    transparent: true, // enable transparency for the material
-    side: THREE.DoubleSide,
-});
-let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-cylinderMesh.position.y = 0.12;
-scene.add(cylinderMesh);
-
 let intersects = [];
 let originPoint = new THREE.Vector2(0, 0);
 let dragStartingOnCube = false;
