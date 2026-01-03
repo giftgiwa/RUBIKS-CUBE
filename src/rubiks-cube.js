@@ -222,7 +222,6 @@ class RubiksCube {
         for (let i = 0; i < this.mesh.children.length; i++) {
             let currentPiece = this.mesh.children[i];
             this.addBeacon(currentPiece);
-            //currentPiece.updateMatrixWorld(true);
 
             let x = Number(currentPiece.name[0]);
             let y = Number(currentPiece.name[1]);
@@ -684,9 +683,6 @@ class RubiksCube {
      * @returns true for if the cube is currently solved, false for if the cube
      * 			isn't
      */
-    /**
-     * TODO: Update implementation of isSolved.
-     */
     isSolved() {
         /**
          * Compare the colors of all the squares on the cube map
@@ -696,20 +692,34 @@ class RubiksCube {
          * location is equal for each side. This accounts for relocation of the
          * center pieces that results from middle layer movements.
          */
-        for (let i = 0; i < this.coordinateMap.length; i++) {
-            for (let j = 0; j < this.coordinateMap[0].length; j++) {
-                for (let k = 0; k < this.coordinateMap[0][0].length; k++) {
-                    let piece = this.coordinateMap[i][j][k];
-                    if (piece && piece.colors.length == 1) {
-                        console.log(piece.orientationMap)
+        for (let key of Object.keys(this.rotationGroups)) {
+            if (key.charAt(1) != "#") {
+                let baseFace = null, baseColor = null;
+
+                // iterating through pieces of the current rotation group
+                for (let piece of this.rotationGroups[key]) {
+                    if (piece.colors.length == 1) {
+                        if (baseFace == null) {
+                            baseColor = Object.keys(piece.orientationMap)[0]
+                            baseFace = piece.orientationMap[baseColor]
+                        }
+                        else if (baseFace != null && baseFace != Object.keys(piece.orientationMap)[0]) {
+                            return false;
+                        }
+
 
                     }
-
-
                 }
+
+                for (let piece of this.rotationGroups[key]) {
+                    if (piece.colors.length > 1) {
+                        if (piece.orientationMap[baseColor] != baseFace)
+                            return false;
+                    }
+                }
+
             }
-        } 
-        console.log(this.coordinateMap)
+        }
         return true;
     }
 
