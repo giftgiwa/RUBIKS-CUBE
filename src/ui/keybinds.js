@@ -11,9 +11,10 @@ class Keybinds {
      * @param {RubiksCube} rubiksCube instance of RubiksCube class to be
      *  associated with keybinds
      */
-    constructor(uiControls, rubiksCube) {
+    constructor(uiControls, rubiksCubes) {
         this.uiControls = uiControls;
-        this.addInputs(rubiksCube);
+        for (let i = 0; i < rubiksCubes.length; i++)
+            this.addInputs(rubiksCubes[i]);
     }
 
     /**

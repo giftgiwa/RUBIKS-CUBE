@@ -209,7 +209,7 @@ for (let i = 0; i < rubiksCubes.length; i++) {
     rotationHelpers.push(new RotationHelper(ui, trackballControls));
 }
 
-//let keybindsObj = new Keybinds(ui, rubiksCube3x3)
+let keybindsObj = new Keybinds(ui, rubiksCubes)
 
 // initialize objects for detecting mouse click-and-drag interactions with scene
 const raycaster = new THREE.Raycaster();
