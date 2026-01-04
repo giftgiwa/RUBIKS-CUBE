@@ -513,7 +513,7 @@ class RubiksCube {
         let moves = [];
 
         let numMoves = 0;
-        while (numMoves < 1) {
+        while (numMoves < 40) {
             let currentMove =
                 this.moves[Math.floor(Math.random() * this.moves.length)];
 
