@@ -513,7 +513,7 @@ class RubiksCube {
         let moves = [];
 
         let numMoves = 0;
-        while (numMoves < 40) {
+        while (numMoves < 2) {
             let currentMove =
                 this.moves[Math.floor(Math.random() * this.moves.length)];
 
@@ -684,6 +684,10 @@ class RubiksCube {
      * 			isn't
      */
     isSolved() {
+
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
         /**
          * Compare the colors of all the squares on the cube map
          * Check the face locations of the center pieces and make sure they’re
@@ -697,18 +701,12 @@ class RubiksCube {
                 let baseFace = null, baseColor = null;
 
                 // iterating through pieces of the current rotation group
+                let prevColor = null;
                 for (let piece of this.rotationGroups[key]) {
-                    if (piece.colors.length == 1) {
-                        if (baseFace == null) {
-                            baseColor = Object.keys(piece.orientationMap)[0]
-                            baseFace = piece.orientationMap[baseColor]
-                        }
-                        else if (baseFace != null && baseFace != Object.keys(piece.orientationMap)[0]) {
-                            return false;
-                        }
-
-
-                    }
+                    let currColor = getKeyByValue(piece.orientationMap, key)
+                    if (currColor != prevColor && prevColor != null)
+                        return false;
+                    prevColor = currColor;
                 }
 
                 for (let piece of this.rotationGroups[key]) {
