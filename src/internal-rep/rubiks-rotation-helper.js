@@ -130,8 +130,10 @@ class RotationHelper {
         rubiksCube.cubeMap.populateCubeMap();
         rubiksCube.isAnimated = false;
 
-        if (rubiksCube.isShuffled && rubiksCube.isSolved())
+        if (rubiksCube.isShuffled && rubiksCube.isSolved()) {
             UIControls.congratulations();
+            rubiksCube.isShuffled = false;
+        }
     }
 
     /**
