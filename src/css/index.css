@@ -150,3 +150,30 @@ p {
     margin-bottom: 5px;
     width: 120px;
 }
+
+#github-btn {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    padding: 0px;
+    width: 40px;
+    height: 40px;
+    padding-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0);
+    border-color: black;
+    border-width: 0px;
+    backdrop-filter: blur(8px);
+    transition: 0.3s;
+}
+
+#github-btn:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: 0.3s;
+}
+
+#github-logo {
+    width: 35px;
+    height: 35px;
+}
+
+
