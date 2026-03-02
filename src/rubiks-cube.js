@@ -685,16 +685,16 @@ class RubiksCube {
      */
     isSolved() {
 
+        /**
+         * Source: https://stackoverflow.com/a/28191966
+         */
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value);
         }
+
         /**
-         * Compare the colors of all the squares on the cube map
-         * Check the face locations of the center pieces and make sure they’re
-         * equal, then compare the face locations of the center pieces to the
-         * corners and edges and make sure that for each piece color, the face
-         * location is equal for each side. This accounts for relocation of the
-         * center pieces that results from middle layer movements.
+         * Compare the color of each piece on each face. If there are any
+         * mismatches, return false. Otherwise return true.
          */
         for (let key of Object.keys(this.rotationGroups)) {
             if (key.charAt(1) != "#") {
