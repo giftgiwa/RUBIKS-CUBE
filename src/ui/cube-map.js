@@ -29,10 +29,11 @@ class CubeMap {
         this.rubiksCube = rubiksCube;
         this.rubiksCube.cubeMap = this;
         this.isMobileDevice = isMobileDevice;
-
-        this.CUBE_MAP_WIDTH = 3 * 4 * 20 + 20
-        this.CUBE_MAP_HEIGHT = 3 * 3 * 20 + 20
-        this.TILE_WIDTH = (this.CUBE_MAP_WIDTH - 20) / (this.rubiksCube.dimension * 4)
+        
+        this.CUBE_TILE_UNIT = 20;
+        this.CUBE_MAP_WIDTH = 3 * 4 * this.CUBE_TILE_UNIT + this.CUBE_TILE_UNIT;
+        this.CUBE_MAP_HEIGHT = 3 * 3 * this.CUBE_TILE_UNIT + this.CUBE_TILE_UNIT;
+        this.TILE_WIDTH = (this.CUBE_MAP_WIDTH - this.CUBE_TILE_UNIT) / (this.rubiksCube.dimension * 4)
 
         this.cubeMap = [];
         for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
@@ -87,8 +88,8 @@ class CubeMap {
             tile.style.display = "flex";
             tile.style.margin = "0";
             tile.style.backgroundColor = "#fff";
-            tile.style.width = `${(this.CUBE_MAP_WIDTH - 20) / (this.rubiksCube.dimension * 4)}px`;
-            tile.style.height = `${(this.CUBE_MAP_HEIGHT - 20) / (this.rubiksCube.dimension * 3)}px`;
+            tile.style.width = `${(this.CUBE_MAP_WIDTH - this.CUBE_TILE_UNIT) / (this.rubiksCube.dimension * 4)}px`;
+            tile.style.height = `${(this.CUBE_MAP_HEIGHT - this.CUBE_TILE_UNIT) / (this.rubiksCube.dimension * 3)}px`;
         };
 
         /**
