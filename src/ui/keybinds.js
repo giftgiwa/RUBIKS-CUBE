@@ -36,7 +36,7 @@ class Keybinds {
 
         window.addEventListener("keypress", (event) => {
             if (this.uiControls.keybindsEnabled && !rubiksCube.isRotating) {
-                if (colors.has(event.key.toLowerCase())) {
+                if (colors.has(event.key.toLowerCase()) && rubiksCube.isRendered) {
                     if (event.shiftKey) {
                         RotationHelper.rotateFace(
                             rubiksCube,
