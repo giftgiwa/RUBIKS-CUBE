@@ -219,13 +219,19 @@ class RubiksCube {
          * * There should be (and are) 8 corner pieces, 12 edge pieces, and 6
          *   face pieces.
          */
+        let n = this.dimension;
         for (let i = 0; i < this.mesh.children.length; i++) {
-            let currentPiece = this.mesh.children[i];
-            this.addBeacon(currentPiece);
+            let piece = this.mesh.children[i];
+            let x = Number(piece.name[0]);
+            let y = Number(piece.name[1]);
+            let z = Number(piece.name[2]);
 
-            let x = Number(currentPiece.name[0]);
-            let y = Number(currentPiece.name[1]);
-            let z = Number(currentPiece.name[2]);
+            // add beacon for center piece of cube
+            if (x == 0 && y > 0 && z > 0  &&
+                y == Math.floor(n / 2) &&
+                z == Math.floor(n / 2)) {
+                    this.addBeacon(piece);      
+                }
 
             /**
              * RubiksPiece(colors, coordinates, orientationMap, mesh)
@@ -239,7 +245,7 @@ class RubiksCube {
                     colors /* colors */,
                     [x, y, z] /* coordinates */,
                     currentOrientationMap /* orientaton map */,
-                    currentPiece /* mesh (within GLTF file) */,
+                    piece /* mesh (within GLTF file) */,
                     this /* backpointer to current instance of cube */,
                 );
             }
@@ -344,42 +350,40 @@ class RubiksCube {
     }
 
     addBeacon(piece) {
-        if (piece.name == "011") {
-            /**
-             * Add beacon atop white center-piece, made with the help of GLSL shaders.
-             * Reference for GLSL code: https://thebookofshaders.com/edit.php#05/expstep.frag
-             */
-            let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.2);
-            let cylinderMaterial = new THREE.ShaderMaterial({
-                uniforms: {
-                    power: { value: 0.5 },
-                },
-                vertexShader: `
-                    varying vec2 vUv;
-                    void main() {
-                        vUv = uv;
-                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                    }
-                `,
-                fragmentShader: `
-                    varying vec2 vUv;
-                    uniform float power;
-                    float expStep(float x, float k, float n) {
-                        return exp( -k * pow(x,n) );
-                    }
-                    void main() {
-                        float gradientFactor = vUv.y;
-                        float alpha = pow(gradientFactor, power);
-                        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0 - alpha); // White color (RGB) with calculated alpha
-                    }
-                `,
-                transparent: true, // enable transparency for the material
-                side: THREE.DoubleSide,
-            });
-            let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-            cylinderMesh.position.y = 0.12;
-            piece.add(cylinderMesh);
-        }
+        /**
+         * Add beacon atop white center-piece, made with the help of GLSL shaders.
+         * Reference for GLSL code: https://thebookofshaders.com/edit.php#05/expstep.frag
+         */
+        let cylinderGeometry = new THREE.CylinderGeometry(0.004, 0.004, 0.2);
+        let cylinderMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                power: { value: 0.5 },
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                varying vec2 vUv;
+                uniform float power;
+                float expStep(float x, float k, float n) {
+                    return exp( -k * pow(x,n) );
+                }
+                void main() {
+                    float gradientFactor = vUv.y;
+                    float alpha = pow(gradientFactor, power);
+                    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0 - alpha); // White color (RGB) with calculated alpha
+                }
+            `,
+            transparent: true, // enable transparency for the material
+            side: THREE.DoubleSide,
+        });
+        let cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        cylinderMesh.position.y = this.collisionCube.width / 2;
+        piece.add(cylinderMesh);
     }
 
     /**
