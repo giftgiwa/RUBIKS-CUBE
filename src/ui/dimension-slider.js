@@ -2,13 +2,16 @@ import * as THREE from "three";
 import RubiksCube from "../rubiks-cube";
 
 /**
- * 
+ * Class to represent the dimension slider in the UI that selects between
+ * rendering the cubes (as of now, 2x2, 3x3, 4x4, and 5x5).
  */
 class DimensionSlider {
 
 	/**
-	 * 
-	 * @param {RubiksCube} rubiksCubes Array of Rubik's cubes
+	 * Constructor for DimensionSlider class.
+	 * @param {RubiksCube} rubiksCubes Array of Rubik's cubes to be selected
+	 * amongst for rendering
+	 *  @param {THREE.Scene} scene THREE.js scene to render Rubik's cubes in
 	 */
 	constructor(rubiksCubes, scene) {
 		this.rubiksCubes = rubiksCubes;
@@ -20,6 +23,15 @@ class DimensionSlider {
 		this.renderCube();
 	}
 
+	/**
+	 * Creates the UI component for the dimension slider – an svg marked with
+	 * the dimensions of the cube (2, 3, 4, 5) and a button that gets clicked
+	 * and dragged between the fur settings for the cube to render. The mouse
+	 * click and drag over the slider are listened for to determine the new
+	 * placement for the button on the slider. The mouse click release is
+	 * listened for the re-render the cube (make the old cube invisible and
+	 * making the new one visible in the scene.)
+	 */
 	createSliderButton() {
 		this.TICK_COUNT = 5;
 		this.button = document.createElement("button");
@@ -93,6 +105,13 @@ class DimensionSlider {
 		});
 	}
 
+	/**
+	 * Iterates through the list of Rubik's cubes passed into the constructor.
+	 * If the dimension of the cube is equal to the member variable set to
+	 * indicate the current dimension of cube to render, the cube becomes
+	 * visible, as well as the accompanying collision cube. Otherwise, the cube
+	 * is set to be invisble, along with its accompanying collision cube.
+	 */
 	renderCube() {
 		for (let i = 0; i < this.rubiksCubes.length; i++) {
 			if (i != this.currentDimension - 2) {

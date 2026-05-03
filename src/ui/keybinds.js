@@ -33,27 +33,39 @@ class Keybinds {
      */
     addInputs(rubiksCube) {
         let colors = new Set(["r", "o", "y", "g", "b", "w"]);
-
         window.addEventListener("keypress", (event) => {
-            if (this.uiControls.keybindsEnabled && !rubiksCube.isRotating) {
-                if (colors.has(event.key.toLowerCase()) && rubiksCube.isRendered) {
-                    if (event.shiftKey) {
-                        RotationHelper.rotateFace(
-                            rubiksCube,
-                            "ccw",
-                            event.key.toUpperCase(),
-                            false,
-                            this.uiControls.keypressMode,
-                        );
-                    } else {
-                        RotationHelper.rotateFace(
-                            rubiksCube,
-                            "cw",
-                            event.key.toUpperCase(),
-                            false,
-                            this.uiControls.keypressMode,
-                        );
-                    }
+            /**
+             * The cube gets updated iff:
+             * 1) keybinds are enabled
+             * 2) the cube is NOT currently in the middle of a rotation
+             * 3) the key is a color on the cube (red, blue orange, yellow,
+             *    green bluw yellow) and
+             * 4) the cube is currently visible in the scene.
+             * 
+             * The cube rotates counterclockwise if the Shift key is held down
+             * in addition to the original key, and clockwise if the Shift key 
+             * is not held down
+             */
+            if (this.uiControls.keybindsEnabled &&
+                !rubiksCube.isRotating &&
+                colors.has(event.key.toLowerCase()) &&
+                rubiksCube.isRendered) {
+                if (event.shiftKey) {
+                    RotationHelper.rotateFace(
+                        rubiksCube,
+                        "ccw",
+                        event.key.toUpperCase(),
+                        false,
+                        this.uiControls.keypressMode,
+                    );
+                } else {
+                    RotationHelper.rotateFace(
+                        rubiksCube,
+                        "cw",
+                        event.key.toUpperCase(),
+                        false,
+                        this.uiControls.keypressMode,
+                    );
                 }
             }
         });

@@ -200,6 +200,12 @@ class CubeMap {
         document.body.appendChild(this.outerDiv);
     }
 
+    /**
+     * populateCubeMap() gets called after a state change in the cube (i.e.
+     * a face rotation). It iterates through each of the tiles in the map,
+     * references the orientations of the colors for the pieces, and recolors
+     * the tiles accordingly.
+     */
     populateCubeMap() {
         for (let i = 0; i < this.rubiksCube.dimension * 3; i++) {
             for (let j = 0; j < this.rubiksCube.dimension * 4; j++) {

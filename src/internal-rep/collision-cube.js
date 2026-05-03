@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
 /**
- * Class for storing collision cubes – invisible cube that bound each
- * Rubik's cube rendered into the scene that are used to determine which face
+ * Class for storing collision cubes – invisible cubes that bound each
+ * Rubik's cube rendered into the scene, which are used to determine which face
  * and direction the user is attempting to swipe on the cube.
  */
 class CollisionCube {
