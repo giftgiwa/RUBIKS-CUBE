@@ -7,6 +7,7 @@ import RubiksAnimationHelper from "./external-rep/rubiks-animation";
 import { TrackballControls } from "three/examples/jsm/Addons.js";
 import UIControls from "./ui/ui-controls";
 import CollisionCube from "./internal-rep/collision-cube";
+import CubeOutline from "./ui/cube-outline";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -179,6 +180,13 @@ const collisionCubes = [
     new CollisionCube(0.144, 4),
     new CollisionCube(0.168, 5),
 ];
+
+const cubeOutlines = [
+    new CubeOutline(2, ),
+    new CubeOutline(3, ),
+    new CubeOutline(4, ),
+    new CubeOutline(5, ),
+]
 
 // initialize rubiks cube "data structure" and helper classes
 let rubiksCube2x2 = new RubiksCube(rubiksCube2x2Mesh, 2, collisionCubes[0]);
