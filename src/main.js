@@ -154,69 +154,33 @@ function loadModel(url) {
 }
 
 const loader = new GLTFLoader();
-let rubiksCube3x3Mesh = new THREE.Mesh(); // create Rubik's cube
-let gltfData = await loadModel("/assets/models/rubiks3x3.gltf");
-rubiksCube3x3Mesh = gltfData.scene;
+let rubiksCubes = [];
+let collisionCubes = [];
+let rubiksAnimationHelpers = [];
 
-let rubiksCube2x2Mesh = new THREE.Mesh(); // create Rubik's cube
-gltfData = await loadModel("/assets/models/rubiks2x2.gltf");
-rubiksCube2x2Mesh = gltfData.scene;
+const collisionCubeWidths = [0.112, 0.12, 0.144, 0.168];
+for (let i = 2; i <= 5; i++) {
+    let mesh = new THREE.Mesh(); // create Rubik's cube
+    let gltfData = await loadModel(`/assets/models/rubiks${i}x${i}.gltf`);
+    let rubiksCubeMesh = gltfData.scene;
+    let collisionCube = new CollisionCube(collisionCubeWidths[i-2], i);
 
-let rubiksCube4x4Mesh = new THREE.Mesh(); // create Rubik's cube
-gltfData = await loadModel("/assets/models/rubiks4x4.gltf");
-rubiksCube4x4Mesh = gltfData.scene;
+    // initialize rubiks cube "data structure" and animation helper class
+    let rubiksCube = new RubiksCube(rubiksCubeMesh, i, collisionCube);
+    rubiksCubes.push(rubiksCube);
+    rubiksAnimationHelpers.push(
+        new RubiksAnimationHelper(rubiksCubes[i-2], camera, renderer),
+    );
 
-let rubiksCube5x5Mesh = new THREE.Mesh(); // create Rubik's cube
-gltfData = await loadModel("/assets/models/rubiks5x5.gltf");
-rubiksCube5x5Mesh = gltfData.scene;
+    scene.add(rubiksCubes[i-2].mesh);
+    scene.add(collisionCube.cube);
+}
 
 /**
  * Add invisble "collision cube", which is used for detecting click positions
  * and swipe directions about the cube for rotating the individual faces.
- */
-const collisionCubes = [
-    new CollisionCube(0.112, 2),
-    new CollisionCube(0.12, 3),
-    new CollisionCube(0.144, 4),
-    new CollisionCube(0.168, 5),
-];
-
-const cubeOutlines = [
-    new CubeOutline(2, ),
-    new CubeOutline(3, ),
-    new CubeOutline(4, ),
-    new CubeOutline(5, ),
-]
-
-// initialize rubiks cube "data structure" and helper classes
-let rubiksCube2x2 = new RubiksCube(rubiksCube2x2Mesh, 2, collisionCubes[0]);
-let rubiksCube3x3 = new RubiksCube(rubiksCube3x3Mesh, 3, collisionCubes[1]);
-let rubiksCube4x4 = new RubiksCube(rubiksCube4x4Mesh, 4, collisionCubes[2]);
-let rubiksCube5x5 = new RubiksCube(rubiksCube5x5Mesh, 5, collisionCubes[3]);
-
-let rubiksMeshes = [
-    rubiksCube2x2Mesh,
-    rubiksCube3x3Mesh,
-    rubiksCube4x4Mesh,
-    rubiksCube5x5Mesh,
-];
-let rubiksCubes = [rubiksCube2x2, rubiksCube3x3, rubiksCube4x4, rubiksCube5x5];
-let rubiksAnimationHelpers = [];
-for (let i = 0; i < rubiksCubes.length; i++) {
-    rubiksAnimationHelpers.push(
-        new RubiksAnimationHelper(rubiksCubes[i], camera, renderer),
-    );
-    scene.add(rubiksCubes[i].mesh);
-    scene.add(collisionCubes[i].cube);
-}
-
+ */ 
 let ui = new UIControls(rubiksCubes, window.mobileCheck(), scene);
-
-let rotationHelpers = [];
-for (let i = 0; i < rubiksCubes.length; i++) {
-    rotationHelpers.push(new RotationHelper(ui, trackballControls));
-}
-
 let keybindsObj = new Keybinds(ui, rubiksCubes);
 
 // initialize objects for detecting mouse click-and-drag interactions with scene

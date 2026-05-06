@@ -32,16 +32,6 @@ class RotationHelper {
     static doAnimate = false;
 
     /**
-     * Creates an instance of the RotationHelper class.
-     * @param {UIControls} uiControls
-     * @param {THREE.TrackballControls} trackballControls trackball controls
-     */
-    constructor(uiControls, trackballControls) {
-        this.uiControls = uiControls;
-        RotationHelper.trackballControls = trackballControls;
-    }
-
-    /**
      * For a given face and direction, modifies the stored groups for the
      * Rubik's cube's pieces to reflect the cube's side's physical rotation.
      * @param {RubiksCube} rubiksCube
