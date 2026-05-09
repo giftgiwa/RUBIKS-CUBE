@@ -13,7 +13,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
     80 /* FOV */,
     window.innerWidth / window.innerHeight /* aspect ratio */,
-    0.1 /* closest visible distance */,
+    0.001 /* closest visible distance */,
     1000 /* furthest visible distance */,
 );
 
@@ -156,6 +156,7 @@ function loadModel(url) {
 const loader = new GLTFLoader();
 let rubiksCubes = [];
 let collisionCubes = [];
+let cubeOutlines = [];
 let rubiksAnimationHelpers = [];
 
 const collisionCubeWidths = [0.112, 0.12, 0.144, 0.168];
@@ -165,15 +166,20 @@ for (let i = 2; i <= 5; i++) {
     let rubiksCubeMesh = gltfData.scene;
     let collisionCube = new CollisionCube(collisionCubeWidths[i-2], i);
 
+    let outlineGltf = await loadModel(`/assets/models/rubiks${i}x${i}_outline.gltf`);
+    let outlineGeometry = outlineGltf.scene.children[0].geometry;
+    let outlineMaterial = new THREE.MeshPhongMaterial();
+    let cubeOutline = new CubeOutline(new THREE.Mesh(outlineGeometry, outlineMaterial));
+
     // initialize rubiks cube "data structure" and animation helper class
-    let rubiksCube = new RubiksCube(rubiksCubeMesh, i, collisionCube);
+    let rubiksCube = new RubiksCube(rubiksCubeMesh, i, collisionCube, cubeOutline);
     rubiksCubes.push(rubiksCube);
     rubiksAnimationHelpers.push(
         new RubiksAnimationHelper(rubiksCubes[i-2], camera, renderer),
     );
-
     scene.add(rubiksCubes[i-2].mesh);
     scene.add(collisionCube.cube);
+    scene.add(cubeOutline.mesh);
 }
 
 /**

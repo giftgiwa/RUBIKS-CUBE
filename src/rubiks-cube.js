@@ -138,7 +138,7 @@ class RubiksCube {
      *
      * @param {*} mesh actual mesh file imported in the THREE.js Scene
      */
-    constructor(mesh, dimension, collisionCube) {
+    constructor(mesh, dimension, collisionCube, cubeOutline) {
         this.mesh = mesh; // store the model file
 
         /**
@@ -154,6 +154,7 @@ class RubiksCube {
         this.cubeMap = null;
         this.isShuffled = false;
         this.collisionCube = collisionCube;
+        this.cubeOutline = cubeOutline;
         this.isRendered = false;
 
         this.getMovesAndRotationGroups();

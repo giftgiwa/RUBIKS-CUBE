@@ -2,8 +2,8 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 class CubeOutline {
-	constructor(dimension, geometry) {
-		this.dimension = dimension;
+	constructor(mesh) {
+		this.mesh = mesh;
 	}
 }
 

@@ -20,14 +20,15 @@
 	],
 	"meshes":[
 		{
-			"name":"Cube.002",
+			"name":"Cube.001",
 			"primitives":[
 				{
 					"attributes":{
 						"POSITION":0,
-						"NORMAL":1
+						"NORMAL":1,
+						"TEXCOORD_0":2
 					},
-					"indices":2
+					"indices":3
 				}
 			]
 		}
@@ -36,27 +37,33 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":456,
+			"count":518,
 			"max":[
-				0.07201199978590012,
-				0.07201199978590012,
-				0.07201199978590012
+				0.06721200048923492,
+				0.06721200048923492,
+				0.06721200048923492
 			],
 			"min":[
-				-0.07201199978590012,
-				-0.07201199978590012,
-				-0.07201199978590012
+				-0.06721200048923492,
+				-0.06721200048923492,
+				-0.06721200048923492
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":456,
+			"count":518,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
+			"componentType":5126,
+			"count":518,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":3,
 			"componentType":5123,
 			"count":864,
 			"type":"SCALAR"
@@ -65,27 +72,33 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":5472,
+			"byteLength":6216,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":5472,
-			"byteOffset":5472,
+			"byteLength":6216,
+			"byteOffset":6216,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":4144,
+			"byteOffset":12432,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1728,
-			"byteOffset":10944,
+			"byteOffset":16576,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":12672,
-			"uri":"rubiks3x3_outline.bin"
+			"byteLength":18304,
+			"uri":"rubiks2x2_outline.bin"
 		}
 	]
 }

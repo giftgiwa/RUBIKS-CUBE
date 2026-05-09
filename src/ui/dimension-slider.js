@@ -118,15 +118,17 @@ class DimensionSlider {
 				this.rubiksCubes[i].isRendered = false;
 				this.rubiksCubes[i].mesh.visible = false;
 				this.rubiksCubes[i].collisionCube.cube.visible = false;
+				this.rubiksCubes[i].cubeOutline.mesh.visible = false;
 
 				if (this.rubiksCubes[i].cubeMap) {
 					this.rubiksCubes[i].cubeMap.hide();
 				}
 			} else {
 				this.rubiksCubes[i].isRendered = true;
-				this.rubiksCubes[i].mesh.visible = true;
 				this.rubiksCubes[i].mesh.updateMatrixWorld();
+				this.rubiksCubes[i].mesh.visible = true;
 				this.rubiksCubes[i].collisionCube.cube.visible = true;
+				this.rubiksCubes[i].cubeOutline.mesh.visible = true;
 
 				if (this.rubiksCubes[i].cubeMap) {
 					this.rubiksCubes[i].cubeMap.show();
