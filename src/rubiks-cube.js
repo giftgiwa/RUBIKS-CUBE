@@ -217,8 +217,6 @@ class RubiksCube {
          * NOTE:
          * * All of the pieces in the mesh are being iterated through
          *   (which excludes the "null center piece" in the middle layer).
-         * * There should be (and are) 8 corner pieces, 12 edge pieces, and 6
-         *   face pieces.
          */
         let n = this.dimension;
         for (let i = 0; i < this.mesh.children.length; i++) {
